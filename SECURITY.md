@@ -10,4 +10,4 @@ We will respond within 5 business days and aim to resolve confirmed issues withi
 
 ## Supported Versions
 
-As this is a WorkBuddy Skill project, only the latest version is actively supported.
+As this is an AI Agent Skill project, only the latest version is actively supported.

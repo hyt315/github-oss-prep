@@ -32,8 +32,8 @@
 
 | 示例 | 判断 | 原因 |
 |------|------|------|
-| `C:\Users\YourName\.workbuddy\skills\...` | ❌ 泄露 | 包含真实 Windows 用户名 |
-| `D:\zcode\node.js\node.exe` | ❌ 泄露 | 个人计算机绝对路径 |
+| `C:\Users\YourName\.agent\skills\...` | ❌ 泄露 | 包含真实 Windows 用户名 |
+| `C:\Users\YourName\AppData\Local\node.exe` | ❌ 泄露 | 个人计算机绝对路径 |
 | `"args": ["-y", "obsidian-mcp", "你的Vault路径"]` | ✅ 安全 | 占位符，不是真实路径 |
 | `需要配置 API Key` | ✅ 安全 | 是说明文字，不是实际 key |
 | `sk-abc123def456` | ❌ 泄露 | 真实 API key |

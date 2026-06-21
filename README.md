@@ -37,19 +37,22 @@
 
 ## 🚀 快速开始
 
-在 WorkBuddy 中直接触发：
+这是一个 AI Agent Skill，安装到任意 AI 编程助手后即可使用。
 
-```
-帮我把当前项目准备开源，推送到 GitHub
-```
+### 它能做什么？
 
-或指定项目路径：
+一句话：**把任意本地项目变成专业的 GitHub 开源仓库。** 自动补全 LICENSE、README、Issue/PR 模板等全套社区健康文件，隐私扫描确保无敏感信息泄露，最后推送到 GitHub。
 
-```
-扫描 /path/to/my-project，补齐开源文件，然后推送到 GitHub
-```
+### 典型使用场景
 
-Skill 会自动执行 7 步工作流：**扫描 → 补齐 → 审查 → Description → 推送 → Release → 优化**。
+- 你写了个工具/脚本，想开源但不知道怎么"包装" — 它帮你补齐所有标准文件
+- 你的项目 README 太简陋 — 它生成中英双语专业版
+- 你不确定有没有忘记删 API Key — 它自动扫描并提醒
+- 你不想手动创建 Issue 模板、PR 模板 — 它一键生成
+
+### 怎么用
+
+安装后直接告诉 AI 助手你的意图，Skill 会自动执行 **扫描 → 补齐 → 审查 → Description → 推送 → Release → 优化** 这 7 步工作流。全程不覆盖已有文件，每步确认后再继续。
 
 ---
 
@@ -124,11 +127,11 @@ github-oss-prep/
 
 假设有一个本地 Markdown 文档项目，想开源到 GitHub：
 
-1. **触发 Skill**：`帮我把当前项目准备开源`
+1. **安装**：克隆本仓库到 AI 助手的 skills 目录
 2. **扫描**：识别为文档项目 → 发现缺少 LICENSE、README、.gitignore
 3. **补齐**：生成对应文件，内容适配文档项目特性
 4. **审查**：隐私扫描通过，文件内容确认无误
-5. **推送**：用户确认仓库名和 Topics → 自动创建仓库并推送
+5. **推送**：确认仓库名和 Topics → 自动推送
 6. **完成**：项目已在 GitHub 上线，Community Profile 100% 达标
 
 ---
@@ -166,19 +169,22 @@ github-oss-prep/
 
 ## 🚀 Quick Start
 
-Trigger directly in WorkBuddy:
+This is an AI Agent Skill — install it in any AI coding assistant and it's ready to use.
 
-```
-Help me prepare this project for open-source and push to GitHub
-```
+### What it does
 
-Or specify a path:
+In one sentence: **turn any local project into a professional GitHub open-source repo.** It auto-generates LICENSE, README, Issue/PR templates and other community health files, runs privacy scans to catch sensitive data, and pushes everything to GitHub.
 
-```
-Scan /path/to/my-project, add missing open-source files, and push to GitHub
-```
+### Common use cases
 
-The skill runs a 7-step workflow: **Scan → Fill → Review → Description → Push → Release → Optimize**.
+- You built a tool/script and want to open-source it but don't know how to "package" it — it fills in all the standard files
+- Your project's README is too bare — it generates a bilingual professional version
+- You're not sure if you forgot to remove an API key — it scans and alerts you
+- You don't want to manually create Issue templates and PR templates — it generates them in one shot
+
+### How to use
+
+Once installed, simply tell your AI assistant what you want. The Skill runs a 7-step workflow: **Scan → Fill → Review → Description → Push → Release → Optimize**. It never overwrites existing files, and confirms with you at each step.
 
 ---
 
@@ -208,11 +214,11 @@ github-oss-prep/
 
 Here's a real workflow: a local Markdown document project wants to go open-source:
 
-1. **Trigger**: `Help me prepare this project for open-source`
+1. **Install**: Clone this repo into your AI assistant's skills directory
 2. **Scan**: Detected as docs project → Missing LICENSE, README, .gitignore
 3. **Fill**: Generated files tailored to the project
 4. **Review**: Privacy scan clean, content confirmed
-5. **Push**: Repo name and topics confirmed → Auto-create repo and push
+5. **Push**: Repo name and topics confirmed → Auto-push
 6. **Done**: Project live on GitHub, Community Profile 100%
 
 ---
