@@ -51,9 +51,29 @@ PAT（Personal Access Token）是 GitHub 的个人访问令牌，用于替代密
 
 > 以下仅列出常见工具示例。如果你使用的是其他支持 MCP 的工具，找到它的 MCP 配置文件，按相同格式添加即可。
 
+> **两种 MCP Server 可选：** GitHub 官方目前推荐使用 Docker 方式运行 `github/github-mcp-server`（活跃维护），原 npx 方式 `@modelcontextprotocol/server-github` 已停止维护但仍可使用。两种方式工具接口完全兼容，任选其一即可。
+
 ### Cursor
 
 编辑 `~/.cursor/mcp.json`：
+
+**方式一：Docker（推荐）**
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_你的token"
+      }
+    }
+  }
+}
+```
+
+**方式二：npx（备选，需安装 Node.js）**
 
 ```json
 {
@@ -76,6 +96,24 @@ PAT（Personal Access Token）是 GitHub 的个人访问令牌，用于替代密
 - macOS：`~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows：`%APPDATA%\Claude\claude_desktop_config.json`
 
+**方式一：Docker（推荐）**
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_你的token"
+      }
+    }
+  }
+}
+```
+
+**方式二：npx（备选，需安装 Node.js）**
+
 ```json
 {
   "mcpServers": {
@@ -93,6 +131,24 @@ PAT（Personal Access Token）是 GitHub 的个人访问令牌，用于替代密
 ### Windsurf
 
 编辑 `~/.codeium/mcp_config.json`：
+
+**方式一：Docker（推荐）**
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_你的token"
+      }
+    }
+  }
+}
+```
+
+**方式二：npx（备选，需安装 Node.js）**
 
 ```json
 {
@@ -112,6 +168,24 @@ PAT（Personal Access Token）是 GitHub 的个人访问令牌，用于替代密
 
 编辑 `~/.claude/settings.json`，在 `mcpServers` 中添加：
 
+**方式一：Docker（推荐）**
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_你的token"
+      }
+    }
+  }
+}
+```
+
+**方式二：npx（备选，需安装 Node.js）**
+
 ```json
 {
   "mcpServers": {
@@ -129,6 +203,24 @@ PAT（Personal Access Token）是 GitHub 的个人访问令牌，用于替代密
 ### VS Code / GitHub Copilot
 
 在项目根目录创建或编辑 `.vscode/mcp.json`（项目级配置）：
+
+**方式一：Docker（推荐）**
+
+```json
+{
+  "servers": {
+    "github": {
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_你的token"
+      }
+    }
+  }
+}
+```
+
+**方式二：npx（备选，需安装 Node.js）**
 
 ```json
 {
@@ -187,6 +279,7 @@ x-oauth-scopes: repo, workflow
 | Fine-grained PAT 能用吗 | Fine-grained 有功能缺口 | 本 Skill 推荐 Classic PAT，操作更简单 |
 | PAT 被自动删除了 | GitHub 会清理一年未使用的 PAT | 重新生成，或定期使用以保持活跃 |
 | `npx` 命令报错 | 没安装 Node.js | 先安装 Node.js（https://nodejs.org） |
+| `docker` 命令报错 | 没安装 Docker Desktop | 安装 Docker Desktop（https://www.docker.com/products/docker-desktop），或改用 npx 备选方式 |
 
 ---
 
