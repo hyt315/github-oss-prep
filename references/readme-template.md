@@ -36,7 +36,7 @@
 
 ---
 
-<a name="中文"></a>
+## 中文
 
 ## 📖 这是什么？
 
@@ -136,7 +136,7 @@
 
 ---
 
-<a name="english"></a>
+## English
 
 ## 📖 What is this?
 
@@ -192,14 +192,16 @@
 [English](#english) | [中文](#中文)
 ```
 
-在对应章节前添加锚点：
+在对应章节前使用 Markdown 标题作为锚点（GitHub 会自动为标题生成 ID）：
 ```markdown
-<a name="中文"></a>
+## 中文
 ## 📖 这是什么？
 
-<a name="english"></a>
+## English
 ## 📖 What is this?
 ```
+
+> **注意**：GitHub 不支持 `<a name="xxx">` HTML 锚点标签，只有 Markdown 标题（`#`）会自动生成可跳转的锚点 ID。
 
 ### 视觉元素
 
