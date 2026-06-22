@@ -299,6 +299,8 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 **分支保护**：推荐使用 **Repository Rulesets**（Settings → Rules → New ruleset），比传统分支保护规则更灵活（可组合、可针对用户/团队、可分层）。新项目优先用 Rulesets 而非传统分支保护。
 
+**初始 Labels**（可选）：新仓库建议创建标准标签，便于后续 Issue 管理。已安装 gh CLI 时可用 `gh label create bug --color "d73a4a" --description "Something isn't working"` 等命令批量创建。推荐标签：`bug`、`enhancement`、`good first issue`、`documentation`、`question`。
+
 ### 7.2 GitHub Actions CI/CD（代码项目推荐）
 
 根据项目技术栈生成基础 CI 工作流文件 `.github/workflows/ci.yml`。**Node.js 和 Python 的完整 YAML 模板见 `references/templates-and-formats.md`**。

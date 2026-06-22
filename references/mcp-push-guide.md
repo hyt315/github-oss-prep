@@ -242,6 +242,21 @@ curl -s -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
   -d '{"description":"<repo description>"}'
 ```
 
+### GitHub CLI 替代（已安装 gh 且已登录时可用）
+
+如用户已安装 GitHub CLI 并完成 `gh auth login`（默认 scope 包含 `repo`，无需额外配置 Token），可将上述 curl 命令替换为：
+
+```bash
+# 创建仓库 + 推送（需先 git init + add + commit）
+gh repo create <repo-name> --public -d "<description>" --source=. --push
+
+# 设置 Topics
+gh repo edit --add-topic "topic1" --add-topic "topic2"
+
+# 设置 Description
+gh repo edit -d "<description>"
+```
+
 ---
 
 ## 异常处理
