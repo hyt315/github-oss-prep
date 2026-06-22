@@ -1,6 +1,6 @@
 ---
 name: github-oss-prep
-version: 1.1.0
+version: 1.2.0
 description: Use when preparing a project for open-source release on GitHub — covers license selection, community health files, README structure, privacy scanning, and repo push. Triggers: GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、oss prep、publish to GitHub、prepare for open source.
 ---
 
