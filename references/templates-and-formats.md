@@ -138,11 +138,11 @@ body:
         - Windows
         - macOS
         - Linux
-  - type: upload
+  - type: textarea
     id: screenshot
     attributes:
       label: Screenshot
-      description: Attach a screenshot if applicable (images max 10MB)
+      description: Paste or drag-and-drop a screenshot here if applicable (GitHub uploads it automatically)
   - type: checkboxes
     id: terms
     attributes:
@@ -153,7 +153,7 @@ body:
           required: true
 ```
 
-> `upload` 类型支持文件上传：图片（png/jpg/gif/svg/webp，10MB）、文档（pdf/docx/xlsx，25MB）、视频（mp4/mov/webm，100MB）、压缩包（zip/gz，25MB）。
+> 注意：GitHub Issue 表单**没有** `upload` 字段类型（合法类型仅 markdown/textarea/input/dropdown/checkboxes）。需要附件时，用 `textarea` 字段引导用户把文件（截图/日志/压缩包等）拖入或粘贴到文本框，GitHub 会自动上传并生成链接。
 
 **config.yml 配置**（可选）：
 ```yaml

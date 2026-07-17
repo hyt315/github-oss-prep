@@ -92,9 +92,11 @@
 | **HTTPS** | `git clone https://github.com/<owner>/<repo>.git` |
 | **SSH** | `git clone git@github.com:<owner>/<repo>.git` |
 | **GitHub CLI** | `gh repo clone <owner>/<repo>` |
-| **ZIP 源码** | `[下载 ZIP](https://github.com/<owner>/<repo>/archive/refs/heads/main.zip)` |
-| **Tar 源码** | `[下载 Tar](https://github.com/<owner>/<repo>/archive/refs/heads/main.tar.gz)` |
-| **单文件** | `curl -O https://raw.githubusercontent.com/<owner>/<repo>/main/核心文件名` |
+| **ZIP 源码** | `[下载 ZIP](https://github.com/<owner>/<repo>/archive/refs/heads/<branch>.zip)` |
+| **Tar 源码** | `[下载 Tar](https://github.com/<owner>/<repo>/archive/refs/heads/<branch>.tar.gz)` |
+| **单文件** | `curl -O https://raw.githubusercontent.com/<owner>/<repo>/<branch>/核心文件名` |
+
+> `<owner>`/`<repo>` 替换为真实用户名/仓库名；`<branch>` 替换为仓库的**实际默认分支名**（新仓库通常是 `main`，老仓库可能是 `master`，可在仓库首页分支下拉框查看）。分支名写错会导致 ZIP/Tar/单文件链接 404，但 `git clone` 不受影响（它自动使用默认分支）。
 
 **编译产物下载**（如有 Release）：
 

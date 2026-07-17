@@ -79,10 +79,12 @@ git remote remove origin
 ```markdown
 | 方式 | 链接 |
 |------|------|
-| ZIP 源码 | `https://github.com/<owner>/<repo>/archive/refs/heads/main.zip` |
-| Tar 源码 | `https://github.com/<owner>/<repo>/archive/refs/heads/main.tar.gz` |
+| ZIP 源码 | `https://github.com/<owner>/<repo>/archive/refs/heads/<branch>.zip` |
+| Tar 源码 | `https://github.com/<owner>/<repo>/archive/refs/heads/<branch>.tar.gz` |
 | Release 最新版 | `https://github.com/<owner>/<repo>/releases/latest` |
 ```
+
+> `<branch>` 必须替换为仓库的**实际默认分支名**（main 或 master，见仓库首页分支下拉框）；写错会导致 ZIP/Tar 链接 404。`git clone` 不受影响（自动使用默认分支）。
 
 **编译产物下载**（Release 上传后）：
 ```markdown

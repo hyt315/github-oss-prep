@@ -7,7 +7,7 @@
 **One-click polish any project into a professional GitHub open-source repo with full community health files**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.2.1-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.2.2-green.svg)]()
 [![SKILL.md](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green)](SKILL.md)
 
 [English](#english) | [中文](#中文)
@@ -62,9 +62,9 @@
 
 | 平台 | 安装命令 |
 |------|----------|
-| **Claude Code** | `git clone https://github.com/<owner>/<repo>.git ~/.claude/skills/github-oss-prep` |
-| **Codex** | `git clone https://github.com/<owner>/<repo>.git ~/.codex/skills/github-oss-prep` |
-| **Cursor** | `git clone https://github.com/<owner>/<repo>.git ~/.cursor/skills/github-oss-prep` |
+| **Claude Code** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.claude/skills/github-oss-prep` |
+| **Codex** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.codex/skills/github-oss-prep` |
+| **Cursor** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.cursor/skills/github-oss-prep` |
 
 > 安装后 Skill 会自动生效，无需额外配置。
 
@@ -76,11 +76,11 @@
 
 | 方式 | 命令 / 链接 |
 |------|------------|
-| **HTTPS** | `git clone https://github.com/<owner>/<repo>.git` |
-| **SSH** | `git clone git@github.com:<owner>/<repo>.git` |
-| **GitHub CLI** | `gh repo clone <owner>/<repo>` |
-| **ZIP 源码** | [下载 ZIP](https://github.com/<owner>/<repo>/archive/refs/heads/main.zip) |
-| **Tar 源码** | [下载 Tar](https://github.com/<owner>/<repo>/archive/refs/heads/main.tar.gz) |
+| **HTTPS** | `git clone https://github.com/hyt315/github-oss-prep.git` |
+| **SSH** | `git clone git@github.com:hyt315/github-oss-prep.git` |
+| **GitHub CLI** | `gh repo clone hyt315/github-oss-prep` |
+| **ZIP 源码** | [下载 ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
+| **Tar 源码** | [下载 Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: github-oss-prep
-version: 1.2.1
+version: 1.2.2
 description: Use when preparing a project for open-source release on GitHub — covers license selection, community health files, README structure, privacy scanning, and repo push. Triggers: GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、oss prep、publish to GitHub、prepare for open source.
 ---
 
@@ -149,7 +149,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 | 文件 | 生成要点 |
 |------|----------|
 | **LICENSE** | 默认 MIT；代码保护用 Apache 2.0（需附 NOTICE 文件）；创意内容用 CC BY 4.0 |
-| **README.md** | 结构参考 `references/readme-template.md`，支持中英双语。**必须包含 `📥 下载/Download` 章节**，列出表格：HTTPS clone、SSH clone、GitHub CLI (`gh repo clone`)、ZIP 下载、curl/wget 单文件下载至少 5 种方式。安装示例应覆盖 Claude Code、Codex、Cursor 等主流 AI Agent 平台（Skill 项目），示例路径用 `~/.claude/skills/` |
+| **README.md** | 结构参考 `references/readme-template.md`，支持中英双语。**必须包含 `📥 下载/Download` 章节**，列出表格：HTTPS clone、SSH clone、GitHub CLI (`gh repo clone`)、ZIP 下载、curl/wget 单文件下载至少 5 种方式。安装示例应覆盖 Claude Code、Codex、Cursor 等主流 AI Agent 平台（Skill 项目），示例路径用 `~/.claude/skills/`。**下载链接中的分支名必须用仓库真实默认分支**（main 或 master，见 Step 5 推送后确认），写死 `main` 在 master 仓库上会导致 ZIP/Tar/raw 链接 404；README 中的 `<owner>/<repo>` 占位符必须替换为真实用户名/仓库名 |
 | **.gitignore** | Node.js: `node_modules/` `dist/`；Python: `__pycache__/` `*.pyc`；Skill: `.obsidian/workspace.json`；通用: `.DS_Store` `Thumbs.db` |
 | **CONTRIBUTING.md** | 贡献方式 + Fork/Branch/PR 流程 + 行为准则引用 |
 | **CODE_OF_CONDUCT.md** | 引用 Contributor Covenant 2.1 + 报告渠道 |
@@ -208,6 +208,8 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 - [ ] 核心特性用表格展示
 - [ ] README 引用 LICENSE（如 `[MIT](LICENSE)`）
 - [ ] README 不超过 512 KB（GitHub 会截断超过此大小的内容）
+- [ ] 无残留 `<owner>`/`<repo>` 等未替换占位符（README、`.github/ISSUE_TEMPLATE/config.yml` 等交付文件）
+- [ ] 下载链接（ZIP/Tar/raw 单文件）的分支名与仓库实际默认分支一致（main 或 master）
 
 ---
 
