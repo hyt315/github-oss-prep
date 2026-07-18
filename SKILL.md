@@ -1,7 +1,6 @@
 ---
 name: github-oss-prep
-version: 1.2.2
-description: Use when preparing a project for open-source release on GitHub — covers license selection, community health files, README structure, privacy scanning, and repo push. Triggers: GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、oss prep、publish to GitHub、prepare for open source.
+description: "Use when preparing a project for open-source release on GitHub, including license selection, community health files, README structure, privacy scanning, release packaging, and approval-gated repository publishing. Triggers include GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、oss prep、publish to GitHub, and prepare for open source."
 ---
 
 # GitHub 开源准备
@@ -17,25 +16,24 @@ description: Use when preparing a project for open-source release on GitHub — 
 
 ---
 
-## 前置条件
+## 运行模式与前置条件
 
-确认 GitHub 推送凭据可用。
+开源整理、隐私扫描、README 与社区文件生成、源码 ZIP 打包均不需要 GitHub 认证，也不得因缺少 MCP、连接器、`gh` CLI 或 Token 而中断。只有用户明确要求“现在发布到 GitHub”时，才进入认证检查。
 
-**发现策略**（按优先级）：
+按当前环境自动选择一种模式，并在开始时说明：
 
-1. **检查环境变量**：`GITHUB_TOKEN`、`GITHUB_PERSONAL_ACCESS_TOKEN`
-2. **自动发现 MCP 配置**：在用户主目录下搜索包含 `github` MCP 服务器配置的 JSON 文件（各类 AI 编码工具都会在特定目录存放 MCP 配置）
-3. **参考常见路径**（仅作兜底，不同工具路径可能不同）：
-   - `~/.cursor/mcp.json`（Cursor）
-   - `~/Library/Application Support/Claude/claude_desktop_config.json`（Claude Desktop macOS）
-   - `%APPDATA%\Claude\claude_desktop_config.json`（Claude Desktop Windows）
-   - `~/.codeium/mcp_config.json`（Windsurf）
-   - `.vscode/mcp.json`（VS Code / GitHub Copilot，项目级配置）
-   - `~/.trae/mcp.json`（Trae）
+1. **Prepare only（默认）**：完成全部本地开源整理，输出可审查目录与 ZIP；不需要 GitHub 账户连接。
+2. **GitHub connector**：用户明确授权发布，且当前平台已有官方 GitHub 连接器时使用。
+3. **GitHub CLI**：没有连接器但已安装 `gh` 时，通过浏览器登录和系统凭据存储发布。
+4. **Manual handoff**：无法认证时仍交付完整目录、ZIP、仓库 Description 和 Topics，附网页上传步骤；不得把认证失败当作项目失败。
 
-发现配置文件后，从中提取 `GITHUB_PERSONAL_ACCESS_TOKEN` 字段值。
+**安全策略**（按优先级）：
 
-Token 推荐使用 Classic PAT（`ghp_` 前缀），需要 `repo` 权限。如所有方式都找不到，引导用户参考 `references/github-pat-setup.md` 配置。Fine-grained PAT 与 Classic PAT 的差异详见 `references/github-pat-comparison.md`。
+1. 优先使用当前平台已安装的官方 GitHub 连接器。
+2. 若使用本机 GitHub CLI，只运行 `gh auth status` 检查状态；需要登录时让用户自行完成 `gh auth login --web`。
+3. 不扫描用户主目录、编辑器配置或 MCP 配置来寻找 Token，不从配置文件提取 Token，不在对话、日志、仓库或技能目录中保存 Token。
+4. 如果用户明确选择 PAT，指导用户在 GitHub 官方页面创建最小权限凭据，并让受信任的认证工具接收它；不要要求用户把明文 Token 发到聊天中。权限差异可参考 `references/github-pat-comparison.md`。
+5. 不推荐已停止维护或非 GitHub 官方的 MCP 包。需要 MCP 时，以 `github/github-mcp-server` 官方仓库的当前安装说明为准；不要把个人 MCP 配置或凭据提交到待开源项目。
 
 ---
 
@@ -50,7 +48,7 @@ Step 3: 审查（内容质量 + SKILL.md 合规）
     ↓
 Step 4: 生成 Description（按规则 + 模板，详见 references/description-guide.md）
     ↓
-Step 5: 推送确认 → 使用 Token → 创建仓库 + 推送（MCP 优先，curl+git 回退）
+Step 5: 发布确认 → 连接器 / gh CLI / 手动交付三选一
     ↓
 Step 6: Release + 多平台分发（详见 references/release-and-distribution.md）
     ↓
@@ -232,9 +230,9 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 ### 5.2 创建仓库 + 推送
 
-**方案选择**：优先尝试 GitHub MCP 工具，如 MCP 不可用或权限不足，回退到 curl + git。详细命令和异常处理见 `references/mcp-push-guide.md`。
+**方案选择**：优先使用当前平台已安装的官方 GitHub 连接器；否则使用已完成 `gh auth login --web` 的 GitHub CLI；两者都不可用时交付 ZIP 和网页上传说明。不得从配置文件、环境变量输出或用户目录中提取凭据。详细流程见 `references/mcp-push-guide.md`。
 
-如找不到 token，引导用户参考 `references/github-pat-setup.md` 配置。
+如未登录，只暂停远程发布，不暂停本地整理和交付。让用户在受信任终端中完成 `gh auth login --web`，或选择手动上传。只有用户明确要求了解 PAT 时才读取 `references/github-pat-setup.md`。
 
 ---
 

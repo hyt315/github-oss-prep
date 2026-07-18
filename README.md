@@ -29,7 +29,7 @@
 | 🔍 **智能扫描** | 自动识别项目类型（Skill/代码/文档），逐项检查 GitHub Community Profile 考核项 |
 | 📝 **补齐文件** | 一键生成 LICENSE、README、.gitignore、CONTRIBUTING、Issue/PR 模板等全套社区健康文件 |
 | 🛡️ **隐私保护** | 自动扫描 API Key、邮箱、私网 IP、真实路径等敏感信息，推送前二次验证 |
-| 📤 **一键推送** | 支持 MCP 工具和 curl+git 两种方式推送到 GitHub，自动发现 Token |
+| 📤 **灵活交付** | 无认证也能完成整理并导出 ZIP；发布时支持官方 GitHub 连接器或 `gh` CLI |
 | 🌐 **中英双语** | 所有生成文件支持中英双语，符合 GitHub 全球社区最佳实践 |
 | 📦 **多平台分发** | 代码项目支持 npm、PyPI、crates.io、Docker Hub、Homebrew 等多渠道发布 |
 
@@ -52,7 +52,7 @@
 
 ### 怎么用
 
-安装后直接告诉 AI 助手你的意图，Skill 会自动执行 **扫描 → 补齐 → 审查 → Description → 推送 → Release → 优化** 这 7 步工作流。全程不覆盖已有文件，每步确认后再继续。
+安装后直接告诉 AI 助手你的意图，Skill 会自动执行 **扫描 → 补齐 → 审查 → Description → 交付/发布 → Release → 优化** 这 7 步工作流。整理和 ZIP 交付不需要 GitHub 认证；只有远程发布需要授权。
 
 ---
 
@@ -66,7 +66,17 @@
 | **Codex** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.codex/skills/github-oss-prep` |
 | **Cursor** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.cursor/skills/github-oss-prep` |
 
-> 安装后 Skill 会自动生效，无需额外配置。
+> 安装后即可完成扫描、整理、隐私检查和 ZIP 交付，无需 GitHub Token。只有最终发布需要 GitHub 授权。
+
+### GitHub 发布认证
+
+推荐顺序：
+
+1. 使用 AI 平台提供的官方 GitHub 连接器；
+2. 或在受信任终端运行 `gh auth login --web`；
+3. 两者均不可用时，Skill 仍会输出完整源码目录、ZIP、Description 和 Topics，供网页手动上传。
+
+不要把 PAT 写进公开仓库、聊天记录或 Git remote URL。需要 MCP 时，请使用 GitHub 当前维护的 [`github/github-mcp-server`](https://github.com/github/github-mcp-server)；旧的 `@modelcontextprotocol/server-github` npm 包已停止维护。
 
 ---
 
@@ -131,8 +141,8 @@ github-oss-prep/
 2. **扫描**：识别为文档项目 → 发现缺少 LICENSE、README、.gitignore
 3. **补齐**：生成对应文件，内容适配文档项目特性
 4. **审查**：隐私扫描通过，文件内容确认无误
-5. **推送**：确认仓库名和 Topics → 自动推送
-6. **完成**：项目已在 GitHub 上线，Community Profile 100% 达标
+5. **交付**：确认仓库名和 Topics → 连接器/`gh` 发布，或输出 ZIP 手动上传
+6. **完成**：本地开源包一定可交付；授权可用时同步发布到 GitHub
 
 ---
 
@@ -161,7 +171,7 @@ github-oss-prep/
 | 🔍 **Smart Scanning** | Identifies project type (Skill / Code / Docs) and checks against GitHub Community Profile standards |
 | 📝 **Auto-Fill Files** | Generates LICENSE, README, .gitignore, CONTRIBUTING, Issue/PR templates, and more |
 | 🛡️ **Privacy Protection** | Scans for API keys, emails, private IPs, real paths — with pre-push verification |
-| 📤 **One-Click Push** | Pushes to GitHub via MCP tools or curl+git fallback with automatic token discovery |
+| 📤 **Flexible Delivery** | Always produces a local ZIP; publishes through an official GitHub connector or authenticated `gh` CLI when available |
 | 🌐 **Bilingual Support** | All generated files support Chinese/English bilingual output |
 | 📦 **Multi-Platform** | Code projects support npm, PyPI, crates.io, Docker Hub, Homebrew distribution |
 
@@ -184,7 +194,7 @@ In one sentence: **turn any local project into a professional GitHub open-source
 
 ### How to use
 
-Once installed, simply tell your AI assistant what you want. The Skill runs a 7-step workflow: **Scan → Fill → Review → Description → Push → Release → Optimize**. It never overwrites existing files, and confirms with you at each step.
+Once installed, simply tell your AI assistant what you want. The Skill runs a 7-step workflow: **Scan → Fill → Review → Description → Deliver/Publish → Release → Optimize**. Preparation and ZIP delivery never require GitHub authentication. It never overwrites existing files, and confirms with you before remote publication.
 
 ---
 
@@ -218,8 +228,8 @@ Here's a real workflow: a local Markdown document project wants to go open-sourc
 2. **Scan**: Detected as docs project → Missing LICENSE, README, .gitignore
 3. **Fill**: Generated files tailored to the project
 4. **Review**: Privacy scan clean, content confirmed
-5. **Push**: Repo name and topics confirmed → Auto-push
-6. **Done**: Project live on GitHub, Community Profile 100%
+5. **Deliver**: Confirm repo name and Topics → connector/`gh` publish, or manual ZIP handoff
+6. **Done**: Open-source package is always delivered; GitHub publication follows when authentication is available
 
 ---
 

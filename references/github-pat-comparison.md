@@ -53,7 +53,7 @@ GitHub **推荐使用 Fine-grained PAT 而非 Classic PAT**，但明确承认 Fi
 
 ## 本 Skill 的选择
 
-本 Skill 推荐使用 **Classic PAT**（`ghp_` 前缀），因为：
+本 Skill 默认不直接处理 PAT，而是使用 GitHub 连接器或已登录的 `gh` CLI。只有用户明确需要为其他受信任工具选择 PAT 类型时，才参考以下差异：
 
 - 需要 `repo` scope 来**创建新仓库 + 推送代码**，Classic PAT 授权流程最简单
 - Fine-grained PAT 虽然也能创建仓库（`POST /user/repos` 已支持），但需要预先配置仓库权限范围，且**无法跨组织操作**，多仓库场景下配置繁琐

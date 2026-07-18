@@ -1,0 +1,12 @@
+interface:
+  display_name: GitHub OSS Prep
+  short_description: Prepare projects for safe open-source GitHub release
+  default_prompt: Use $github-oss-prep to audit and prepare this project for an approval-gated
+    open-source GitHub release.
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
