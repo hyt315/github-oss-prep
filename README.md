@@ -7,7 +7,7 @@
 **One-click polish any project into a professional GitHub open-source repo with full community health files**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.3.0)
+[![Version](https://img.shields.io/badge/version-1.4.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.4.0)
 [![SKILL.md](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green)](SKILL.md)
 
 [English](#english) | [中文](#中文)
@@ -27,9 +27,12 @@
 | 特性 | 说明 |
 |------|------|
 | 🔍 **智能扫描** | 自动识别项目类型（Skill/代码/文档），逐项检查 GitHub Community Profile 考核项 |
-| 📝 **补齐文件** | 一键生成 LICENSE、README、.gitignore、CONTRIBUTING、Issue/PR 模板等全套社区健康文件 |
+| 📝 **审计与改进** | 补齐缺失文件，也会识别过时、残缺或不可运行的已有文档，经确认后改进 |
 | 🛡️ **隐私保护** | 自动扫描 API Key、邮箱、私网 IP、真实路径等敏感信息，推送前二次验证 |
+| ✅ **采用性验证** | 用干净 clone 验证安装、最小示例、测试、构建、来源许可与版本一致性 |
 | 📤 **灵活交付** | 无认证也能完成整理并导出 ZIP；发布时支持官方 GitHub 连接器或 `gh` CLI |
+| 🔀 **安全发布** | 公开项目默认走分支、Draft PR、CI 与人工合并；单人低风险改动可选择直推 |
+| 📣 **发现与推广** | 生成 Topics、社交预览、演示素材、Launch Kit、渠道计划和反馈闭环 |
 | 🌐 **中英双语** | 所有生成文件支持中英双语，符合 GitHub 全球社区最佳实践 |
 | 📦 **多平台分发** | 代码项目支持 npm、PyPI、crates.io、Docker Hub、Homebrew 等多渠道发布 |
 
@@ -52,7 +55,7 @@
 
 ### 怎么用
 
-安装后直接告诉 AI 助手你的意图，Skill 会自动执行 **扫描 → 补齐 → 审查 → Description → 交付/发布 → Release → 优化** 这 7 步工作流。整理和 ZIP 交付不需要 GitHub 认证；只有远程发布需要授权。
+安装后直接告诉 AI 助手你的意图，Skill 会自动执行 **定位 → 扫描 → 整理 → 验证 → 仓库门面 → PR/发布 → Release → 发现与增长**。整理和 ZIP 交付不需要 GitHub 认证；远程发布、Release 和外部推广分别确认。
 
 ---
 
@@ -96,10 +99,11 @@
 
 ## 💡 核心理念
 
-- **只补缺，不覆盖**：已有文件不修改，只补充缺失项
+- **先审后改**：保留有效内容；已有文件存在质量或安全问题时，展示差异后再修改
 - **按类型适配**：Skill 项目、代码项目、文档项目各有侧重
-- **对齐标准**：目标是通过 GitHub Community Profile 100% 考核
-- **确认后推送**：生成内容先展示，用户确认后才创建仓库
+- **可运行优先**：Community Profile 只是底线，干净环境可安装、可运行、可贡献才算完成
+- **PR 默认**：公开维护项目走分支、Draft PR、CI 和人工复核
+- **分步授权**：推送、Release、包发布和对外推广互不默认包含
 
 ---
 
@@ -127,6 +131,8 @@ github-oss-prep/
     ├── mcp-push-guide.md             # 推送方案指南
     ├── templates-and-formats.md      # 模板与格式合集
     ├── release-and-distribution.md   # Release 与分发指南
+    ├── pr-and-release-workflow.md    # PR、CI、验证和发布门禁
+    ├── discovery-and-promotion.md    # 可发现性、Launch Kit 与推广闭环
     ├── github-pat-setup.md           # PAT 配置教程
     └── github-pat-comparison.md      # PAT 类型对比
 ```
@@ -196,7 +202,7 @@ In one sentence: **turn any local project into a professional GitHub open-source
 
 ### How to use
 
-Once installed, simply tell your AI assistant what you want. The Skill runs a 7-step workflow: **Scan → Fill → Review → Description → Deliver/Publish → Release → Optimize**. Preparation and ZIP delivery never require GitHub authentication. It never overwrites existing files, and confirms with you before remote publication.
+Once installed, tell your AI assistant what you want. The Skill runs an adoption-focused workflow: **Position → Scan → Improve → Validate → Repository Surface → PR/Publish → Release → Discover**. Preparation and ZIP delivery never require GitHub authentication. Public projects default to a reviewable branch and Draft PR; remote publication, releases and external promotion require separate approval.
 
 ---
 
@@ -217,7 +223,7 @@ github-oss-prep/
 │       ├── bug_report.yml            # Bug report form
 │       ├── feature_request.yml       # Feature request form
 │       └── doc_improvement.yml       # Docs improvement form
-└── references/                       # Reference documents (8 files)
+└── references/                       # Reference documents
 ```
 
 ---
