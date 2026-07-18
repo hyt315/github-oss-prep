@@ -1,6 +1,6 @@
 # Description 生成指南
 
-仓库 Description 是 GitHub 搜索和「第一眼」理解项目的重要信息。写好后在 Step 5 通过已授权的官方 GitHub 连接器或 GitHub CLI 设置；无认证时将文案交给用户手动填写。
+仓库 Description 是 GitHub 搜索和「第一眼」理解项目的重要信息。写好后在 Step 5 通过已授权的官方 GitHub 连接器或 GitHub CLI 实际设置 Description 与 Topics，并从仓库回读验证；无认证时将两者作为明确的待办和可复制内容交给用户手动填写，不能只生成后跳过。
 
 ---
 

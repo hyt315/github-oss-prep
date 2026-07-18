@@ -7,7 +7,7 @@
 **One-click polish any project into a professional GitHub open-source repo with full community health files**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.4.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.4.0)
+[![Version](https://img.shields.io/badge/version-1.4.1-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.4.1)
 [![SKILL.md](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green)](SKILL.md)
 
 [English](#english) | [中文](#中文)
@@ -33,6 +33,7 @@
 | 📤 **灵活交付** | 无认证也能完成整理并导出 ZIP；发布时支持官方 GitHub 连接器或 `gh` CLI |
 | 🔀 **安全发布** | 公开项目默认走分支、Draft PR、CI 与人工合并；单人低风险改动可选择直推 |
 | 📣 **发现与推广** | 生成 Topics、社交预览、演示素材、Launch Kit、渠道计划和反馈闭环 |
+| 🔎 **元数据闭环** | 发布时真正写入并回读验证 Description 与 Topics；无认证时明确交付手动待办 |
 | 🌐 **中英双语** | 所有生成文件支持中英双语，符合 GitHub 全球社区最佳实践 |
 | 📦 **多平台分发** | 代码项目支持 npm、PyPI、crates.io、Docker Hub、Homebrew 等多渠道发布 |
 

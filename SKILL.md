@@ -269,6 +269,10 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 如未登录，只暂停远程发布，不暂停本地整理和交付。让用户在受信任终端中完成 `gh auth login --web`，或选择手动上传。只有用户明确要求了解 PAT 时才读取 `references/github-pat-setup.md`。
 
+**仓库元数据是发布必做项，不是建议项**：远程仓库创建或代码推送成功后，必须实际设置已确认的 Description 和 Topics，并从 GitHub 回读验证。不能只在回复中列出 Topics。若当前认证方式无法修改元数据，则把每个未完成项标为 `待手动设置`，给出精确值与网页路径；不得报告“发布全部完成”。
+
+发布后最少验证：仓库 URL、可见性、默认分支、Description、Topics、README/文件树和最新 CI 状态。回读值与确认值不一致时立即修正或清楚报告失败。
+
 ### 5.3 选择变更路径
 
 默认使用 `public-safe`：
