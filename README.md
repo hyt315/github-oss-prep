@@ -7,7 +7,7 @@
 **One-click polish any project into a professional GitHub open-source repo with full community health files**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.2.2-green.svg)]()
+[![Version](https://img.shields.io/badge/version-1.3.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.3.0)
 [![SKILL.md](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green)](SKILL.md)
 
 [English](#english) | [中文](#中文)
@@ -156,6 +156,8 @@ github-oss-prep/
 
 [MIT](LICENSE)
 
+版本变化见 [CHANGELOG.md](CHANGELOG.md)。
+
 ---
 
 ## English
@@ -242,3 +244,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## 📄 License
 
 [MIT](LICENSE)
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
