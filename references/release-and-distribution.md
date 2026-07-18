@@ -45,12 +45,10 @@ gh release create v0.1.0 --title "v0.1.0" --notes "首个版本" ./dist/*.exe ./
 1. 在项目目录打 tag 并推送：
 ```bash
 git tag v0.1.0
-
-# 由于 Step 5 推送后 origin 已被清除，需要临时添加 remote 推送 tag
-git remote add origin "https://${GITHUB_TOKEN}@github.com/<owner>/<repo>.git"
 git push origin v0.1.0
-git remote remove origin
 ```
+
+远程地址必须保持无凭据形式（如 `https://github.com/<owner>/<repo>.git`）。认证由官方连接器、GitHub CLI 凭据助手或 SSH 代理完成；不要把 Token 拼进 URL、命令参数或脚本。
 
 2. 去 GitHub 仓库 → Releases → Create a new release
 

@@ -1,6 +1,6 @@
 # Description 生成指南
 
-仓库 Description 是 GitHub 搜索排名和「第一眼」的关键。写好后在 Step 5 通过 MCP 直接设置。
+仓库 Description 是 GitHub 搜索和「第一眼」理解项目的重要信息。写好后在 Step 5 通过已授权的官方 GitHub 连接器或 GitHub CLI 设置；无认证时将文案交给用户手动填写。
 
 ---
 

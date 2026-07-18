@@ -1,6 +1,6 @@
 ---
 name: github-oss-prep
-description: "Use when preparing a project for open-source release on GitHub, including license selection, community health files, README structure, privacy scanning, release packaging, and approval-gated repository publishing. Triggers include GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、oss prep、publish to GitHub, and prepare for open source."
+description: "Use when preparing, publishing, launching, or improving a project for open-source adoption on GitHub, including positioning, licensing, community health files, README quality, privacy and provenance scanning, clean-clone validation, PR workflows, release packaging, discoverability, and approval-gated promotion. Triggers include GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、开源推广、oss prep、publish to GitHub, launch an open-source project, and prepare for open source."
 ---
 
 # GitHub 开源准备
@@ -9,10 +9,12 @@ description: "Use when preparing a project for open-source release on GitHub, in
 
 ## 核心理念
 
-- **只补缺，不覆盖**：已有文件不修改，只补充缺失项
+- **先审后改，不盲目覆盖**：保留有效内容；已有文件若过时、残缺或存在风险，先展示差异与理由，获批后再修改
 - **按项目类型适配**：Skill 项目、代码项目、文档项目的侧重点不同
 - **对齐 GitHub 社区配置文件标准**：目标是通过 Insights → Community 中 100% 的考核
-- **确认后再推送**：生成内容后展示给用户确认，收到明确同意才创建仓库
+- **可运行比“文件齐全”更重要**：用干净环境验证安装、最小示例、测试与打包路径
+- **PR 默认、直推可选**：公开维护项目默认走分支、PR、CI 和人工复核；个人引导期可在明确授权后直推
+- **确认后再发布**：生成内容后展示给用户确认，远程仓库、Release、包平台和外部推广分别授权
 
 ---
 
@@ -40,20 +42,33 @@ description: "Use when preparing a project for open-source release on GitHub, in
 ## 工作流程
 
 ```
-Step 1: 扫描（识别类型 + 检查缺失文件）
+Step 0: 定位（目标用户 + 核心价值 + 可验证结果）
     ↓
-Step 2: 补齐（生成缺失的标准文件）
+Step 1: 扫描（识别类型 + 检查缺失、薄弱与风险项）
     ↓
-Step 3: 审查（内容质量 + SKILL.md 合规）
+Step 2: 整理（补齐缺失文件 + 经确认改进薄弱文件）
     ↓
-Step 4: 生成 Description（按规则 + 模板，详见 references/description-guide.md）
+Step 3: 验证（内容 + 隐私 + 来源许可 + 干净环境运行）
     ↓
-Step 5: 发布确认 → 连接器 / gh CLI / 手动交付三选一
+Step 4: 仓库门面（README + Description + Topics + 社交预览）
     ↓
-Step 6: Release + 多平台分发（详见 references/release-and-distribution.md）
+Step 5: 发布确认 → 分支/PR（默认）或个人直推（可选）
     ↓
-Step 7: 发布后优化（仓库设置 + CI/CD + 推广）
+Step 6: Release + 多平台分发 + 版本一致性验证
+    ↓
+Step 7: 发现与增长（Launch Kit + 定向发布 + 反馈闭环）
 ```
+
+## Step 0: 定位与成功标准
+
+开始改文件前先用现有项目资料回答四个问题；能从仓库推断时不要反复询问：
+
+1. **谁会用**：首要用户只能有一类，次要用户最多两类。
+2. **解决什么**：用“用户在什么场景下，原来多麻烦，现在少几步”描述。
+3. **五分钟证明**：确定一个新用户可复现的最小示例和预期输出。
+4. **本次边界**：区分“准备开源”“发布 GitHub”“创建 Release”“对外推广”，不得把前一步授权扩展到后一步。
+
+输出一张简短定位卡：目标用户、核心承诺、最小示例、证据、非目标。详见 `references/discovery-and-promotion.md`。
 
 ---
 
@@ -135,7 +150,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 ---
 
-## Step 2: 补齐缺失文件
+## Step 2: 补齐并改进文件
 
 > **检查点**：向用户展示 Step 1 的结果（项目类型 + 缺失清单），确认后进入补齐。
 
@@ -143,6 +158,8 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 - 中英双语（中文项目可全中文，建议保留英文摘要）
 - 内容精准适配项目类型，不套通用模板
 - 生成前先简要说明将要创建的内容，获得用户认可
+- 已有文件先按“准确、清楚、可运行、可维护”评分；只在确有收益时提出修改，并展示摘要或 diff
+- 不因文件存在就自动判定合格，也不为统一模板而抹掉项目原有表达
 
 | 文件 | 生成要点 |
 |------|----------|
@@ -160,7 +177,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 ### 项目类型速查
 
-根据 Step 1 识别的类型，按以下清单生成（跳过已存在的文件）：
+根据 Step 1 识别的类型，按以下清单生成；已存在的文件进入质量审查，不机械跳过：
 
 | 类型 | 需要生成的文件 |
 |------|--------------|
@@ -172,7 +189,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 ---
 
-## Step 3: 审查改进
+## Step 3: 验证与审查
 
 > **检查点**：向用户展示 Step 2 生成的文件列表和内容摘要，确认后进行审查。
 
@@ -209,9 +226,20 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 - [ ] 无残留 `<owner>`/`<repo>` 等未替换占位符（README、`.github/ISSUE_TEMPLATE/config.yml` 等交付文件）
 - [ ] 下载链接（ZIP/Tar/raw 单文件）的分支名与仓库实际默认分支一致（main 或 master）
 
+### 3.4 来源、许可与可复现性门禁
+
+- [ ] 项目代码、逆向分析产物、图片、字体、音频、数据集和示例内容均有可公开分发的权利或许可证
+- [ ] 第三方依赖、NOTICE、字体/素材署名与许可证文件完整；无法确认的资产不进入发布包
+- [ ] 不只扫描工作区，还检查将要提交的 Git 树与可访问历史中是否含秘密；发现历史泄露时先轮换凭据，再制定历史清理方案
+- [ ] 从干净目录或全新 clone 按 README 完成安装、最小示例、测试和构建
+- [ ] Windows/macOS/Linux 支持范围写清楚；未测试的平台明确标为未验证
+- [ ] 一键脚本失败时有可执行的手动步骤和故障排查，不把本机缓存当成依赖
+
+验证方法与发布门禁见 `references/pr-and-release-workflow.md`。任何 P0（秘密、许可不明、无法复现）失败都必须阻止公开发布。
+
 ---
 
-## Step 4: 生成 Description
+## Step 4: 仓库门面与 Description
 
 按规则生成仓库简介。**规则 + 模板 + 案例 + Topics 建议** 详见 `references/description-guide.md`。
 
@@ -219,6 +247,13 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 - 120 字以内，`功能 + 亮点`
 - 禁止「一个用于…的项目」式废话、版本号
 - 按项目类型选用模板
+
+同时准备：
+
+- 5–12 个准确 Topics，优先使用目标用户会搜索的成熟词，不堆砌近义词；
+- 1280×640 社交预览图方案，展示用途或结果，不只放 Logo；
+- README 首屏的“一句话价值 + 结果图/GIF + 最短安装 + 最小示例”；
+- 3 个真实示例或一个 60–90 秒演示，证明项目确实能解决问题。
 
 ---
 
@@ -233,6 +268,18 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 **方案选择**：优先使用当前平台已安装的官方 GitHub 连接器；否则使用已完成 `gh auth login --web` 的 GitHub CLI；两者都不可用时交付 ZIP 和网页上传说明。不得从配置文件、环境变量输出或用户目录中提取凭据。详细流程见 `references/mcp-push-guide.md`。
 
 如未登录，只暂停远程发布，不暂停本地整理和交付。让用户在受信任终端中完成 `gh auth login --web`，或选择手动上传。只有用户明确要求了解 PAT 时才读取 `references/github-pat-setup.md`。
+
+### 5.3 选择变更路径
+
+默认使用 `public-safe`：
+
+1. 从最新默认分支创建短生命周期分支；
+2. AI 修改、运行验证并提交；
+3. 推送分支并创建 Draft PR；
+4. 展示 diff、验证结果和剩余风险，由人复核；
+5. CI 通过后 Squash Merge；受保护默认分支不得绕过规则。
+
+仅当项目由单人维护、改动低风险且用户明确同意时使用 `solo-fast` 直推。秘密处理、许可证、发布工作流、依赖升级和可执行代码默认不属于低风险。完整决策表见 `references/pr-and-release-workflow.md`。
 
 ---
 
@@ -280,9 +327,19 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 ---
 
-## Step 7: 发布后优化
+## Step 7: 发现、推广与发布后优化
 
 > 推送和分发完成后，建议进行以下优化。非必须，但能显著提升项目专业度和可维护性。
+
+发布完成不等于会被发现。先生成 `Launch Kit`，再按目标用户选择少量渠道。未经单独确认，不代表用户发布帖子、评论、私信或批量投放。详见 `references/discovery-and-promotion.md`。
+
+Launch Kit 至少包含：
+
+- 一句介绍、100 字短介绍、完整发布帖三种长度；
+- 社交预览图、演示 GIF/视频、三张功能截图及替代文本；
+- 安装命令、最小示例、常见问题、已知限制和反馈入口；
+- 渠道清单与适配版本，禁止同一文案无差别群发；
+- 发布后 7/30 天检查表：访问、README→安装转化、成功运行、Issue、贡献者与留存反馈。
 
 ### 7.1 仓库设置优化
 
