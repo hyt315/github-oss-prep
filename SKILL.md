@@ -360,6 +360,8 @@ Launch Kit 至少包含：
 
 **分支保护**：推荐使用 **Repository Rulesets**（Settings → Rules → New ruleset），比传统分支保护规则更灵活（可组合、可针对用户/团队、可分层）。新项目优先用 Rulesets 而非传统分支保护。
 
+**版本标签保护**：发布过第一个版本后，再建一条 tag 类型的 Ruleset（目标 `refs/tags/v*`，规则：禁止删除 + 禁止强制改动），防止已发布的版本标签被误删或篡改；需要有意调整标签时临时停用该规则即可。
+
 **初始 Labels**（可选）：新仓库建议创建标准标签，便于后续 Issue 管理。已安装 gh CLI 时可用 `gh label create bug --color "d73a4a" --description "Something isn't working"` 等命令批量创建。推荐标签：`bug`、`enhancement`、`good first issue`、`documentation`、`question`。
 
 ### 7.2 GitHub Actions CI/CD（代码项目推荐）

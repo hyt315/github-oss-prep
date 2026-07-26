@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0] - 2026-07-26
+
+### Added
+
+- Repository setup now recommends a tag-protection Ruleset (`refs/tags/v*`, block deletion and forced updates) after the first release, so published version tags cannot be accidentally removed or rewritten.
+- Release gate note: dependency vulnerability audits (e.g. `npm audit`) must run against the official registry or inside CI — mirror registries commonly lack the audit endpoint and fail silently, hiding high-severity advisories until CI.
+
 ## [1.4.1] - 2026-07-18
 
 ### Fixed
