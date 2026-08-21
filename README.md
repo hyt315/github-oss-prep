@@ -13,11 +13,11 @@
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
 [![skills.sh](https://skills.sh/b/hyt315/github-oss-prep)](https://skills.sh/hyt315/github-oss-prep)
 
-**English · [简体中文](./README.en.md)**
+**简体中文 · [English](./README.en.md)**
 
 </div>
 
-> **Status:** v1.6 · 本地整理与 ZIP 交付**不需要 GitHub Token** · 发布到 GitHub 需你显式授权 · 只读审计，不主动推送。
+> **Status:** v1.6.2 · 本地整理与 ZIP 交付**不需要 GitHub Token** · 发布到 GitHub 需你显式授权 · 只读审计，不主动推送。
 
 ---
 

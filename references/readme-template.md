@@ -199,21 +199,29 @@
 
 ## 中英双语 README 最佳实践
 
-### 语言切换
+### 语言切换（推荐：拆分文件）
 
-在顶部使用锚点链接实现语言切换：
+推荐 **中文主页 + 独立英文文件**：`README.md` 放中文、`README.en.md` 放英文，两文件顶部互相链接。链接文字必须与目标文件对应：
+
+**README.md（中文版）顶部**——左侧"简体中文"是当前页（纯文本，不可点）；右侧"English"是可点链接、指向英文文件：
+```markdown
+**简体中文 · [English](./README.en.md)**
+```
+
+**README.en.md（英文版）顶部**——左侧"English"是当前页（纯文本，不可点）；右侧"简体中文"是可点链接、指回中文文件：
+```markdown
+**English · [简体中文](./README.md)**
+```
+
+> **核心规则**：链接文字 = 你要**去**的语言名；当前页语言 = 纯文本（不设链接）。写反了就会出现"点简体中文进英文页、点 English 回中文页"的颠倒。
+
+> **常见错误**：写成 `English · [简体中文](./README.en.md)`（"简体中文"链接到英文文件）或 `简体中文 · [English](./README.md)`（"English"链接到中文文件），切换就全乱了——点"English"看不到英文。
+
+**备选：单文件双语结构**——把中文、English 两个章节放进同一个 `README.md`，用锚点在同一文件内切换：
 ```markdown
 [English](#english) | [中文](#中文)
 ```
-
-在对应章节前使用 Markdown 标题作为锚点（GitHub 会自动为标题生成 ID）：
-```markdown
-## 中文
-## 📖 这是什么？
-
-## English
-## 📖 What is this?
-```
+在对应章节前使用 Markdown 标题作为锚点（GitHub 会自动为标题生成 ID）：`## 中文`（锚点 `#中文`）、`## English`（锚点 `#english`）。
 
 > **注意**：GitHub 不支持 `<a name="xxx">` HTML 锚点标签，只有 Markdown 标题（`#`）会自动生成可跳转的锚点 ID。
 
@@ -368,14 +376,26 @@ README 不直接是排名因素，但通过影响**用户行为和参与度指�
 
 ### 语言切换链接
 
-在两个文件顶部添加语言切换链接：
+推荐在两文件**顶部**（标题下方）放语言切换链接，标签与目标一一对应：
 
-**README.md（中文版）**：
+**README.md（中文版）**——左侧当前页语言（纯文本）、右侧目标语言链接：
+```markdown
+**简体中文 · [English](./README.en.md)**
+```
+
+**README.en.md（英文版）**——左侧当前页语言（纯文本）、右侧目标语言链接：
+```markdown
+**English · [简体中文](./README.md)**
+```
+
+也可在文末追加（两种同时存在时，顶部优先）：
+
+**README.md（中文版）文末**：
 ```markdown
 > 🌏 **English version: [README.en.md](./README.en.md)**
 ```
 
-**README.en.md（英文版）**：
+**README.en.md（英文版）文末**：
 ```markdown
 > 🌏 **中文版: [README.md](./README.md)**
 ```

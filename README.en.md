@@ -13,11 +13,11 @@
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
 [![skills.sh](https://skills.sh/b/hyt315/github-oss-prep)](https://skills.sh/hyt315/github-oss-prep)
 
-**简体中文 · [English](./README.md)**
+**English · [简体中文](./README.md)**
 
 </div>
 
-> **Status:** v1.6 · Local packaging & ZIP delivery need **no GitHub Token** · Publishing to GitHub requires your explicit approval · Read-only audit, never auto-pushes.
+> **Status:** v1.6.2 · Local packaging & ZIP delivery need **no GitHub Token** · Publishing to GitHub requires your explicit approval · Read-only audit, never auto-pushes.
 
 ---
 
