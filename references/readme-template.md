@@ -54,7 +54,19 @@
 
 ## 🚀 快速开始
 
-（最小化可运行示例，让用户在 1 分钟内跑起来）
+（Skill 项目的最优写法——**先给"复制一句给 Agent 自装"，再给手动表**，极致降门槛：
+
+```
+把这句话发给你的 AI 助手即可自动安装：
+"请安装 <Project> Skill：把 <repo-url>
+ 克隆到你的 skills 目录（如 ~/.claude/skills/<repo>），并确认安装成功。"
+```
+
+若用户已装 GitHub CLI 2.90+，可补一行：`gh skill install <owner>/<repo> <name> --agent claude-code --scope user`
+
+然后才是手动分平台表：Claude Code / Codex / Cursor 各自的 `git clone ... ~/.xxx/skills/...`。）
+
+代码项目则以"包管理器一行命令"为主，clone 为辅。
 
 ---
 

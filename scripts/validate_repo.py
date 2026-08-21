@@ -66,18 +66,32 @@ for key in ("name:", "description:"):
 
 # 3) 版本一致性（README 徽章 ↔ CHANGELOG ↔ Release 链接；CHANGELOG 缺失时容错）
 readme = (ROOT / "README.md").read_text(encoding="utf-8")
-badge = re.search(r"version-([0-9]+\.[0-9]+\.[0-9]+)-", readme)
-version = badge.group(1) if badge else ""
-if not badge:
-    fail("README version badge not found")
-if f"releases/tag/v{version}" not in readme:
-    fail("README badge link does not match badge version")
+# 动态徽章（github/v/release）或静态徽章（version-x.y.z-）二选一
+badge_static = re.search(r"version-([0-9]+\.[0-9]+\.[0-9]+)-", readme)
+badge_dynamic = re.search(r"github/v/release/[^\s)\]]+", readme)
 changelog_path = ROOT / "CHANGELOG.md"
-if changelog_path.is_file():
-    changelog = changelog_path.read_text(encoding="utf-8")
-    if f"## [{version}]" not in changelog:
-        fail("CHANGELOG does not contain README badge version")
-elif _type in ("code", "skill"):
+changelog_text = changelog_path.read_text(encoding="utf-8") if changelog_path.is_file() else ""
+
+if badge_static:
+    version = badge_static.group(1)
+    if f"releases/tag/v{version}" not in readme:
+        fail("README static badge link does not match badge version")
+    if f"## [{version}]" not in changelog_text:
+        fail("CHANGELOG does not contain README static badge version")
+elif badge_dynamic:
+    # 动态徽章：从 CHANGELOG 顶部标题取最新版本，校验 README 含 Releases 页链接
+    m = re.search(r"^## \[([0-9]+\.[0-9]+\.[0-9]+)\]", changelog_text, re.M)
+    if not m:
+        fail("CHANGELOG has no version heading (needed for dynamic badge)")
+    version = m.group(1)
+    if "/releases" not in readme and "releases/tag" not in readme:
+        fail("README should link to the Releases page when using a dynamic badge")
+else:
+    fail("README version badge not found (expected static `version-x.y.z-` or dynamic `github/v/release`)")
+    version = ""
+
+# CHANGELOG 对 code/skill 项目应存在（前面已通过动态/静态取版本校验其内容）
+if not changelog_path.is_file() and _type in ("code", "skill"):
     fail(f"missing CHANGELOG.md ({_type} project)")
 
 # 4) 密钥扫描：覆盖 TEXT_SUFFIXES 内全部文本 + .env（含任何后缀的单层 .env 文件）
