@@ -27,7 +27,7 @@
 **One-liner English description**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/github/v/release/用户名/仓库名?sort=semver)](CHANGELOG.md)
 [![GitHub Stars](https://img.shields.io/github/stars/用户名/仓库名?style=social)](https://github.com/用户名/仓库名/stargazers)
 
 [English](#english) | [中文](#中文)
@@ -397,7 +397,7 @@ README 不直接是排名因素，但通过影响**用户行为和参与度指�
 
 <p align="center">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" />
-  <img src="https://img.shields.io/badge/version-1.0.0-green.svg?style=flat-square" />
+  <img src="https://img.shields.io/github/v/release/用户名/仓库名?sort=semver&style=flat-square" />
   <img src="https://img.shields.io/badge/Agent%20Skill-SKILL.md-green.svg?style=flat-square" />
   <img src="https://img.shields.io/badge/Platform-Claude%20Code-orange?style=flat-square" />
   <img src="https://img.shields.io/badge/Platform-Cursor-brightgreen?style=flat-square" />

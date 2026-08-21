@@ -247,7 +247,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20, 22]
+        node-version: [22, 24]
 
     steps:
       - uses: actions/checkout@v4
@@ -278,7 +278,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13']
 
     steps:
       - uses: actions/checkout@v4
@@ -295,7 +295,7 @@ jobs:
           pytest --cov=. --cov-report=xml
       - name: Upload coverage
         uses: codecov/codecov-action@v5
-        if: matrix.python-version == '3.12'
+        if: matrix.python-version == '3.13'
 ```
 
 ---

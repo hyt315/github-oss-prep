@@ -105,7 +105,7 @@ git push origin v0.1.0
 | `brew install xxx` | Homebrew | Formula 文件（PR 提交） | PR 到 homebrew-core |
 | `cargo install xxx` | crates.io | `Cargo.toml` | `cargo publish` |
 | `docker pull xxx` | Docker Hub | `Dockerfile` | `docker push` |
-| `go install xxx` | Go Proxy | `go.mod` | 打 tag 即可自动索引 |
+| `go install github.com/owner/repo@latest` | Go Proxy | `go.mod` | 打 tag 即可自动索引 |
 
 ---
 
@@ -167,7 +167,7 @@ name = "my-tool"
 version = "1.0.0"
 description = "一个工具"
 license = "MIT"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 
 [project.scripts]
 my-tool = "my_tool.cli:main"
@@ -211,7 +211,7 @@ Homebrew 有两条路：
 ### 第一步：写 Dockerfile
 
 ```dockerfile
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --production
@@ -247,7 +247,7 @@ Go 最简单，不需要手动发布：
 
 1. 确保 `go.mod` 中的模块路径正确（如 `github.com/owner/repo`）
 2. 打 tag 并推送：`git tag v1.0.0 && git push origin v1.0.0`
-3. Go Proxy 会自动索引，用户 `go install xxx` 即可
+3. Go Proxy 会自动索引，用户用完整模块路径 + 版本安装：`go install github.com/owner/repo@latest`（或 `@v1.2.3` 指定版本）
 
 ---
 

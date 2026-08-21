@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.6.0] - 2026-08-21
+
+### Fixed
+
+- **CI 模板版本矩阵去 EOL**：Node `[18,20,22]` → `[22,24]`（18/20 已停止安全支持）；Python `[3.9,...]` → `[3.10,3.11,3.12,3.13]`（3.9 EOL）；`requires-python >=3.8` → `>=3.10`；Docker `node:18-alpine` → `node:22-alpine`。
+- **`validate_repo.py` 隐私门禁盲区**：扫描后缀扩展到源码（`.js/.ts/.sh/.toml/.env` 等）并纳入 AWS/私钥等密钥模式，修复"核心卖点是隐私扫描却漏检 `.env` 和源码"的问题。
+- **`validate_repo.py` 与项目类型规则冲突**：按 SKILL.md 的项目类型（skill/code/docs）条件校验强制文件，文档项目不再因缺 COC/SECURITY/CHANGELOG 而误报；CHANGELOG 缺失时容错。
+- **裸宽 except 收敛**：`except Exception` → `except OSError`（读文件容错更明确，不再吞一切异常）。
+
+### Added
+
+- **`scripts/selftest.py`** 回归入口（好夹具全绿 + 负向夹具必须 FAIL），并在 SKILL.md 新增「维护者自测」节挂载 `validate_repo.py`（修掉"脚本在 CI 跑、文档从不提"的孤儿状态）。
+- **Git 作者隐私审计**（`privacy-scan.md`）：`git log` 作者身份核查、noreply 匿名邮箱、`git filter-repo` 历史清理。
+- **License 决策补全**（SKILL.md）：加入 GPL/AGPL/LGPL（copyleft）、CC0/CC BY-SA（内容），并将 Apache 2.0 的卖点修正为"专利授权"，而非笼统"代码保护"。
+- **演示素材真实性规则**：禁单帧静态图冒充 GIF、禁挪用/杜撰跨平台与性能数据。
+- **可选自动化发布**（SKILL.md 6.1a）：release-please / semantic-release 与既有 Conventional Commits 闭环。
+- **中文 Windows 用户名路径检测**（`privacy-scan.md` + `validate_repo.py`）：覆盖 `C:\Users\张三` 形态，并把 `YourName` 占位符例子从"泄露"修正为"占位符安全"。
+- `SUPPORT.md`、`.github/CODEOWNERS` 交付模板；`.gitignore` 补 `.mimosa/`、`audit-report.txt`、`nul`、`__pycache__`。
+
+### Changed
+
+- Topics 推荐统一为 5–10 个（原 SKILL.md 5–12 / description-guide 5–8 打架）。
+- README 徽章示例改为动态 shields 标签（`/github/v/release/...`），避免版本写死失真。
+- 技能自身 README 补齐第 6 种下载方式（curl 单文件）与文件结构（agents/、scripts/、workflows/、CHANGELOG 等漏列项）。
+- Go 发布命令修正为完整模块路径 + `@version`（裸 `go install xxx` 无效）。
+
 ## [1.5.0] - 2026-07-26
 
 ### Added
@@ -57,3 +83,5 @@
 [1.3.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v1.3.0
 [1.4.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v1.4.0
 [1.4.1]: https://github.com/hyt315/github-oss-prep/releases/tag/v1.4.1
+[1.5.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v1.5.0
+[1.6.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v1.6.0

@@ -7,7 +7,7 @@
 **One-click polish any project into a professional GitHub open-source repo with full community health files**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.5.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.5.0)
+[![Version](https://img.shields.io/badge/version-1.6.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v1.6.0)
 [![SKILL.md](https://img.shields.io/badge/Agent%20Skill-SKILL.md-green)](SKILL.md)
 
 [English](#english) | [中文](#中文)
@@ -95,6 +95,7 @@
 | **GitHub CLI** | `gh repo clone hyt315/github-oss-prep` |
 | **ZIP 源码** | [下载 ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
 | **Tar 源码** | [下载 Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
+| **单文件（SKILL.md）** | `curl -O https://raw.githubusercontent.com/hyt315/github-oss-prep/main/SKILL.md` |
 
 ---
 
@@ -114,17 +115,26 @@
 github-oss-prep/
 ├── SKILL.md                          # Skill 核心定义
 ├── README.md                         # 本文件
+├── CHANGELOG.md                      # 版本变更记录
 ├── LICENSE                           # MIT 协议
 ├── .gitignore                        # Git 忽略规则
 ├── CONTRIBUTING.md                   # 贡献指南
 ├── CODE_OF_CONDUCT.md                # 行为准则
 ├── SECURITY.md                       # 安全策略
+├── agents/
+│   └── openai.yaml                   # Codex/OpenAI 技能元数据
+├── scripts/
+│   ├── validate_repo.py              # 结构/密钥/版本一致性自检
+│   └── selftest.py                   # 回归测试（维护者改动后必跑）
 ├── .github/
 │   ├── pull_request_template.md      # PR 模板
+│   ├── workflows/
+│   │   └── validate.yml              # CI：自动跑 validate_repo.py
 │   └── ISSUE_TEMPLATE/
 │       ├── bug_report.yml            # Bug 报告表单
 │       ├── feature_request.yml       # 功能建议表单
-│       └── doc_improvement.yml       # 文档改进表单
+│       ├── doc_improvement.yml       # 文档改进表单
+│       └── config.yml                # 模板选择器配置
 └── references/                       # 参考文件
     ├── readme-template.md            # README 模板
     ├── description-guide.md          # Description 编写指南

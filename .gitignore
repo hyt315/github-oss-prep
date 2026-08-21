@@ -21,3 +21,12 @@ desktop.ini
 
 # Logs
 *.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# 本地审计残留 / 会话状态（勿提交）
+audit-report.txt
+.mimosa/
+nul

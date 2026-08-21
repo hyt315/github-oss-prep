@@ -21,7 +21,7 @@
 | **真实邮箱** | `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}` | 除 README 中的通用联系邮箱外 |
 | **手机号** | `1[3-9]\d{9}` | 中国大陆手机号 |
 | **身份证号** | `\d{17}[\dXx]` | 18 位身份证 |
-| **用户名路径** | `C:\\Users\\[A-Za-z]+\|/Users/[A-Za-z]+\|/home/[A-Za-z]+` | 操作系统路径含真实用户名 |
+| **用户名路径** | `C:\\Users\\[^\\]+` 或 `/Users/[^/]+` 或 `/home/[^/]+` | 操作系统路径含真实用户名（含中文用户名，如 `C:\Users\张三`）；仅占位符（`YourName`、`<username>`、`用户名`）不算 |
 | **私网 IP** | `192\.168\.\|10\.\|172\.(1[6-9]\|2[0-9]\|3[01])\.` | 内网地址 |
 | **数据库连接串** | `mongodb://\|mysql://\|postgres://\|redis://` | 含密码的连接串 |
 | **私有域名** | `\.local\|\.internal\|\.corp\|\.intranet` | 内网域名 |
@@ -32,8 +32,8 @@
 
 | 示例 | 判断 | 原因 |
 |------|------|------|
-| `C:\Users\YourName\.agent\skills\...` | ❌ 泄露 | 包含真实 Windows 用户名 |
-| `C:\Users\YourName\AppData\Local\node.exe` | ❌ 泄露 | 个人计算机绝对路径 |
+| `C:\Users\YourName\.agent\skills\...` | ✅ 安全（占位符） | `YourName` 是占位符；若换成真实用户名则 ❌ 泄露 |
+| `C:\Users\张三\AppData\Local\node.exe` | ❌ 泄露 | 真实中文 Windows 用户名路径 |
 | `"args": ["-y", "obsidian-mcp", "你的Vault路径"]` | ✅ 安全 | 占位符，不是真实路径 |
 | `需要配置 API Key` | ✅ 安全 | 是说明文字，不是实际 key |
 | `sk-abc123def456` | ❌ 泄露 | 真实 API key |
@@ -48,6 +48,46 @@
 - `example@example.com` — 占位符，安全
 - `localhost:3000` — 本地开发端口，安全
 - `github.com/username` — 如果是项目公开作者的账号，安全
+
+---
+
+## Git 作者隐私审计（提交前必做）
+
+提交历史的作者身份会**永久留在仓库里**，很多"泄露"不是文件内容，而是 `git log` 里的姓名/邮箱。发布前做三件事：
+
+1. **检查当前身份**：
+   ```bash
+   git config user.name
+   git config user.email
+   ```
+   - 若是 `张三@公司.com`、工号、企业域名 → **泄露企业身份**，先改正再提交。
+   - 建议用 GitHub 提供的 noreply 匿名邮箱，避免暴露真实邮箱：
+     ```bash
+     git config user.name "你的公开昵称"
+     git config user.email "<你的ID>+<用户名>@users.noreply.github.com"
+     ```
+     （GitHub 设置 → Emails → "Keep my email addresses private" 能看到你的专属 noreply 邮箱。）
+
+2. **审查历史**（社区对暴露了要判断是否可接受）：
+   ```bash
+   git log --format='%an <%ae>' | sort -u   # 列出所有作者，找非预期身份
+   git log --all --grep='@' --pretty=oneline  # 抓含邮箱/域名的历史
+   ```
+
+3. **历史已泄露 → 清理**（不能只改当前配置，旧提交还在）：
+   - 小仓库单因素：`git filter-branch --env-filter` 或直接改 `.git/config`
+   - 大仓库/只想改作者：**`git filter-repo`**（推荐，官方工具）：
+     ```bash
+     git filter-repo --mailmap <映射文件> --force
+     # 或按新旧作者映射：
+     git filter-repo --commit-callback '
+       if commit.author_email == b"old@corp.com":
+           commit.author_email = b"new@users.noreply.github.com"
+           commit.committer_email = b"new@users.noreply.github.com"
+     ' --force
+     ```
+   - 注意：`filter-repo` 会重写历史 → **所有 clone 过仓库的人需重新 clone**；先备份。
+   - 若涉及密钥在历史里，第一优先级是**到 GitHub 轮换/撤销该凭据**（历史再怎么清理，泄漏过的凭据视为已泄露）。
 
 ---
 

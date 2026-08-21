@@ -163,7 +163,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 | 文件 | 生成要点 |
 |------|----------|
-| **LICENSE** | 默认 MIT；代码保护用 Apache 2.0（需附 NOTICE 文件）；创意内容用 CC BY 4.0 |
+| **LICENSE** | 决策规则（详见 choosealicense.com）：<br>• **MIT**（默认）：宽松，最通用，允许闭源衍生；适合个人/小工具<br>• **Apache 2.0**：宽松 + **专利授权**（每个贡献者授予专利许可）+ NOTICE 文件；适合企业/库/怕专利风险<br>• **GPLv3 / AGPLv3**：强 copyleft，衍生必须开源（AGPL 额外约束网络服务）；适合"想强制共享改进"的项目<br>• **LGPL**：库场景的弱 copyleft<br>• **CC BY 4.0 / CC BY-SA / CC0**：**内容/文档/素材**用（非代码）；CC BY 需署名、CC BY-SA 需相同方式共享、CC0 完全放弃版权。代码不要用 CC 系列<br>• Apache 2.0 项目**必须**附 `NOTICE` 文件，MIT 不需要 |
 | **README.md** | 结构参考 `references/readme-template.md`，支持中英双语。**必须包含 `📥 下载/Download` 章节**，列出表格：HTTPS clone、SSH clone、GitHub CLI (`gh repo clone`)、ZIP 下载、curl/wget 单文件下载至少 5 种方式。安装示例应覆盖 Claude Code、Codex、Cursor 等主流 AI Agent 平台（Skill 项目），示例路径用 `~/.claude/skills/`。**下载链接中的分支名必须用仓库真实默认分支**（main 或 master，见 Step 5 推送后确认），写死 `main` 在 master 仓库上会导致 ZIP/Tar/raw 链接 404；README 中的 `<owner>/<repo>` 占位符必须替换为真实用户名/仓库名 |
 | **.gitignore** | Node.js: `node_modules/` `dist/`；Python: `__pycache__/` `*.pyc`；Skill: `.obsidian/workspace.json`；通用: `.DS_Store` `Thumbs.db` |
 | **CONTRIBUTING.md** | 贡献方式 + Fork/Branch/PR 流程 + 行为准则引用 |
@@ -250,10 +250,15 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 
 同时准备：
 
-- 5–12 个准确 Topics，优先使用目标用户会搜索的成熟词，不堆砌近义词；
+- 5–10 个准确 Topics，优先使用目标用户会搜索的成熟词，不堆砌近义词；
 - 1280×640 社交预览图方案，展示用途或结果，不只放 Logo；
 - README 首屏的“一句话价值 + 结果图/GIF + 最短安装 + 最小示例”；
 - 3 个真实示例或一个 60–90 秒演示，证明项目确实能解决问题。
+
+**演示素材真实性（硬规则）**：
+- 演示 GIF/视频/截图必须是**真实产物录屏或真实输出**；GIF 要真实播放（禁止用单帧静态图冒充动画）。
+- 禁止挪用网图/库存图/摆拍；禁止杜撰跨平台、性能、兼容性数据（如"在 X 上实测 Y 秒"而无实证）。
+- 拿到素材后先自查：来源真实、可复现。
 
 ---
 
@@ -304,6 +309,15 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 **创建步骤**：打 tag 并推送 → GitHub Releases → Create a new release → 填写说明 → 上传编译产物（如有）→ Publish
 
 > 详细步骤、下载链接格式见 `references/release-and-distribution.md`。
+
+### 6.1a 可选：自动化发布（代码项目推荐，P2）
+
+如果项目已统一用 **Conventional Commits**（`fix:`/`feat:`/`BREAKING CHANGE`），可接自动化，让 CHANGELOG、tag、Release 零手工：
+- **release-please**（Google 官方，GitHub Action）：解析提交记录自动 bump 版本、生成 CHANGELOG、开 Release PR → 合并即发布。
+- **semantic-release**（JS 生态）：同样自动版本 + 发布。
+- 示例 workflow：`.github/workflows/release.yml` 在 `push` 到 `main` 时跑 `googleapis/release-please-action`。
+- 用法：普通提交打 `feat:`/`fix:` 前缀，合并 `release-please` 开的 PR 即自动发版。
+- **取舍**：手动 `gh release create` 简单直接、适合单人；自动化适合持续迭代/多维护者。二选一即可，不必两个都上。
 
 ### 6.2 多平台包发布（代码项目）
 
@@ -420,3 +434,21 @@ GitHub 支持创建一个名为 `.github` 的**公开**仓库，存放默认社�
 | P2 | 加 Homebrew / Docker | 用户量大了再加 |
 | P2 | .editorconfig + .gitattributes | 多人协作时加 |
 | P2 | CODEOWNERS | 多人维护时加 |
+
+---
+
+## 维护者自测（改动后必跑）
+
+本技能自带两个零依赖自检脚本，**任何改动后先跑再提交**：
+
+```bash
+# 1) 结构/健康检查：frontmatter、版本徽章一致性、密钥扫描、占位符、中文用户路径
+python3 scripts/validate_repo.py
+
+# 2) 回归测试：好夹具全绿 + 负向夹具（缺文件/带占位符）必须 FAIL
+python3 scripts/selftest.py
+```
+
+- `scripts/validate_repo.py` 也在 `.github/workflows/validate.yml` 的 CI 里自动跑（push 到 main + PR 触发）。
+- 新增 reference 文件后，请同步更新 `scripts/selftest.py` 的 `REQUIRED_FILES`。
+- 这两个脚本只读、不上网、不触碰用户主目录；密钥与隐私边界原则见 `references/privacy-scan.md`。
