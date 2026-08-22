@@ -452,3 +452,19 @@ python3 scripts/selftest.py
 - `scripts/validate_repo.py` 也在 `.github/workflows/validate.yml` 的 CI 里自动跑（push 到 main + PR 触发）。
 - 新增 reference 文件后，请同步更新 `scripts/selftest.py` 的 `REQUIRED_FILES`。
 - 这两个脚本只读、不上网、不触碰用户主目录；密钥与隐私边界原则见 `references/privacy-scan.md`。
+
+
+## Reference Files
+
+十个参考文件承载本技能沉淀的开源准备方法。references 不会自动加载——以下时机必须读取对应文件：
+
+- 写或审 README 时，读 `references/readme-template.md`：完整模板结构、双语规范与自装指令句式
+- 起草仓库 Description 时，读 `references/description-guide.md`：文案模板、长度限制与禁忌
+- 执行隐私扫描阶段时，读 `references/privacy-scan.md`：扫描规则、豁免场景与示例上下文判定
+- 需要 GitHub 能力做推送或发布时，读 `references/mcp-push-guide.md`：能力映射、认证优先级与回退方式
+- 生成 CI / Issue / PR 模板文件时，读 `references/templates-and-formats.md`：各技术栈完整 YAML 合集
+- 创建 Release 或多平台分发时，读 `references/release-and-distribution.md`：tag/Release 流程与渠道清单
+- 处理 PR 与发布门禁时，读 `references/pr-and-release-workflow.md`：分支策略、Draft PR 与验证门禁
+- 发布后做推广时，读 `references/discovery-and-promotion.md`：可发现性、Launch Kit 与反馈闭环
+- 需要 PAT 认证时，读 `references/github-pat-setup.md`：fine-grained PAT 配置教程
+- 选择 PAT 类型时，读 `references/github-pat-comparison.md`：fine-grained 与 classic 对比及数量上限
