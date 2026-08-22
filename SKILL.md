@@ -145,7 +145,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 |------|------|
 | 项目目录不存在 | 提示用户确认路径后重试 |
 | 目录为空 | 询问用户是否从零创建新项目 |
-| 扫描到的文件超过 200 个 | 缩小范围，跳过 `node_modules`、`vendor` 等依赖目录 |
+| 扫描到的文件过多时 | 缩小范围，跳过 `node_modules`、`vendor` 等依赖目录 |
 | 检测到已有 `.git` 目录 | 不重新 git init，直接进入扫描 |
 
 ---
@@ -165,7 +165,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 |------|----------|
 | **LICENSE** | 决策规则（详见 choosealicense.com）：<br>• **MIT**（默认）：宽松，最通用，允许闭源衍生；适合个人/小工具<br>• **Apache 2.0**：宽松 + **专利授权**（每个贡献者授予专利许可）+ NOTICE 文件；适合企业/库/怕专利风险<br>• **GPLv3 / AGPLv3**：强 copyleft，衍生必须开源（AGPL 额外约束网络服务）；适合"想强制共享改进"的项目<br>• **LGPL**：库场景的弱 copyleft<br>• **CC BY 4.0 / CC BY-SA / CC0**：**内容/文档/素材**用（非代码）；CC BY 需署名、CC BY-SA 需相同方式共享、CC0 完全放弃版权。代码不要用 CC 系列<br>• Apache 2.0 项目**必须**附 `NOTICE` 文件，MIT 不需要 |
 | **README.md** | 结构参考 `references/readme-template.md`，支持中英双语。**必须包含 `📥 下载/Download` 章节**，列出表格：HTTPS clone、SSH clone、GitHub CLI (`gh repo clone`)、ZIP 下载、curl/wget 单文件下载至少 5 种方式。安装示例应覆盖 Claude Code、Codex、Cursor 等主流 AI Agent 平台（Skill 项目），示例路径用 `~/.claude/skills/`。**技能类项目必须额外提供「复制一段话给 Agent 自装」的安装引导**：把「请安装 <Project> Skill：把 <repo-url> 克隆到你的 skills 目录（如 ~/.claude/skills/<repo>），并确认安装成功。」放进 README 快速开始/安装章节第一屏，再给手动分平台表（模板见 `references/readme-template.md`，须逐字核对该段存在）。**下载链接中的分支名必须用仓库真实默认分支**（main 或 master，见 Step 5 推送后确认），写死 `main` 在 master 仓库上会导致 ZIP/Tar/raw 链接 404；README 中的 `<owner>/<repo>` 占位符必须替换为真实用户名/仓库名 |
-| **.gitignore** | Node.js: `node_modules/` `dist/`；Python: `__pycache__/` `*.pyc`；Skill: `.obsidian/workspace.json`；通用: `.DS_Store` `Thumbs.db` |
+| **.gitignore** | Node.js: `node_modules/` `dist/`；Python: `__pycache__/` `*.pyc`；Skill: 目标仓库 .obsidian/workspace.json；通用: `.DS_Store` `Thumbs.db` |
 | **CONTRIBUTING.md** | 贡献方式 + Fork/Branch/PR 流程 + 行为准则引用 |
 | **CODE_OF_CONDUCT.md** | 引用 Contributor Covenant 2.1 + 报告渠道 |
 | **SECURITY.md** | 支持位置：根目录 / `docs/` / `.github/`<br>方法论/文档类项目可极简（只说明报告渠道）<br>代码项目建议详细：支持版本、漏洞严重性分类、响应时间承诺<br>GitHub 支持开启 Private vulnerability reporting（仓库 Settings → Security） |
@@ -315,7 +315,7 @@ GitHub 官方 Community Profile 考核项（Insights → Community）：
 如果项目已统一用 **Conventional Commits**（`fix:`/`feat:`/`BREAKING CHANGE`），可接自动化，让 CHANGELOG、tag、Release 零手工：
 - **release-please**（Google 官方，GitHub Action）：解析提交记录自动 bump 版本、生成 CHANGELOG、开 Release PR → 合并即发布。
 - **semantic-release**（JS 生态）：同样自动版本 + 发布。
-- 示例 workflow：`.github/workflows/release.yml` 在 `push` 到 `main` 时跑 `googleapis/release-please-action`。
+- 示例 workflow：写入目标仓库 .github/workflows/release.yml，在 `push` 到 `main` 时跑 `googleapis/release-please-action`。
 - 用法：普通提交打 `feat:`/`fix:` 前缀，合并 `release-please` 开的 PR 即自动发版。
 - **取舍**：手动 `gh release create` 简单直接、适合单人；自动化适合持续迭代/多维护者。二选一即可，不必两个都上。
 
@@ -380,7 +380,7 @@ Launch Kit 至少包含：
 
 ### 7.2 GitHub Actions CI/CD（代码项目推荐）
 
-根据项目技术栈生成基础 CI 工作流文件 `.github/workflows/ci.yml`。**Node.js 和 Python 的完整 YAML 模板见 `references/templates-and-formats.md`**。
+根据项目技术栈生成基础 CI 工作流文件，写入目标仓库 .github/workflows/ci.yml。**Node.js 和 Python 的完整 YAML 模板见 `references/templates-and-formats.md`**。
 
 **推荐的额外 Actions**：
 
@@ -392,7 +392,7 @@ Launch Kit 至少包含：
 
 ### 7.3 Dependabot 配置（代码项目推荐）
 
-生成 `.github/dependabot.yml`，自动检测依赖更新。**完整配置示例（含 groups 分组更新、cooldown 冷却期等新功能）见 `references/templates-and-formats.md`**。
+生成 .github/dependabot.yml 写入目标仓库，自动检测依赖更新。**完整配置示例（含 groups 分组更新、cooldown 冷却期等新功能）见 `references/templates-and-formats.md`**。
 
 基础配置：
 ```yaml

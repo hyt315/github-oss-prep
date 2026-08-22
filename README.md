@@ -17,7 +17,7 @@
 
 </div>
 
-> **Status:** v1.6.2 · 本地整理与 ZIP 交付**不需要 GitHub Token** · 发布到 GitHub 需你显式授权 · 只读审计，不主动推送。
+> **Status:** v1.7.0 · 本地整理与 ZIP 交付**不需要 GitHub Token** · 发布到 GitHub 需你显式授权 · 只读审计，不主动推送。
 
 ---
 

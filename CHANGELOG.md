@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.7.0] - 2026-08-22
+
+### Fixed
+
+- SKILL.md 中 4 处"给用户项目生成的目标文件"裸路径（dependabot.yml / ci.yml / release.yml / .obsidian/workspace.json）改为明确的"写入目标仓库"表述——此前会被误读为本仓库缺失的文件（skill-doctor LK002 检出）。
+- 隐私扫描章节"扫描文件过多"措辞调整，消除与 PAT 数量上限的数字对撞误报（CK001）。
+
+### Added
+
+- readme-template 与 SKILL.md：Skill 类项目 README 必须含「复制一段话给 Agent 自装」引导，并逐字核对（2026-08-21 定稿，随本版本正式发版）。
+
 ## [1.6.2] - 2026-08-21
 
 ### Fixed

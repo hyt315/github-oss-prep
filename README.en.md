@@ -17,7 +17,7 @@
 
 </div>
 
-> **Status:** v1.6.2 · Local packaging & ZIP delivery need **no GitHub Token** · Publishing to GitHub requires your explicit approval · Read-only audit, never auto-pushes.
+> **Status:** v1.7.0 · Local packaging & ZIP delivery need **no GitHub Token** · Publishing to GitHub requires your explicit approval · Read-only audit, never auto-pushes.
 
 ---
 
