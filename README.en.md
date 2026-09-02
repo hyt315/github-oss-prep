@@ -105,6 +105,17 @@ python scripts/selftest.py
 
 ---
 
+## 📚 End-to-End Practical Walkthrough
+
+Suppose you have a local Python CLI utility, MCP Server, or browser extension ready to open-source:
+
+1. **Trigger & Scan**: Send "help me prepare this project for open-source" → Auto-detects archetype, executes 5-layer privacy audit, and cleans build caches;
+2. **Generate Community & CI Files**: Creates GitHub 2026-compliant YAML Issue Forms, `SECURITY.md`, `LICENSE`, and Node/Python matrix CI workflows;
+3. **Progressive Facade Rendering**: Progressively loads dedicated archetype template, generating bilingual READMEs with modern CLI matrices (`uvx`/`bunx`) and config blocks;
+4. **Validate & Distribute**: Runs `selftest.py` locally, outputs clean reviewable project bundle, and publishes to GitHub, Release assets, and global registries upon explicit approval.
+
+---
+
 ## 🔒 Safety & Privacy Principles
 
 - **Audit Before Change**: Reads and audits locally by default, generating diffs before creating or modifying any files.
@@ -139,6 +150,67 @@ python scripts/selftest.py
 | 🌐 [**Discoverability & Launch Kit (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Promotion strategies, social previews, and channel checklists | When launching or publicizing a project | 3 mins |
 | 🔐 [**GitHub Push & MCP Guide (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | Official MCP server setup and standard CLI push workflows | When pushing code and creating remote repos | 2 mins |
 | 🚦 [**PR, CI & Release Gates (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | Branches, PRs, CI testing, and release gating rules | When establishing CI pipelines and release gates | 3 mins |
+
+---
+
+## 📁 File Structure
+
+```
+github-oss-prep/
+├── SKILL.md                          # Core skill definition, progressive disclosure & lightweight workflow
+├── README.md                         # Chinese documentation
+├── README.en.md                      # English documentation
+├── CHANGELOG.md                      # Version history
+├── LICENSE                           # MIT License
+├── .gitignore                        # Git ignore rules
+├── CONTRIBUTING.md                   # Contribution guide
+├── CODE_OF_CONDUCT.md                # Code of conduct
+├── SECURITY.md                       # Security policy
+├── SUPPORT.md                        # Support channels
+├── manifest.json                     # Skill manifest
+├── agents/                           # Multi-agent metadata
+├── scripts/
+│   ├── validate_repo.py              # Structure, hygiene & security validator
+│   └── selftest.py                   # Automated regression test runner
+├── .github/
+│   ├── CODEOWNERS                    # Code owners config
+│   ├── pull_request_template.md      # Standard PR template
+│   ├── workflows/                    # CI workflows
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.yml            # Interactive Bug report form
+│       ├── feature_request.yml       # Interactive Feature request form
+│       └── config.yml                # Template selector config
+└── references/                       # In-depth reference guides
+    ├── readme-template.md            # 10 Universal Archetype complete README template engines
+    ├── privacy-scan.md               # 5-Layer deep privacy and environment scan guide
+    ├── community-templates.md        # GitHub 2026 Community Profile & CI pack
+    ├── release-and-distribution.md   # All-ecosystem package distribution guides
+    ├── description-guide.md          # Description & Topics optimization guide
+    ├── discovery-and-promotion.md    # Open-source discoverability & Launch Kit
+    ├── mcp-push-guide.md             # GitHub push & MCP guide
+    ├── pr-and-release-workflow.md    # PR, CI & release gates
+    ├── github-pat-setup.md           # GitHub PAT setup guide
+    └── github-pat-comparison.md      # GitHub PAT comparison
+```
+
+---
+
+## ❓ FAQ
+
+- **Q: Do I need a GitHub Token for preparation and packaging?**  
+  A: No. Scanning, privacy audits, community file generation, README creation, and ZIP packaging run entirely locally without tokens.
+- **Q: Will it rewrite my codebase without asking?**  
+  A: Never. The skill follows strict "audit before change" principles, requiring explicit approval before modifying any files.
+- **Q: Does it support non-AI projects?**  
+  A: Absolutely. It features 10 dedicated archetype engines covering MCP Servers, AI models, CLI tools, extensions, SDK libraries, IaC, fullstack apps, and curated lists.
+- **Q: Why does `SKILL.md` remain lightweight?**  
+  A: The skill follows the Progressive Disclosure Architecture, encapsulating deep domain templates into modular references to prevent LLM context over-saturation and cross-domain pollution.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md). If this skill helped you, please give it a [Star ⭐](https://github.com/hyt315/github-oss-prep/stargazers)!
 
 ---
 

@@ -82,6 +82,8 @@
 
 > 请安装 github-oss-prep 技能：克隆 `https://github.com/hyt315/github-oss-prep` 到你的 skills 目录（如 `~/.claude/skills/github-oss-prep` 或 `~/.agents/skills/github-oss-prep`），并确认安装成功。
 
+> 💡 **小模型同样适配**：安装完成后，只需对 AI 说“帮我把这个项目开源整理一下”或“准备发布到 GitHub”，即可自动触发全流程。
+
 ### 方式 B：GitHub CLI 2.90+（一行命令）
 
 ```bash
@@ -102,6 +104,17 @@ gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --sc
 ```powershell
 python scripts/selftest.py
 ```
+
+---
+
+## 📚 端到端实战演示
+
+假设本地有一个编写好的 Python CLI 工具、MCP Server 或浏览器扩展准备开源：
+
+1. **触发与扫描**：向 AI 发送“帮我准备开源这个项目” → 自动识别品类，执行 5 重隐私扫描，阻断路径指纹与未清理缓存；
+2. **生成社区与 CI 文件**：自动生成符合 GitHub 2026 规范的 YAML Issue Forms、`SECURITY.md`、`LICENSE` 以及 Node/Python 矩阵 CI 流水线；
+3. **渐进式渲染门面**：严格根据品类调阅对应模版，生成包含痛点解构、现代运行器矩阵 (`uvx`/`bunx`)、配置代码块的中英文 README；
+4. **验证与分发**：本地运行 `selftest.py` 自动化回归自检，输出完整可审查项目包，在获得授权后一键发布 GitHub、Release 资产与对应生态中心。
 
 ---
 
@@ -139,6 +152,67 @@ python scripts/selftest.py
 | 🌐 [**开源发现与推广策略 (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Launch Kit 营销包、社交预览与全网发布渠道 | 准备发布与对外推广项目时 | 3 分钟 |
 | 🔐 [**GitHub 推送与 MCP 指引 (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | 官方 MCP 与标准 CLI 推送流程 | 执行远程推送与仓库创建时 | 2 分钟 |
 | 🚦 [**PR 与发布门禁工作流 (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | 分支、PR、CI 测试与发布自动化校验 | 建立持续集成与发版流水线时 | 3 分钟 |
+
+---
+
+## 📁 文件结构
+
+```
+github-oss-prep/
+├── SKILL.md                          # 核心技能定义、渐进式披露与轻量化工作流
+├── README.md                         # 中文说明文档
+├── README.en.md                      # 英文说明文档
+├── CHANGELOG.md                      # 版本发布记录
+├── LICENSE                           # MIT 开源许可证
+├── .gitignore                        # Git 忽略规则
+├── CONTRIBUTING.md                   # 社区贡献指南
+├── CODE_OF_CONDUCT.md                # 行为准则
+├── SECURITY.md                       # 安全策略
+├── SUPPORT.md                        # 支持渠道
+├── manifest.json                     # 技能元数据清单
+├── agents/                           # 多 Agent 平台元数据
+├── scripts/
+│   ├── validate_repo.py              # 仓库结构、规范与隐私安全校验器
+│   └── selftest.py                   # 自动化回归自测脚本
+├── .github/
+│   ├── CODEOWNERS                    # 代码审查者配置
+│   ├── pull_request_template.md      # 标准 PR 模板
+│   ├── workflows/                    # CI 自动化工作流
+│   └── ISSUE_TEMPLATE/
+│       ├── bug_report.yml            # 交互式 Bug 反馈表单
+│       ├── feature_request.yml       # 交互式功能建议表单
+│       └── config.yml                # Issue 模板选择器配置
+└── references/                       # 深度参考文档
+    ├── readme-template.md            # 十大品类专属 README 完整模板库
+    ├── privacy-scan.md               # 五重深度隐私与环境安全扫描指南
+    ├── community-templates.md        # GitHub 2026 社区文件库与 CI 模板
+    ├── release-and-distribution.md   # 全渠道现代分发与发版实操指南
+    ├── description-guide.md          # Description 与 Topics 标签优化指南
+    ├── discovery-and-promotion.md    # 开源发现、Launch Kit 与推广策略
+    ├── mcp-push-guide.md             # GitHub 推送与授权指引
+    ├── pr-and-release-workflow.md    # PR、CI 与发布门禁
+    ├── github-pat-setup.md           # GitHub PAT 配置指南
+    └── github-pat-comparison.md      # GitHub PAT 权限类型对比
+```
+
+---
+
+## ❓ 常见问题 (FAQ)
+
+- **Q: 整理和打包需要 GitHub Token 吗？**  
+  A: 不需要。项目扫描、隐私检查、规范补齐、README 生成与源码 ZIP 打包均在本地完成，只有最终向 GitHub 推送时才需要授权。
+- **Q: 它会擅自修改我的现有代码吗？**  
+  A: 绝对不会。本技能坚持“先审后改”原则，仅在用户明确批准后才创建或修改文件。
+- **Q: 我的项目不是 AI 技能，也能使用吗？**  
+  A: 完全可以。内置十大全景品类模板引擎，对 MCP Server、AI 模型权重、CLI 工具、浏览器扩展、类库 SDK、IaC 配置与 Web 应用均有深度针对性支持。
+- **Q: 为什么技能主干 `SKILL.md` 能够保持轻量？**  
+  A: 技能严格遵循渐进式披露架构，将各领域的详细模板下沉到 `references/` 独立模块中，避免 AI 上下文过载与交叉污染。
+
+---
+
+## 🤝 参与贡献
+
+欢迎提交 Issue 与 Pull Request！详见 [CONTRIBUTING.md](CONTRIBUTING.md)。如果这个技能对你有帮助，欢迎在 GitHub 上点个 [Star ⭐](https://github.com/hyt315/github-oss-prep/stargazers)！
 
 ---
 
