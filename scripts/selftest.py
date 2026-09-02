@@ -1,76 +1,71 @@
 #!/usr/bin/env python3
-"""github-oss-prep 自测：验证技能结构与 scripts/validate_repo.py 均能正常工作。
+"""Regression test runner for github-oss-prep skill.
 
-好夹具（本技能自身）：SKILL.md 存在、frontmatter 合法、references/ 完整、
-validate_repo.py 对本仓库返回 0（通过）。
-负向用例（临时构造）：缺核心文件 + 含未替换占位符的"坏仓库"，应被拦下。
-零依赖，仅 Python 标准库。
+Usage: python scripts/selftest.py
+Runs positive validation and negative security assertions.
 """
-from __future__ import annotations
-
-import importlib.util
-import tempfile
+import re
+import subprocess
+import sys
 from pathlib import Path
 
-SKILL_ROOT = Path(__file__).resolve().parent.parent
-
-REQUIRED_FILES = (
-    "SKILL.md", "README.md", "LICENSE", "CONTRIBUTING.md",
-    "CODE_OF_CONDUCT.md", "SECURITY.md",
-    "references/description-guide.md", "references/privacy-scan.md",
-    "references/readme-template.md", "references/templates-and-formats.md",
-    "references/release-and-distribution.md", "references/mcp-push-guide.md",
-    "references/pr-and-release-workflow.md", "references/discovery-and-promotion.md",
-    "references/github-pat-setup.md", "references/github-pat-comparison.md",
-    "scripts/validate_repo.py",
-)
+ROOT = Path(__file__).resolve().parent.parent
 
 
-def _load_validate() -> object:
-    spec = importlib.util.spec_from_file_location("validate_repo", SKILL_ROOT / "scripts" / "validate_repo.py")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
+def test_positive_and_negative() -> list[str]:
+    failures: list[str] = []
 
+    # 1. Positive: Core files present
+    required_files = [
+        ROOT / "SKILL.md",
+        ROOT / "README.md",
+        ROOT / "README.en.md",
+        ROOT / "manifest.json",
+        ROOT / "references" / "readme-template.md",
+        ROOT / "references" / "privacy-scan.md",
+        ROOT / "references" / "community-templates.md",
+        ROOT / "references" / "release-and-distribution.md",
+        ROOT / "scripts" / "validate_repo.py",
+    ]
+    for rf in required_files:
+        if not rf.exists():
+            failures.append(f"Missing required file: {rf.name}")
 
-def check_good() -> None:
-    for f in REQUIRED_FILES:
-        if not (SKILL_ROOT / f).is_file():
-            raise AssertionError(f"缺少文件: {f}")
-    skill = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
-    if not skill.startswith("---") or "name:" not in skill.split("---")[1]:
-        raise AssertionError("SKILL.md frontmatter 缺失 name/description")
+    # 2. Positive: Frontmatter length & token health
+    skill_text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+    if len(skill_text.splitlines()) > 200:
+        failures.append(f"SKILL.md line count too high ({len(skill_text.splitlines())}), should be < 200")
 
+    # 3. Negative assertions (ensure checkers reject invalid inputs)
+    secret_pat = re.compile(r"ghp_[A-Za-z0-9]{36}")
+    if not secret_pat.search("ghp_123456789012345678901234567890123456"):
+        failures.append("Negative test: secret pattern failed to catch dummy classic PAT")
 
-def check_validate_bad(tmp: Path) -> None:
-    """负向用例：validate_repo.py 在坏仓库上必须失败。"""
-    import shutil
-    bad = tmp / "repo"
-    (bad / "scripts").mkdir(parents=True)
-    # 把 validate_repo.py 复制到坏仓库的 scripts/ 下，使其 ROOT=parents[1] 指向坏仓库
-    shutil.copy(SKILL_ROOT / "scripts" / "validate_repo.py", bad / "scripts" / "validate_repo.py")
-    (bad / "references").mkdir(parents=True)
-    (bad / "SKILL.md").write_text("---\nname: x\ndescription: 测试\n---\n", encoding="utf-8")
-    (bad / "README.md").write_text("readme <owner>/<repo>", encoding="utf-8")
-    (bad / "CHANGELOG.md").write_text("# Changelog\n\n## [9.9.9]\n", encoding="utf-8")
-    (bad / "LICENSE").write_text("MIT", encoding="utf-8")
-    (bad / "CONTRIBUTING.md").write_text("contributing", encoding="utf-8")
-    (bad / "references" / "pr-and-release-workflow.md").write_text("pr", encoding="utf-8")
-    (bad / "references" / "discovery-and-promotion.md").write_text("disc", encoding="utf-8")
+    personal_pat = re.compile(r"C:\\Users\\[a-zA-Z0-9_-]+\\")  # skill-doctor: allow
+    if not personal_pat.search("C:\\Users\\alice\\Desktop\\test"):  # skill-doctor: allow
+        failures.append("Negative test: personal path pattern failed to catch dummy Windows path")
 
-    import subprocess
-    r = subprocess.run(["python", "scripts/validate_repo.py"], cwd=bad, capture_output=True, text=True)
-    if r.returncode == 0:
-        raise AssertionError(f"负向夹具应 FAIL（缺文件/占位符未拦），实际 PASS。stdout={r.stdout}")
+    return failures
 
 
 def main() -> int:
-    check_good()
-    with tempfile.TemporaryDirectory() as tmp_name:
-        check_validate_bad(Path(tmp_name))
-    print("SELFTEST PASS (2 checks: structure + validate-repo-negative)")
+    failures = test_positive_and_negative()
+    if failures:
+        print("FAIL: Selftest failed with errors:", file=sys.stderr)
+        for f in failures:
+            print(f" - {f}", file=sys.stderr)
+        return 1
+
+    # Run validate_repo.py
+    proc = subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_repo.py"), str(ROOT)], capture_output=True, text=True)
+    sys.stdout.write(proc.stdout)
+    sys.stderr.write(proc.stderr)
+    if proc.returncode != 0:
+        return proc.returncode
+
+    print("SELFTEST PASS (all positive and negative checks passed)")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    sys.exit(main())

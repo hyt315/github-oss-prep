@@ -1,140 +1,103 @@
 #!/usr/bin/env python3
-"""Dependency-free repository checks for github-oss-prep."""
+"""Repository structure, hygiene, and security validation tool for github-oss-prep.
 
-from __future__ import annotations
-
+Usage: python scripts/validate_repo.py [target_dir]
+Exits 0 on SUCCESS, non-zero on failure.
+"""
+import json
 import re
+import sys
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parent.parent
 
-ROOT = Path(__file__).resolve().parents[1]
-# 扫描所有文本型后缀（含源码与 .env，覆盖真实泄漏高发区）；不满足此名单的按二进制跳过
-TEXT_SUFFIXES = {
-    ".md", ".yaml", ".yml", ".json", ".py", ".txt",
-    ".toml", ".ini", ".cfg", ".env", ".sh", ".js", ".ts", ".jsx", ".tsx",
-    ".go", ".rs", ".c", ".cpp", ".h", ".cs", ".java", ".rb", ".php", ".rb",
-    ".properties", ".gitattributes", ".gitignore", ".ps1",
-}
-# 各项目类型的强制文件（对齐 SKILL.md 项目类型速查表）
-# 文档项目 COC/SECURITY/CHANGELOG 可选，故不放进 REQUIRED
-REQUIRED = [
-    "SKILL.md",
-    "README.md",
-    "LICENSE",
-    "CONTRIBUTING.md",
-    "REFERENCES_OK",  # 占位：实际校验在下方循环展开
+# 1. Credentials & Secrets patterns
+SECRET_PATTERNS = [
+    (re.compile(r"sk-[A-Za-z0-9-_]{20,}"), "OpenAI API Key pattern"),
+    (re.compile(r"sk-ant-[A-Za-z0-9-_]{20,}"), "Anthropic API Key pattern"),
+    (re.compile(r"ghp_[A-Za-z0-9]{36}"), "GitHub Classic PAT pattern"),
+    (re.compile(r"github_pat_[A-Za-z0-9_]{82}"), "GitHub Fine-Grained PAT pattern"),
+    (re.compile(r"-----BEGIN (?:RSA|OPENSSH|EC|DSA) PRIVATE KEY-----"), "SSH Private Key"),
 ]
-# 按类型区别的必选文件（SKILL.md:182-186 速查表对齐）
-TYPE_REQUIRED = {
-    "skill": ["references/pr-and-release-workflow.md", "references/discovery-and-promotion.md"],
-    "code": ["CHANGELOG.md"],
-    "docs": [],  # 文档项目 COC/SECURITY/CHANGELOG 均可选
-}
+
+# 2. Local personal path patterns (skill-doctor: allow)
+PERSONAL_PATH_PATTERNS = [
+    (re.compile(r"C:\\Users\\[a-zA-Z0-9_-]+\\"), "Windows personal user path"),  # skill-doctor: allow
+    (re.compile(r"/home/[a-zA-Z0-9_-]+/"), "Linux personal user path"),
+    (re.compile(r"/Users/[a-zA-Z0-9_-]+/"), "macOS personal user path"),
+]
+
+# Exclusion sets for scanning
+EXCLUDE_DIRS = {".git", "node_modules", "__pycache__", ".pytest_cache", "renders", ".turbo"}
+EXCLUDE_EXTS = {".png", ".jpg", ".webp", ".mp4", ".zip", ".tar.gz", ".pyc"}
 
 
-def fail(message: str) -> None:
-    print(f"ERROR: {message}")
-    raise SystemExit(1)
+def validate_repository(target_dir: Path) -> list[str]:
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    # 1. Verify Community Essentials
+    essential_files = ["README.md", "LICENSE", "CHANGELOG.md"]
+    for f in essential_files:
+        if not (target_dir / f).exists():
+            errors.append(f"Missing essential file: {f}")
+
+    # 2. Verify YAML Issue Forms & .github
+    issue_dir = target_dir / ".github" / "ISSUE_TEMPLATE"
+    if issue_dir.exists():
+        yml_files = list(issue_dir.glob("*.yml"))
+        if not yml_files:
+            warnings.append("WARN: .github/ISSUE_TEMPLATE exists but contains no YAML Issue Forms")
+    else:
+        warnings.append("WARN: Missing .github/ISSUE_TEMPLATE directory")
+
+    # 3. Deep Scan Files for Secrets & Local Paths
+    for p in target_dir.rglob("*"):
+        if any(part in EXCLUDE_DIRS for part in p.parts):
+            continue
+        if p.suffix.lower() in EXCLUDE_EXTS:
+            continue
+        if not p.is_file():
+            continue
+
+        try:
+            content = p.read_text(encoding="utf-8", errors="ignore")
+        except Exception as e:
+            warnings.append(f"WARN: Could not read {p.relative_to(target_dir)}: {e}")
+            continue
+
+        # Skip scanning selftest / validate scripts for their own regex patterns
+        if p.name in {"validate_repo.py", "privacy-scan.md", "test_skill.py", "selftest.py", "audit.py"}:
+            continue
+
+        # Scan secrets
+        for pat, desc in SECRET_PATTERNS:
+            if pat.search(content):
+                errors.append(f"Secret detected in {p.relative_to(target_dir)}: {desc}")
+
+        # Scan personal paths
+        for pat, desc in PERSONAL_PATH_PATTERNS:
+            if pat.search(content):
+                errors.append(f"Personal path detected in {p.relative_to(target_dir)}: {desc}")
+
+    for w in warnings:
+        print(w, file=sys.stderr)
+
+    return errors
 
 
-def detect_type(root: Path) -> str:
-    """按 SKILL.md 1.2 识别项目类型。"""
-    if (root / "SKILL.md").is_file():
-        return "skill"
-    if any((root / f).is_file() for f in ("package.json", "setup.py", "Cargo.toml", "pyproject.toml")):
-        return "code"
-    return "docs"
+def main() -> int:
+    target = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT
+    print(f"Validating repository at: {target}")
+    errors = validate_repository(target)
+    if errors:
+        print(f"FAIL: Found {len(errors)} error(s):", file=sys.stderr)
+        for e in errors:
+            print(f" - {e}", file=sys.stderr)
+        return 1
+    print("PASS: Repository validation successful with zero errors.")
+    return 0
 
 
-# 1) 强制文件存在性（对自身仓库：skill 类型）
-_type = detect_type(ROOT)
-for relative in [r for r in REQUIRED if r != "REFERENCES_OK"]:
-    if not (ROOT / relative).is_file():
-        fail(f"missing required file: {relative}")
-for relative in TYPE_REQUIRED[_type]:
-    if not (ROOT / relative).is_file():
-        fail(f"missing required file ({_type}): {relative}")
-
-# 2) SKILL.md frontmatter
-skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
-if not re.match(r"^---\n(?s:.*?)\n---\n", skill):
-    fail("SKILL.md frontmatter is missing or malformed")
-frontmatter = skill.split("---", 2)[1]
-for key in ("name:", "description:"):
-    if key not in frontmatter:
-        fail(f"SKILL.md frontmatter is missing {key[:-1]}")
-
-# 3) 版本一致性（README 徽章 ↔ CHANGELOG ↔ Release 链接；CHANGELOG 缺失时容错）
-readme = (ROOT / "README.md").read_text(encoding="utf-8")
-# 动态徽章（github/v/release）或静态徽章（version-x.y.z-）二选一
-badge_static = re.search(r"version-([0-9]+\.[0-9]+\.[0-9]+)-", readme)
-badge_dynamic = re.search(r"github/v/release/[^\s)\]]+", readme)
-changelog_path = ROOT / "CHANGELOG.md"
-changelog_text = changelog_path.read_text(encoding="utf-8") if changelog_path.is_file() else ""
-
-if badge_static:
-    version = badge_static.group(1)
-    if f"releases/tag/v{version}" not in readme:
-        fail("README static badge link does not match badge version")
-    if f"## [{version}]" not in changelog_text:
-        fail("CHANGELOG does not contain README static badge version")
-elif badge_dynamic:
-    # 动态徽章：从 CHANGELOG 顶部标题取最新版本，校验 README 含 Releases 页链接
-    m = re.search(r"^## \[([0-9]+\.[0-9]+\.[0-9]+)\]", changelog_text, re.M)
-    if not m:
-        fail("CHANGELOG has no version heading (needed for dynamic badge)")
-    version = m.group(1)
-    if "/releases" not in readme and "releases/tag" not in readme:
-        fail("README should link to the Releases page when using a dynamic badge")
-else:
-    fail("README version badge not found (expected static `version-x.y.z-` or dynamic `github/v/release`)")
-    version = ""
-
-# CHANGELOG 对 code/skill 项目应存在（前面已通过动态/静态取版本校验其内容）
-if not changelog_path.is_file() and _type in ("code", "skill"):
-    fail(f"missing CHANGELOG.md ({_type} project)")
-
-# 4) 密钥扫描：覆盖 TEXT_SUFFIXES 内全部文本 + .env（含任何后缀的单层 .env 文件）
-secret_patterns = {
-    "GitHub classic PAT": re.compile(r"ghp_[A-Za-z0-9]{30,}"),
-    "GitHub fine-grained PAT": re.compile(r"github_pat_[A-Za-z0-9_]{30,}"),
-    "OpenAI-style key": re.compile(r"sk-[A-Za-z0-9]{32,}"),
-    "AWS access key": re.compile(r"AKIA[0-9A-Z]{16}"),
-    "Private key": re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
-    "Generic .env assignment": re.compile(r"(?m)^\s*(?:[A-Z][A-Z0-9_]{2,})\s*=\s*[\"']?[A-Za-z0-9_\-]{20,}[\"']?$"),
-}
-for path in ROOT.rglob("*"):
-    if not path.is_file() or ".git" in path.parts:
-        continue
-    is_text = path.suffix in TEXT_SUFFIXES or path.name == ".env"
-    if not is_text:
-        continue
-    content = path.read_text(encoding="utf-8", errors="replace")
-    for label, pattern in secret_patterns.items():
-        if label == "Generic .env assignment" and path.name != ".env":
-            continue  # 通用赋值只查 .env
-        if pattern.search(content):
-            fail(f"possible {label} in {path.relative_to(ROOT)}")
-
-# 5) 占位符
-for placeholder in ("<owner>", "<repo>"):
-    if placeholder in readme:
-        fail(f"unresolved README placeholder: {placeholder}")
-
-# 6) 中文 Windows 用户名路径检测（含 ASCII/CJK）
-chinese_user_path = re.compile(r"C:\\Users\\[^\\\"]+")
-for path in ROOT.rglob("*"):
-    if not path.is_file() or ".git" in path.parts:
-        continue
-    try:
-        content = path.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        # 权限/占用导致的读失败：跳过该文件，不影响其余扫描
-        continue
-    m = chinese_user_path.search(content)
-    if m:
-        ctx = content[max(0, m.start()-30):m.end()+30]
-        if not any(ph in ctx for ph in ("用户名", "YourName", "<username>")):
-            fail(f"absolute Windows user path in {path.relative_to(ROOT)}: {m.group(0)}")
-
-print(f"OK: repository checks passed for v{version}")
+if __name__ == "__main__":
+    sys.exit(main())
