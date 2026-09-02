@@ -1,7 +1,7 @@
 # 六大项目品类专属 README 完整模板库
 
 > 本文档为开源项目提供 **6 大主流品类的完整、开箱即用、可直接复制填空的 README.md 骨架**。
-> 包含全套包管理器安装表（npm / pip / cargo / homebrew / winget / scoop / docker / agent 自装）、动态徽章矩阵与场景速查表。
+> 包含 2026 现代终端 CLI 运行器（uvx / uv tool / pipx / npx / pnpm dlx / bunx / cargo binstall / brew / winget / scoop / docker / agent 自装）、动态徽章矩阵与场景速查表。
 
 ---
 
@@ -14,7 +14,7 @@
 5. [品类 4：类库与核心 SDK 型 (Library / SDK) 完整模板](#品类-4类库与核心-sdk-型-library--sdk-完整模板)
 6. [品类 5：完整应用与 Web 服务型 (Fullstack App) 完整模板](#品类-5完整应用与-web-服务型-fullstack-app-完整模板)
 7. [品类 6：文档与知识库型 (Docs / Knowledge Base) 完整模板](#品类-6文档与知识库型-docs--knowledge-base-完整模板)
-8. [多平台通用下载与安装表格集合](#多平台通用下载与安装表格集合)
+8. [多平台现代终端下载与安装表格集合 (2026 标准)](#多平台现代终端下载与安装表格集合-2026-标准)
 
 ---
 
@@ -163,15 +163,49 @@ gh skill install {owner}/{repo} {name} --agent claude-code --scope user
 | **现象 1** | 根因 1 | `命令 1` | 解决对策 1 |
 | **现象 2** | 根因 2 | `命令 2` | 解决对策 2 |
 
-## 📥 安装与下载方式
+---
 
-| 安装渠道 | 安装命令 / 链接 |
-|---|---|
-| **Winget (Windows)** | `winget install {owner}.{repo}` |
-| **Scoop (Windows)** | `scoop install {repo}` |
-| **Homebrew (macOS)** | `brew install {owner}/tap/{repo}` |
-| **Release 预编译包** | [下载 .exe / .zip 资产](https://github.com/{owner}/{repo}/releases) (含 SHA-256 校验) |
-| **源码运行** | `git clone https://github.com/{owner}/{repo}.git` |
+## 📥 现代终端安装与运行方式 (按生态针对性选择)
+
+### 选项 A：Python 现代环境运行 (推荐 uv / pipx)
+```bash
+# 🚀 uvx 免安装即时秒开 (最推荐)
+uvx {pkg-name}
+
+# 📦 uv tool 持久隔离安装
+uv tool install {pkg-name}
+
+# 传统 pipx 隔离安装
+pipx install {pkg-name}
+```
+
+### 选项 B：Node.js / 前端环境运行
+```bash
+# 🚀 npx / pnpm / bun 免安装即时运行
+npx {pkg-name}
+pnpm dlx {pkg-name}
+bunx {pkg-name}
+
+# 全局安装
+npm install -g {pkg-name}
+```
+
+### 选项 C：跨平台单行脚本直装 (Standalone Binary)
+```bash
+# Linux / macOS
+curl -fsSL https://{domain}/install.sh | sh
+
+# Windows PowerShell
+irm https://{domain}/install.ps1 | iex
+```
+
+### 选项 D：系统级包管理器
+| 操作系统 | 推荐包管理器 | 安装命令 |
+|---|---|---|
+| **Windows** | **Winget** | `winget install {owner}.{repo}` |
+| **Windows** | **Scoop** | `scoop install {repo}` |
+| **macOS / Linux** | **Homebrew** | `brew install {owner}/tap/{repo}` |
+| **跨平台** | **Release 预编译包** | [下载 .exe / .zip / .tar.gz 资产](https://github.com/{owner}/{repo}/releases) |
 ```
 
 ---
@@ -231,6 +265,9 @@ pnpm add {pkg-name}
 
 # yarn
 yarn add {pkg-name}
+
+# bun
+bun add {pkg-name}
 ```
 ```
 
@@ -269,6 +306,7 @@ console.log(result.data);
 |---|---|
 | **npm** | `npm install {pkg-name}` |
 | **pnpm** | `pnpm add {pkg-name}` |
+| **bun** | `bun add {pkg-name}` |
 | **pip** | `pip install {pkg-name}` |
 | **cargo** | `cargo add {pkg-name}` |
 
@@ -345,27 +383,39 @@ docker compose up -d
 
 ---
 
-## 多平台通用下载与安装表格集合
+## 多平台现代终端下载与安装表格集合 (2026 标准)
 
-在任意 README 中，可根据项目实际支持的渠道选择复制以下安装表格：
+在为特定项目编写 README 时，可根据其技术栈直接选取以下现代安装表格：
 
-### 1. 包管理器一览表
+### 1. 现代 Python 终端生态
 ```markdown
-| 平台 / 包管理器 | 安装命令 | 说明 |
+| 工具 / 运行器 | 命令 | 适用说明 |
 |---|---|---|
-| **npm (Global)** | `npm install -g <package>` | 全局安装命令行工具 |
-| **npx (无需安装)** | `npx <package>` | 临时直接执行 |
-| **pip (Python)** | `pip install <package>` | 从 PyPI 安装模块 |
-| **cargo (Rust)** | `cargo install <package>` | 从 Crates.io 编译安装 |
-| **Homebrew (macOS)**| `brew install <owner>/tap/<package>` | macOS/Linux 软件包管理 |
-| **Winget (Windows)** | `winget install <owner>.<package>` | Windows 官方应用管理 |
-| **Scoop (Windows)** | `scoop install <package>` | Windows 开发者工具管理 |
+| **`uvx` (免装秒开)** | `uvx <package>` | 现代标准：即时沙箱运行，不污染环境 |
+| **`uv tool` (持久安装)** | `uv tool install <package>` | 现代标准：快速安装到隔离 PATH 环境 |
+| **`pipx`** | `pipx install <package>` | 传统 PyPA 隔离环境安装 |
+| **`pip`** | `pip install <package>` | 传统虚拟环境内安装 |
 ```
 
-### 2. 容器与镜像一览表
+### 2. 现代 JavaScript / TypeScript 终端生态
 ```markdown
-| 镜像源 | 拉取命令 |
-|---|---|
-| **GitHub Container Registry** | `docker pull ghcr.io/<owner>/<repo>:latest` |
-| **Docker Hub** | `docker pull <owner>/<repo>:latest` |
+| 工具 / 运行器 | 命令 | 适用说明 |
+|---|---|---|
+| **`npx`** | `npx <package>` | Node.js 官方即时运行器 |
+| **`pnpm dlx`** | `pnpm dlx <package>` | pnpm 官方即时运行器 |
+| **`bunx`** | `bunx <package>` | Bun 超高速即时运行器 |
+| **`npm (Global)`** | `npm install -g <package>` | 全局持久安装 |
+```
+
+### 3. 系统级与编译二进制生态
+```markdown
+| 渠道 | 安装命令 | 适用说明 |
+|---|---|---|
+| **`cargo binstall`** | `cargo binstall <crate>` | Rust 预编译二进制极速安装 (无需本地编译) |
+| **`cargo install`** | `cargo install <crate>` | 从 Crates.io 源码编译安装 |
+| **`Homebrew`** | `brew install <owner>/tap/<package>` | macOS / Linux 软件包管理 |
+| **`Winget`** | `winget install <owner>.<package>` | Windows 官方应用管理 |
+| **`Scoop`** | `scoop install <package>` | Windows 开发者工具管理 |
+| **`一键脚本 (Unix)`** | `curl -fsSL https://.../install.sh \| sh` | Linux / macOS 单行安装 |
+| **`一键脚本 (Win)`** | `irm https://.../install.ps1 \| iex` | Windows PowerShell 单行安装 |
 ```
