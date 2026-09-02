@@ -1,7 +1,7 @@
 {
   "name": "github-oss-prep",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "owner": "hyt315",
   "updated_at": "2026-09-02",
-  "description": "Comprehensive GitHub open-source preparation skill featuring 6 archetype README engines, modern 2026 CLI runners (uvx, bunx, pnpm dlx, cargo binstall), 5-layer deep security scanning, YAML Issue Forms, and CI/Dependabot templates."
+  "description": "Comprehensive GitHub open-source preparation skill featuring 10 Universal Archetype README engines, progressive disclosure architecture, all-ecosystem distribution (uv, npm, HuggingFace, Chrome Store), 5-layer deep security scanning, YAML Issue Forms, and CI/Dependabot templates."
 }
