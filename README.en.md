@@ -41,6 +41,35 @@ When open-sourcing projects on GitHub, developers frequently hit these hurdles:
 
 ---
 
+## 📊 Complete Open-Source Preparation Architecture
+
+```
+[Input: Any local project / directory to open-source]
+                         │
+              [Step 0: Archetype Positioning]
+              Identify: AI Skill / CLI Tool / Multimedia / SDK / Web App / Docs
+                         │
+              [Step 1: 5-Layer Deep Security Audit]
+              Intercept API Keys / Machine Fingerprints / Session IDs / Git URLs / Caches
+                         │
+              [Step 2: 2026 Community Profile Pack]
+              Generate YAML Issue Forms / PR Templates / SECURITY.md / LICENSE
+                         │
+              [Step 3: Tailored Archetype README Facade]
+              Render high-converting bilingual READMEs from 6 archetype engines
+                         │
+              [Step 4: Multi-Channel Distribution Matrix]
+              Configure gh skill / Agent prompt / Release assets with SHA-256 Checksums
+                         │
+              [Step 5: Clean-Clone Regression Verification]
+              Run scripts/selftest.py to pass 100% quality and security gates
+                         │
+              [Step 6: Staged Approval & Publishing]
+              Push to GitHub, tag, and publish GitHub Release upon explicit approval
+```
+
+---
+
 ## 🚀 Quick Start
 
 This is an AI Agent Skill — install it into your AI assistant and you're ready.
@@ -77,6 +106,17 @@ python scripts/selftest.py
 
 ---
 
+## 📚 End-to-End Practical Walkthrough
+
+Suppose you have a local Python CLI utility or frontend component ready to open-source:
+
+1. **Trigger & Scan**: Send "help me prepare this project for open-source" → Auto-detects archetype, executes 5-layer privacy audit, and cleans build caches;
+2. **Generate Community Files**: Creates GitHub 2026-compliant YAML Issue Forms, `SECURITY.md`, and `LICENSE`;
+3. **Render Facade**: Automatically generates bilingual READMEs with problem statements, parameter tables, and ASCII workflows tailored to the archetype;
+4. **Validate & Deliver**: Runs `selftest.py` locally, outputs clean reviewable project bundle, and publishes to GitHub upon explicit approval.
+
+---
+
 ## 🔒 Safety & Privacy Principles
 
 - **Audit Before Change**: Reads and audits locally by default, generating diffs before creating or modifying any files.
@@ -95,6 +135,21 @@ python scripts/selftest.py
 | **ZIP** | [Download ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
 | **Tarball** | [Download Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
 | **Single file (SKILL.md)** | `curl -O https://raw.githubusercontent.com/hyt315/github-oss-prep/main/SKILL.md` |
+
+---
+
+## 📖 In-Depth Technical References
+
+| Reference Guide | Core Focus | When to Read | Estimated Time |
+|---|---|---|---|
+| 📑 [**6 Archetype README Engines (`readme-template.md`)**](references/readme-template.md) | Complete bilingual structures and dynamic badge specs for 6 archetypes | When generating or rewriting READMEs | 4 mins |
+| 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | Interception rules for credentials, machine paths, sessions, and Git URLs | When performing security audits and sanitization | 3 mins |
+| 🏛️ [**Community Profile Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, PR templates, and security policies | When completing GitHub Community Standards | 3 mins |
+| 🚀 [**Multi-Channel Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | `gh skill`, package managers, Release binary assets with SHA-256 | When configuring download channels and releases | 3 mins |
+| 🏷️ [**Description & Topics Guide (`description-guide.md`)**](references/description-guide.md) | Concise 120-char repository description and topic selection | When configuring repo surface metadata | 3 mins |
+| 🌐 [**Discoverability & Launch Kit (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Promotion strategies, social previews, and channel checklists | When launching or publicizing a project | 3 mins |
+| 🔐 [**GitHub Push & MCP Guide (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | Official MCP server setup and standard CLI push workflows | When pushing code and creating remote repos | 2 mins |
+| 🚦 [**PR, CI & Release Gates (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | Branches, PRs, CI testing, and release gating rules | When establishing CI pipelines and release gates | 3 mins |
 
 ---
 
