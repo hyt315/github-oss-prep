@@ -18,6 +18,7 @@ metadata:
 - **五重严密环境与隐私扫描**：深度拦截敏感凭据、私有路径指纹、内部会话标记、Git URL 凭据污染与构建缓存。
 - **全生态现代分发矩阵**：支持 `gh skill`、`uvx`/`uv tool`、`npx`/`bunx`、Hugging Face、Chrome Web Store、`cargo binstall`、`brew`、`winget` 与 Release Checksums。
 - **分阶段授权与确认发布**：本地整理、远程推送、Release 打包与外部推广分别独立授权，严禁越权。
+- **纯 Python 标准库零依赖**：所有辅助脚本（validate_repo.py、selftest.py 等）严格基于 Python 3.10+ 原生标准库，100% 零依赖、纯只读。
 
 ---
 
