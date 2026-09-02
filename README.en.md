@@ -2,9 +2,9 @@
 
 <div align="center">
 
-**Turn any project into a polished, GitHub-ready open-source repository with full community health files and tailored facade.**
+**Turn any project into a polished, GitHub-ready open-source repository with full community health files, CI automation, and tailored multi-channel distribution.**
 
-**将任意项目美化为适合 GitHub 发布的专业级开源版本，补齐全套社区健康文件，构建专属针对性门面。**
+**将任意项目美化为适合 GitHub 发布的专业级开源版本，补齐全套社区健康文件与 CI 自动化，构建专属针对性门面与全渠道分发。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/hyt315/github-oss-prep?sort=semver)](CHANGELOG.md)
@@ -23,9 +23,10 @@
 When open-sourcing projects on GitHub, developers frequently hit these hurdles:
 - Missing required `LICENSE`, `CODE_OF_CONDUCT.md`, `SECURITY.md`, or modern YAML Issue Forms, preventing the repo from reaching 100% in GitHub Insights → Community profile;
 - Generic, one-size-fits-all README layouts that fail to highlight the distinct value of AI Agent Skills, system CLI tools, multimedia engines, or developer SDKs;
+- Missing concrete publishing instructions for npm, PyPI, Docker, Homebrew, Crates.io, or CI matrix testing;
 - Accidental leaks of local machine paths, private agent session fingerprints, API tokens, or Git credentials into public repositories.
 
-**`github-oss-prep`** is a professional-grade GitHub open-source preparation skill designed for AI Agents and open-source creators. It features **6 project archetype-tailored README engines**, a **5-layer deep environment and credential security scanner**, and the **GitHub 2026 Community Profile pack** for seamless, professional repo releases.
+**`github-oss-prep`** is a professional-grade GitHub open-source preparation skill designed for AI Agents and open-source creators. It features **6 project archetype-tailored README engines**, **all-channel package distribution guides**, a **5-layer deep environment and credential security scanner**, and the **GitHub 2026 Community Profile & CI pack** for seamless, professional repo releases.
 
 ---
 
@@ -33,10 +34,10 @@ When open-sourcing projects on GitHub, developers frequently hit these hurdles:
 
 | Core Module | Capabilities | Value Delivered |
 |---|---|---|
-| **6 Archetype README Engines** | Tailored structures for AI Skills, CLI tools, Multimedia, SDKs, Fullstack Apps, Docs | Replaces generic templates with precise positioning and quick-start matrices |
-| **5-Layer Deep Security Net** | Scans API keys, local path fingerprints, session IDs, Git remote tokens, build caches | 100% prevention of credentials and private environment leakage |
-| **2026 Community Profile Pack** | Interactive YAML Issue Forms (`bug_report.yml`), PR template, `SECURITY.md` | Guarantees 100% GitHub Community Standards score |
-| **Multi-Channel Distribution** | `gh skill install`, one-sentence agent auto-install, Release binary assets with SHA-256 | Flawless, instant installation for users and downstream AI agents |
+| **6 Archetype Full README Engines** | Tailored, copy-paste-ready Markdown skeletons for AI Skills, CLI tools, Multimedia, SDKs, Fullstack Apps, Docs | Replaces generic templates with concrete structures and package manager matrices |
+| **5-Layer Deep Security Net** | Scans API keys, local path fingerprints, session IDs, Git remote tokens, build caches with real-leak comparison table | 100% prevention of credentials and private environment leakage |
+| **2026 Community & CI Profile Pack** | Interactive YAML Issue Forms (`bug_report.yml`), PR template, `SECURITY.md`, Node/Python Matrix CI, Dependabot | Guarantees 100% GitHub Community Standards score and automated dependency maintenance |
+| **All-Ecosystem Distribution Guides** | Practical publishing workflows for npm, PyPI, Docker/ghcr.io, Homebrew, Crates.io, Go, Release SHA-256 Checksums | End-to-end guidance from local source to global package registries |
 | **Lightweight Architecture** | Slim main definition, single-layer reference map, automated regression tests | Strict engineering discipline, 100% PASS on `skill-doctor` audits |
 
 ---
@@ -52,14 +53,14 @@ When open-sourcing projects on GitHub, developers frequently hit these hurdles:
               [Step 1: 5-Layer Deep Security Audit]
               Intercept API Keys / Machine Fingerprints / Session IDs / Git URLs / Caches
                          │
-              [Step 2: 2026 Community Profile Pack]
-              Generate YAML Issue Forms / PR Templates / SECURITY.md / LICENSE
+              [Step 2: 2026 Community & CI Pack]
+              Generate YAML Issue Forms / PR Templates / SECURITY.md / CI / Dependabot
                          │
               [Step 3: Tailored Archetype README Facade]
               Render high-converting bilingual READMEs from 6 archetype engines
                          │
-              [Step 4: Multi-Channel Distribution Matrix]
-              Configure gh skill / Agent prompt / Release assets with SHA-256 Checksums
+              [Step 4: All-Channel Package & Release Distribution]
+              Configure npm / pip / cargo / docker / brew / gh skill / Release Checksums
                          │
               [Step 5: Clean-Clone Regression Verification]
               Run scripts/selftest.py to pass 100% quality and security gates
@@ -108,12 +109,12 @@ python scripts/selftest.py
 
 ## 📚 End-to-End Practical Walkthrough
 
-Suppose you have a local Python CLI utility or frontend component ready to open-source:
+Suppose you have a local Python CLI utility, npm package, or frontend component ready to open-source:
 
 1. **Trigger & Scan**: Send "help me prepare this project for open-source" → Auto-detects archetype, executes 5-layer privacy audit, and cleans build caches;
-2. **Generate Community Files**: Creates GitHub 2026-compliant YAML Issue Forms, `SECURITY.md`, and `LICENSE`;
-3. **Render Facade**: Automatically generates bilingual READMEs with problem statements, parameter tables, and ASCII workflows tailored to the archetype;
-4. **Validate & Deliver**: Runs `selftest.py` locally, outputs clean reviewable project bundle, and publishes to GitHub upon explicit approval.
+2. **Generate Community & CI Files**: Creates GitHub 2026-compliant YAML Issue Forms, `SECURITY.md`, `LICENSE`, and Node/Python matrix CI workflows;
+3. **Render Facade**: Automatically generates bilingual READMEs with problem statements, npm/pip installation matrices, and ASCII workflows tailored to the archetype;
+4. **Validate & Distribute**: Runs `selftest.py` locally, outputs clean reviewable project bundle, and publishes to GitHub, Release assets, and global package registries upon explicit approval.
 
 ---
 
@@ -142,10 +143,10 @@ Suppose you have a local Python CLI utility or frontend component ready to open-
 
 | Reference Guide | Core Focus | When to Read | Estimated Time |
 |---|---|---|---|
-| 📑 [**6 Archetype README Engines (`readme-template.md`)**](references/readme-template.md) | Complete bilingual structures and dynamic badge specs for 6 archetypes | When generating or rewriting READMEs | 4 mins |
-| 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | Interception rules for credentials, machine paths, sessions, and Git URLs | When performing security audits and sanitization | 3 mins |
-| 🏛️ [**Community Profile Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, PR templates, and security policies | When completing GitHub Community Standards | 3 mins |
-| 🚀 [**Multi-Channel Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | `gh skill`, package managers, Release binary assets with SHA-256 | When configuring download channels and releases | 3 mins |
+| 📑 [**6 Archetype Full README Engines (`readme-template.md`)**](references/readme-template.md) | Complete copy-pasteable Markdown skeletons and npm/pip/cargo/brew tables | When generating or rewriting READMEs | 4 mins |
+| 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | 5-layer interception rules, real-leak comparison table, and sanitization | When performing security audits and sanitization | 3 mins |
+| 🏛️ [**Community Profile & CI Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, Node/Python matrix CI, and Dependabot | When completing GitHub Community Standards & CI | 3 mins |
+| 🚀 [**All-Channel Package Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | npm, PyPI, Docker, Homebrew, Crates.io publishing, mirrors, and Checksums | When publishing to package registries or GitHub Release | 4 mins |
 | 🏷️ [**Description & Topics Guide (`description-guide.md`)**](references/description-guide.md) | Concise 120-char repository description and topic selection | When configuring repo surface metadata | 3 mins |
 | 🌐 [**Discoverability & Launch Kit (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Promotion strategies, social previews, and channel checklists | When launching or publicizing a project | 3 mins |
 | 🔐 [**GitHub Push & MCP Guide (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | Official MCP server setup and standard CLI push workflows | When pushing code and creating remote repos | 2 mins |
@@ -181,10 +182,10 @@ github-oss-prep/
 │       ├── feature_request.yml       # Interactive Feature request form
 │       └── config.yml                # Template selector config
 └── references/                       # In-depth reference guides
-    ├── readme-template.md            # 6 Archetype README template engines
+    ├── readme-template.md            # 6 Archetype complete README template engines
     ├── privacy-scan.md               # 5-Layer deep privacy and environment scan guide
-    ├── community-templates.md        # GitHub 2026 Community Profile pack
-    ├── release-and-distribution.md   # Multi-channel distribution matrix
+    ├── community-templates.md        # GitHub 2026 Community Profile & CI pack
+    ├── release-and-distribution.md   # All-channel package distribution guides
     ├── description-guide.md          # Description & Topics optimization guide
     ├── discovery-and-promotion.md    # Open-source discoverability & Launch Kit
     ├── mcp-push-guide.md             # GitHub push & MCP guide
