@@ -1,114 +1,371 @@
-# 六大项目品类专属 README 模板引擎
+# 六大项目品类专属 README 完整模板库
 
-> 本文档提供 6 大类开源项目的针对性 README 门面结构规范与实战模板。
-> 核心原则：**对标 2026 顶级开源门面标准、拒绝千篇一律、首屏 5 秒看懂、零私有路径泄露**。
+> 本文档为开源项目提供 **6 大主流品类的完整、开箱即用、可直接复制填空的 README.md 骨架**。
+> 包含全套包管理器安装表（npm / pip / cargo / homebrew / winget / scoop / docker / agent 自装）、动态徽章矩阵与场景速查表。
 
 ---
 
 ## 目录
 
-1. [品类 1：AI Agent 技能型 (Skill / Tool)](#品类-1ai-agent-技能型-skill--tool)
-2. [品类 2：系统与 CLI 诊断工具型 (CLI / System Utility)](#品类-2系统与-cli-诊断工具型-cli--system-utility)
-3. [品类 3：前端与多媒体生成型 (Frontend / Media Generator)](#品类-3前端与多媒体生成型-frontend--media-generator)
-4. [品类 4：类库与核心 SDK 型 (Library / SDK)](#品类-4类库与核心-sdk-型-library--sdk)
-5. [品类 5：完整应用与 Web 服务型 (Fullstack App)](#品类-5完整应用与-web-服务型-fullstack-app)
-6. [品类 6：文档与知识库型 (Docs / Knowledge Base)](#品类-6文档与知识库型-docs--knowledge-base)
-7. [动态 Badge 速查与防踩坑](#动态-badge-速查与防踩坑)
+1. [动态 Badge 速查矩阵](#动态-badge-速查矩阵)
+2. [品类 1：AI Agent 技能型 (Skill / Tool) 完整模板](#品类-1ai-agent-技能型-skill--tool-完整模板)
+3. [品类 2：系统与 CLI 诊断工具型 (CLI / System Utility) 完整模板](#品类-2系统与-cli-诊断工具型-cli--system-utility-完整模板)
+4. [品类 3：前端与多媒体生成型 (Frontend / Media Generator) 完整模板](#品类-3前端与多媒体生成型-frontend--media-generator-完整模板)
+5. [品类 4：类库与核心 SDK 型 (Library / SDK) 完整模板](#品类-4类库与核心-sdk-型-library--sdk-完整模板)
+6. [品类 5：完整应用与 Web 服务型 (Fullstack App) 完整模板](#品类-5完整应用与-web-服务型-fullstack-app-完整模板)
+7. [品类 6：文档与知识库型 (Docs / Knowledge Base) 完整模板](#品类-6文档与知识库型-docs--knowledge-base-完整模板)
+8. [多平台通用下载与安装表格集合](#多平台通用下载与安装表格集合)
 
 ---
 
-## 品类 1：AI Agent 技能型 (Skill / Tool)
+## 动态 Badge 速查矩阵
 
-**适用代表**：`github-oss-prep`、`skill-doctor` 等 AI 助手扩展技能。
-
-### 核心设计要求
-- 顶部居中 Header：双语一句话定位 + Agent Skills 兼容徽章 + 动态 Release 徽章。
-- **快速开始第一屏必须提供：方式 A（一句话发给 Agent 自动安装）**，极致降低使用门槛。
-- 跨平台标准安装路径（`~/.claude/`、`~/.codex/`、`~/.cursor/`、`~/.agents/`），**严禁出现任何本地私有盘符与机器路径**。
-- 单层 Reference Map：标明各参考文档的阅读时机与时间估算。
-- Zero-Token 本地执行与只读安全承诺。
-
----
-
-## 品类 2：系统与 CLI 诊断工具型 (CLI / System Utility)
-
-**适用代表**：`windows-cleanup-optimize`、`network-slow-diagnosis` 等系统级工具。
-
-### 核心设计要求
-- 用户痛点剖析：用 2~3 个真实场景痛点开篇。
-- **ASCII 流程图 / 架构判定树**：让用户一眼看懂分层排查或清理逻辑。
-- **6 大疑难杂症实战速查表**：以“典型现象 → 根因分类 → 核心排查命令 → 官方治理方案”表格呈现。
-- **安全铁律声明**：明确声明 Dry-Run 试跑、只读优先（Zero Mutation）或零破坏（Zero Harm）。
-- **操作系统与权限兼容矩阵**：标明 Windows 10/11/24H2、Linux、macOS 支持度与管理员权限需求。
-
----
-
-## 品类 3：前端与多媒体生成型 (Frontend / Media Generator)
-
-**适用代表**：`notebook-video`、Remotion 渲染工程、Canvas 视觉组件等。
-
-### 核心设计要求
-- **视觉效果 Gallery 演示**：首屏放置高画质 WebP / MP4 / GIF 动图展示实际生成效果。
-- **多画布比例兼容矩阵**：清晰说明 16:9 宽屏、4:3 讲座、3:4 社交短片、9:16 竖屏短视频适配。
-- **宽泛依赖兼容区间**：标明框架依赖范围（如 `react: ^18.2.0 || ^19.0.0`，`remotion: ^4.0.0`）。
-- **资产流水线与渲染流程**：从输入文案/素材到最终 MP4 导出的流水线图。
-
----
-
-## 品类 4：类库与核心 SDK 型 (Library / SDK)
-
-**适用代表**：npm 包、PyPI 库、Rust Crate 等供其他开发者调用的库。
-
-### 核心设计要求
-- 包管理器安装徽章（npm / PyPI / Crates.io / NuGet）。
-- **5 行极简极速 Hello World 代码块**：1 分钟内让开发者跑通最小示例。
-- **TypeScript / Python 类型定义与完整 API 参数表格**。
-- **错误处理范式与 SemVer 向后兼容性承诺**。
-
----
-
-## 品类 5：完整应用与 Web 服务型 (Fullstack App)
-
-**适用代表**：独立 Web 应用、Electron 桌面端、全栈服务端。
-
-### 核心设计要求
-- 在线 Live Demo 体验按钮 + 1 键云端部署按钮（Vercel / Docker / Railway）。
-- `.env.example` 环境变量完整配置清单与必填项说明。
-- 前后端通信架构与数据库拓扑图。
-
----
-
-## 品类 6：文档与知识库型 (Docs / Knowledge Base)
-
-**适用代表**：技术指南、Curated 资源清单、架构标准库。
-
-### 核心设计要求
-- 树状思维导图与全量知识分类索引。
-- 知识收录与贡献准则（Content Inclusion Criteria）。
-- 自动化链接健康检查与引用格式规范。
-
----
-
-## 动态 Badge 速查与防踩坑
-
-### 动态 Badge 官方标准语法
 ```markdown
-<!-- License -->
+<!-- License 徽章 -->
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-<!-- 动态 Release (自动读取 GitHub 最新 Release，严禁写死版本号) -->
+<!-- 动态 Release 徽章（自动读取最新 Tag，严禁硬编码版本） -->
 [![Release](https://img.shields.io/github/v/release/{owner}/{repo}?sort=semver)](https://github.com/{owner}/{repo}/releases)
 
-<!-- Agent Skills 兼容标记 -->
-[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
+<!-- 包管理器动态版本 (npm / PyPI / Crates) -->
+[![npm version](https://img.shields.io/npm/v/{pkg-name}.svg)](https://www.npmjs.com/package/{pkg-name})
+[![PyPI version](https://img.shields.io/pypi/v/{pkg-name}.svg)](https://pypi.org/project/{pkg-name}/)
+[![Crates.io](https://img.shields.io/crates/v/{pkg-name}.svg)](https://crates.io/crates/{pkg-name})
 
-<!-- 平台支持 -->
-[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20%7C%2024H2-lightgrey)](SKILL.md)
+<!-- CI 状态徽章 -->
+[![CI Status](https://github.com/{owner}/{repo}/actions/workflows/ci.yml/badge.svg)](https://github.com/{owner}/{repo}/actions)
 
-<!-- GitHub Stars -->
+<!-- 平台支持与 Stars 徽章 -->
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](SKILL.md)
 [![GitHub Stars](https://img.shields.io/github/stars/{owner}/{repo}?style=social)](https://github.com/{owner}/{repo}/stargazers)
 ```
 
-### 避坑铁律
-1. **严禁硬编码版本号**：绝不要写 `badge/version-1.1.0-blue`，一律使用动态 API 徽章。
-2. **严禁本地盘符与用户名**：安装命令中必须使用标准 `~/.claude/skills/...`，不得出现真实机器路径。
+---
+
+## 品类 1：AI Agent 技能型 (Skill / Tool) 完整模板
+
+```markdown
+# 📦 项目名称 / Project Name
+
+<div align="center">
+
+**一句话中文功能与价值描述**
+
+**One-liner English description of core capabilities and benefits.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/{owner}/{repo}?sort=semver)](CHANGELOG.md)
+[![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
+[![GitHub Stars](https://img.shields.io/github/stars/{owner}/{repo}?style=social)](https://github.com/{owner}/{repo}/stargazers)
+
+[English](#english) | [中文](#chinese)
+
+</div>
+
+---
+
+## 📖 这是什么？
+
+说明该技能解决的具体痛点场景与核心价值（2~3 段）。
+
+## ✨ 核心特性
+
+| 核心特性 | 功能说明 | 带来价值 |
+|---|---|---|
+| **特性 1** | 功能描述 | 价值收益 |
+| **特性 2** | 功能描述 | 价值收益 |
+
+---
+
+## 🚀 快速开始
+
+### 方式 A：把一句话发给任意 Agent（最推荐）
+
+> 请安装 {repo} 技能：克隆 `https://github.com/{owner}/{repo}` 到你的 skills 目录（如 `~/.claude/skills/{repo}` 或 `~/.agents/skills/{repo}`），并确认安装成功。
+
+### 方式 B：GitHub CLI 2.90+（一行命令）
+
+```bash
+gh skill install {owner}/{repo} {name} --agent claude-code --scope user
+```
+
+### 方式 C：多平台手动安装
+
+| 平台 | 安装命令 |
+|---|---|
+| **Claude Code** | `git clone https://github.com/{owner}/{repo}.git ~/.claude/skills/{repo}` |
+| **Codex** | `git clone https://github.com/{owner}/{repo}.git ~/.codex/skills/{repo}` |
+| **Cursor** | `git clone https://github.com/{owner}/{repo}.git ~/.cursor/skills/{repo}` |
+| **通用 Agents** | `git clone https://github.com/{owner}/{repo}.git ~/.agents/skills/{repo}` |
+
+---
+
+## 🔒 安全与隐私原则
+
+- **纯只读 / 先审后改**：说明技能的操作权限边界。
+- **零 Token 本地运行**：说明无需额外 API 消耗。
+
+## 📥 下载与获取
+
+| 方式 | 命令 / 链接 |
+|---|---|
+| **HTTPS** | `git clone https://github.com/{owner}/{repo}.git` |
+| **SSH** | `git clone git@github.com:{owner}/{repo}.git` |
+| **ZIP** | [下载 ZIP](https://github.com/{owner}/{repo}/archive/refs/heads/main.zip) |
+| **单文件** | `curl -O https://raw.githubusercontent.com/{owner}/{repo}/main/SKILL.md` |
+
+## 📄 开源协议
+
+本项目采用 [MIT 许可证](LICENSE) 开源。
+```
+
+---
+
+## 品类 2：系统与 CLI 诊断工具型 (CLI / System Utility) 完整模板
+
+```markdown
+# 🛠️ 工具名称 / Tool Name
+
+<div align="center">
+
+**专治系统级疑难杂症 · 纯只读探测 · 毫秒级数据说话 · 零破坏安全保障**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/{owner}/{repo}?sort=semver)](CHANGELOG.md)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20%7C%2024H2-lightgrey)](SKILL.md)
+
+</div>
+
+---
+
+## 📖 痛点解构
+
+描述 3 个典型疑难用户痛点（如开网页卡死 3 秒、上行吃满、休眠唤醒延迟）。
+
+## 📊 分层架构流程图
+
+```
+[输入: 用户遇到系统变慢 / 故障]
+                 │
+      [第 1 层: 物理与硬件层诊断]
+                 │
+      [第 2 层: 协议与系统调度诊断]
+                 │
+      [第 3 层: 后台资源与瓶颈定位]
+                 │
+      [输出: 确凿毫秒级证据链 + 官方治理建议]
+```
+
+## 🎯 常见疑难杂症实战速查表
+
+| 典型现象 | 根因分类 | 核心排查命令 | 官方治理方案 |
+|---|---|---|---|
+| **现象 1** | 根因 1 | `命令 1` | 解决对策 1 |
+| **现象 2** | 根因 2 | `命令 2` | 解决对策 2 |
+
+## 📥 安装与下载方式
+
+| 安装渠道 | 安装命令 / 链接 |
+|---|---|
+| **Winget (Windows)** | `winget install {owner}.{repo}` |
+| **Scoop (Windows)** | `scoop install {repo}` |
+| **Homebrew (macOS)** | `brew install {owner}/tap/{repo}` |
+| **Release 预编译包** | [下载 .exe / .zip 资产](https://github.com/{owner}/{repo}/releases) (含 SHA-256 校验) |
+| **源码运行** | `git clone https://github.com/{owner}/{repo}.git` |
+```
+
+---
+
+## 品类 3：前端与多媒体生成型 (Frontend / Media Generator) 完整模板
+
+```markdown
+# 🎬 项目名称 / Media Generator
+
+<div align="center">
+
+**高质量多媒体生成与渲染引擎 · 支持多画布比例 · 宽泛框架兼容**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/{pkg-name}.svg)](https://www.npmjs.com/package/{pkg-name})
+
+</div>
+
+---
+
+## 🎨 视觉效果预览 (Gallery)
+
+> 此处嵌入 WebP / MP4 / GIF 动图展示生成效果。
+
+## 📐 画布多比例适配矩阵
+
+| 画布比例 | 分辨率 | 适用场景 |
+|---|---|---|
+| **16:9** | 1920x1080 | 横屏视频 / 讲座演练 |
+| **9:16** | 1080x1920 | 手机竖屏短视频 |
+| **4:3** | 1440x1080 | 传统复古演示 |
+| **3:4** | 1080x1440 | 社交图文短视频 |
+
+## 📦 依赖兼容性区间
+
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0",
+    "remotion": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+```
+
+## 🚀 极速开始
+
+```bash
+# npm
+npm install {pkg-name}
+
+# pnpm
+pnpm add {pkg-name}
+
+# yarn
+yarn add {pkg-name}
+```
+```
+
+---
+
+## 品类 4：类库与核心 SDK 型 (Library / SDK) 完整模板
+
+```markdown
+# 📚 SDK 名称 / Library Name
+
+<div align="center">
+
+**轻量、高效、类型安全的跨平台核心 SDK · 零外部冗余依赖**
+
+[![npm](https://img.shields.io/npm/v/{pkg-name}.svg)](https://www.npmjs.com/package/{pkg-name})
+[![PyPI](https://img.shields.io/pypi/v/{pkg-name}.svg)](https://pypi.org/project/{pkg-name}/)
+[![Crates.io](https://img.shields.io/crates/v/{pkg-name}.svg)](https://crates.io/crates/{pkg-name})
+
+</div>
+
+---
+
+## ⚡ 5 行极简极速示例 (Hello World)
+
+```typescript
+import { createClient } from '{pkg-name}';
+
+const client = createClient({ apiKey: process.env.API_KEY });
+const result = await client.execute({ prompt: "Hello World" });
+console.log(result.data);
+```
+
+## 📥 安装
+
+| 包管理器 | 命令 |
+|---|---|
+| **npm** | `npm install {pkg-name}` |
+| **pnpm** | `pnpm add {pkg-name}` |
+| **pip** | `pip install {pkg-name}` |
+| **cargo** | `cargo add {pkg-name}` |
+
+## 📖 API 参数表格
+
+| 方法 | 参数 | 返回值 | 说明 |
+|---|---|---|---|
+| `execute(options)` | `RequestOptions` | `Promise<Response>` | 执行核心请求 |
+```
+
+---
+
+## 品类 5：完整应用与 Web 服务型 (Fullstack App) 完整模板
+
+```markdown
+# 🌐 应用名称 / Web Service
+
+<div align="center">
+
+**现代化全栈 Web 应用 · 一键部署 · 开箱即用**
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/{owner}/{repo})
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template)
+
+</div>
+
+---
+
+## 🚀 一键云端部署与 Docker
+
+```bash
+# Docker 运行
+docker run -d -p 3000:3000 --env-file .env.production ghcr.io/{owner}/{repo}:latest
+
+# Docker Compose
+docker compose up -d
+```
+
+## ⚙️ 环境变量清单 (`.env.example`)
+
+| 变量名 | 必填 | 默认值 | 说明 |
+|---|---|---|---|
+| `DATABASE_URL` | 是 | - | PostgreSQL 数据库连接串 |
+| `PORT` | 否 | `3000` | 服务监听端口 |
+```
+
+---
+
+## 品类 6：文档与知识库型 (Docs / Knowledge Base) 完整模板
+
+```markdown
+# 📚 知识库名称 / Knowledge Base
+
+<div align="center">
+
+**权威、全面、结构化的技术知识库与最佳实践指南**
+
+</div>
+
+---
+
+## 🗺️ 知识索引与分类地图
+
+- [📁 架构设计指南](#)
+- [📁 安全规范与合规](#)
+- [📁 性能调优实战](#)
+
+## 🤝 知识贡献准则
+
+提交新条目时请遵循：
+1. 必须提供官方来源链接或实测验证数据；
+2. 保持中英双语术语一致。
+```
+
+---
+
+## 多平台通用下载与安装表格集合
+
+在任意 README 中，可根据项目实际支持的渠道选择复制以下安装表格：
+
+### 1. 包管理器一览表
+```markdown
+| 平台 / 包管理器 | 安装命令 | 说明 |
+|---|---|---|
+| **npm (Global)** | `npm install -g <package>` | 全局安装命令行工具 |
+| **npx (无需安装)** | `npx <package>` | 临时直接执行 |
+| **pip (Python)** | `pip install <package>` | 从 PyPI 安装模块 |
+| **cargo (Rust)** | `cargo install <package>` | 从 Crates.io 编译安装 |
+| **Homebrew (macOS)**| `brew install <owner>/tap/<package>` | macOS/Linux 软件包管理 |
+| **Winget (Windows)** | `winget install <owner>.<package>` | Windows 官方应用管理 |
+| **Scoop (Windows)** | `scoop install <package>` | Windows 开发者工具管理 |
+```
+
+### 2. 容器与镜像一览表
+```markdown
+| 镜像源 | 拉取命令 |
+|---|---|
+| **GitHub Container Registry** | `docker pull ghcr.io/<owner>/<repo>:latest` |
+| **Docker Hub** | `docker pull <owner>/<repo>:latest` |
+```

@@ -1,32 +1,30 @@
-# Obsidian
-.obsidian/
-.obsidian/workspace.json
-
-# OS generated
+# OS and editor files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 desktop.ini
-
-# Editor
-*.swp
-*.swo
-*~
-.vscode/
 .idea/
-
-# Logs
-*.log
+.vscode/
 
 # Python
 __pycache__/
 *.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+dist/
+build/
+*.egg-info/
+.venv/
+venv/
 
-# 本地审计残留 / 会话状态（勿提交）
+# Node
+node_modules/
+.next/
+.turbo/
+renders/
+
+# Audit and temp reports
 audit-report.txt
-.mimosa/
-nul
+*.log
+scratch/
+tmp/

@@ -1,6 +1,6 @@
 # GitHub 2026 官方社区健康文件库与模板规范
 
-> 对标：GitHub Insights → Community Standards 100% 满分考核标准。
+> 对标：GitHub Insights → Community Standards 100% 满分考核标准与自动化流水线。
 
 ---
 
@@ -12,7 +12,9 @@
    - [模板全局配置 (`config.yml`)](#13-模板全局配置-githubissue_templateconfigyml)
 2. [合并请求模板 (`pull_request_template.md`)](#2-合并请求模板-githubpull_request_templatemd)
 3. [安全策略 (`SECURITY.md`)](#3-安全策略-securitymd)
-4. [编码规范与换行符文件](#4-编码规范与换行符文件)
+4. [GitHub Actions CI/CD 多版本矩阵工作流](#4-github-actions-cicd-多版本矩阵工作流)
+5. [Dependabot 自动化依赖安全更新 (`dependabot.yml`)](#5-dependabot-自动化依赖安全更新-githubdependabotyml)
+6. [代码规范与换行符文件 (`.editorconfig` / `.gitattributes`)](#6-代码规范与换行符文件-editorconfig--gitattributes)
 
 ---
 
@@ -159,7 +161,95 @@ contact_links:
 
 ---
 
-## 4. 编码规范与换行符文件
+## 4. GitHub Actions CI/CD 多版本矩阵工作流
+
+### 4.1 Node.js 矩阵 CI (`.github/workflows/ci-node.yml`)
+```yaml
+name: CI (Node.js)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test
+```
+
+### 4.2 Python 矩阵 CI (`.github/workflows/ci-python.yml`)
+```yaml
+name: CI (Python)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m unittest discover tests
+```
+
+---
+
+## 5. Dependabot 自动化依赖安全更新 (`.github/dependabot.yml`)
+
+```yaml
+version: 2
+updates:
+  # 监控 GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions-dependencies:
+        patterns:
+          - "*"
+
+  # 监控 npm (若为 Node 项目)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+
+  # 监控 pip (若为 Python 项目)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+```
+
+---
+
+## 6. 代码规范与换行符文件 (`.editorconfig` / `.gitattributes`)
 
 ### `.editorconfig`
 ```ini
