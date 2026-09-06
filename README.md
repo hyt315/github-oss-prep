@@ -145,6 +145,7 @@ python scripts/selftest.py
 | 参考文档 | 核心内容 | 推荐阅读时机 | 预估耗时 |
 |---|---|---|---|
 | 📑 [**十大品类完整 README 模板库 (`readme-template.md`)**](references/readme-template.md) | 10 大软件形态完整开箱即用 Markdown 骨架与现代终端运行器表 | 为项目生成或重构 README 时 | 4 分钟 |
+| 🚨 [**开源准备避坑库与官方规范基线 (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | GitHub Insights 100% 门禁、Git 历史凭据残留洗库与 CI 供应链 Action 锁定 | 评估安全基线与排查深水陷阱时 | 4 分钟 |
 | 🛡️ [**五重隐私与安全扫描 (`privacy-scan.md`)**](references/privacy-scan.md) | 5 重扫描防御网、真伪泄露实战比对表与脱敏规则 | 执行本地安全自检与脱敏排查时 | 3 分钟 |
 | 🏛️ [**社区健康文件与 CI 模板 (`community-templates.md`)**](references/community-templates.md) | 现代交互式 YAML Issue Forms、Node/Python 矩阵 CI 工作流与 Dependabot | 补齐 GitHub 社区文件与持续集成时 | 3 分钟 |
 | 🚀 [**全渠道分发与发版指南 (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv、npm、HuggingFace、ChromeStore、Docker 发版实操、国内镜像源与 Checksums | 发布到全球平台或 GitHub Release 时 | 4 分钟 |
@@ -174,6 +175,8 @@ github-oss-prep/
 ├── scripts/
 │   ├── validate_repo.py              # 仓库结构、规范与隐私安全校验器
 │   └── selftest.py                   # 自动化回归自测脚本
+├── tests/
+│   └── test_skill.py                 # Pytest 自动化测试套件入口
 ├── .github/
 │   ├── CODEOWNERS                    # 代码审查者配置
 │   ├── pull_request_template.md      # 标准 PR 模板
@@ -183,6 +186,7 @@ github-oss-prep/
 │       ├── feature_request.yml       # 交互式功能建议表单
 │       └── config.yml                # Issue 模板选择器配置
 └── references/                       # 深度参考文档
+    ├── github-oss-prep-pitfalls.md   # 开源准备核心避坑库与官方规范基线
     ├── readme-template.md            # 十大品类专属 README 完整模板库
     ├── privacy-scan.md               # 五重深度隐私与环境安全扫描指南
     ├── community-templates.md        # GitHub 2026 社区文件库与 CI 模板

@@ -143,6 +143,7 @@ Suppose you have a local Python CLI utility, MCP Server, or browser extension re
 | Reference Guide | Core Focus | When to Read | Estimated Time |
 |---|---|---|---|
 | 📑 [**10 Universal Archetype README Engines (`readme-template.md`)**](references/readme-template.md) | Complete copy-pasteable Markdown skeletons and 2026 CLI runner tables | When generating or rewriting READMEs | 4 mins |
+| 🚨 [**OSS Prep Killer Pitfalls & Baselines (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | GitHub Insights 100% gates, Git history secret scrubbing & CI supply-chain action pinning | When auditing safety baselines and avoiding deep pitfalls | 4 mins |
 | 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | 5-layer interception rules, real-leak comparison table, and sanitization | When performing security audits and sanitization | 3 mins |
 | 🏛️ [**Community Profile & CI Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, Node/Python matrix CI, and Dependabot | When completing GitHub Community Standards & CI | 3 mins |
 | 🚀 [**All-Ecosystem Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv, npm, HuggingFace, ChromeStore, Docker publishing, and Checksums | When publishing to registries or GitHub Release | 4 mins |
@@ -172,6 +173,8 @@ github-oss-prep/
 ├── scripts/
 │   ├── validate_repo.py              # Structure, hygiene & security validator
 │   └── selftest.py                   # Automated regression test runner
+├── tests/
+│   └── test_skill.py                 # Pytest automated test suite entry
 ├── .github/
 │   ├── CODEOWNERS                    # Code owners config
 │   ├── pull_request_template.md      # Standard PR template
@@ -181,6 +184,7 @@ github-oss-prep/
 │       ├── feature_request.yml       # Interactive Feature request form
 │       └── config.yml                # Template selector config
 └── references/                       # In-depth reference guides
+    ├── github-oss-prep-pitfalls.md   # OSS Prep Killer Pitfalls & Baselines
     ├── readme-template.md            # 10 Universal Archetype complete README template engines
     ├── privacy-scan.md               # 5-Layer deep privacy and environment scan guide
     ├── community-templates.md        # GitHub 2026 Community Profile & CI pack
