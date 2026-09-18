@@ -46,28 +46,31 @@
 ## 📊 开源准备全流程架构
 
 ```
-[输入: 本地任意待开源项目 / 目录]
+[输入：本地任意待开源项目 / 目录]
                  │
-      [Step 0: 十大全景品类识别与定位]
-      精准判定: AI Skill / MCP Server / 模型权重 / CLI 工具 / 浏览器扩展 / IaC / ...
+      [Step 0: 定位（目标用户 + 核心价值 + 可验证结果）]
+      精准判定：AI Skill / MCP Server / 模型权重 / CLI 工具 / 浏览器扩展 / IaC / ...
                  │
-      [Step 1: 五重深度安全扫描]
-      拦截 API 密钥 / 私有路径指纹 / 内部会话 ID / Git URL 污染 / 垃圾缓存
+      [Step 1: 扫描（识别类型 + 检查缺失、薄弱与风险项）]
+      对照 GitHub Community Profile 考核项检查
                  │
-      [Step 2: 2026 社区与 CI 补齐]
-      生成交互式 YAML Issue Forms / PR 模板 / SECURITY.md / CI / Dependabot
+      [Step 2: 整理（补齐缺失文件 + 经确认改进薄弱文件）]
+      生成中英双语社区健康文件
                  │
-      [Step 3: 渐进式专属 README 门面渲染]
-      遵循渐进式披露，定向调阅专属品类完整骨架 (含动态 Shields 徽章)
+      [Step 3: 验证（内容 + 隐私 + 来源许可 + 干净环境运行）]
+      五重深度安全扫描，确保无敏感信息泄露
                  │
-      [Step 4: 全生态分发与包管理配置]
-      配置 uvx / bunx / HuggingFace / ChromeStore / gh skill / Checksums
+      [Step 4: 仓库门面（README + Description + Topics + 社交预览）]
+      渐进式披露，定向调阅专属品类完整骨架
                  │
-      [Step 5: 干净环境回归自测]
-      运行 scripts/selftest.py，确保 100% 满分通过质量门禁
+      [Step 5: 发布确认 → 分支/PR（默认）或个人直推（可选）]
+      public-safe 或 solo-fast 双模式
                  │
-      [Step 6: 分阶段授权发布]
-      经用户明确确认后推送 GitHub、打 Tag 并发布 GitHub Release
+      [Step 6: Release + 多平台分发 + 版本一致性验证]
+      uv/PyPI/npm/HuggingFace/ChromeStore/Docker/Homebrew/Crates.io
+                 │
+      [Step 7: 发现与增长（Launch Kit + 定向发布 + 反馈闭环）]
+      Stranger Test、渠道选择、发布节奏
 ```
 
 ---
