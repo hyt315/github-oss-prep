@@ -1,13 +1,13 @@
-# 🚀 GitHub 开源准备 / GitHub OSS Prep
+# 📦 GitHub 开源准备 / GitHub OSS Prep
 
 <div align="center">
 
-**将任意项目美化为专业级 GitHub 开源版本，补齐全套社区健康文件与 CI 自动化，构建专属门面与现代全渠道分发**
+**将任意项目美化为适合 GitHub 发布的专业级开源版本，补齐全套社区健康文件与 CI 自动化，构建专属针对性门面与全生态分发。**
 
 **Turn any project into a polished, GitHub-ready open-source repository with full community health files, CI automation, and tailored multi-channel distribution.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.2.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v3.2.0)
+[![Release](https://img.shields.io/github/v/release/hyt315/github-oss-prep?sort=semver)](CHANGELOG.md)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
 [![Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20Python)-brightgreen)](SKILL.md)
 [![GitHub Stars](https://img.shields.io/github/stars/hyt315/github-oss-prep?style=social)](https://github.com/hyt315/github-oss-prep/stargazers)
@@ -18,240 +18,136 @@
 
 ---
 
-## 中文
-
 ## 📖 这是什么？
 
-**GitHub 开源准备** 是一个 AI Agent Skill，专为即将开源的项目设计。它会自动扫描项目结构、识别类型、补齐缺失的社区健康文件（LICENSE、README、Issue 模板等），并通过隐私扫描确保无敏感信息泄露，最后支持一键推送到 GitHub。
+将代码、智能体或知识库项目推送到 GitHub 开源时，开发者往往面临这些繁琐痛点：
+- 缺少合规的 `LICENSE`、`CODE_OF_CONDUCT.md`、`SECURITY.md` 或现代 YAML 格式的 Issue 表单，导致 GitHub Insights → Community 健康度无法达到 100%；
+- README 结构泛化千篇一律，无法突出 AI 技能、MCP Server、大模型/GGUF、系统 CLI、浏览器扩展或全栈 Web 应用的独特核心价值；
+- 缺少 `uvx`、`bunx`、`pnpm dlx`、Hugging Face、Chrome Web Store 的具体发版指令与 CI 矩阵测试；
+- 不慎把本地绝对路径（`<user_home>`）、私有 Agent 会话标记、甚至 API 密钥与 Git 凭据推送到公共仓库造成泄露。
 
-### ✨ 核心特性
+**`github-oss-prep`** 是一个专为 AI Agent（与开源作者）打造的专业级 GitHub 开源准备技能。它确立了 **渐进式披露原则（Progressive Disclosure）**，内置 **十大全景项目品类专属 README 完整模板库**、**全生态发版实操指南**、**五重深度环境与隐私安全审计网** 与 **GitHub 2026 社区与 CI 自动化文件库**，实现一键规范化整理与安全发布。
+
+---
+
+## ✨ 核心特性
 
 | 核心模块 | 覆盖功能 | 带来价值 |
 |---|---|---|
-| **7 步完整工作流程** | Step 0 定位 → Step 7 推广 | 从项目定位到对外推广的全流程指导 |
-| **渐进式披露架构** | 定向调阅专属规范，严格隔离无关品类 | 杜绝上下文膨胀与跨品类交叉污染 |
-| **五重深度隐私安全网** | 拦截 API Key、私有路径指纹、内部会话 ID、Git Remote Token、构建缓存 | 100% 杜绝敏感凭据与个人开发环境泄露 |
+| **十大全景品类 README 引擎** | 覆盖 AI Skill、MCP Server、AI 模型/GGUF、CLI 工具、多媒体、SDK、浏览器扩展、IaC 配置、Web 应用、Awesome 清单 | 告别泛化概念，直接复制填空，精准呈现各类项目核心卖点 |
+| **渐进式披露执行铁律** | 依据品类判定结果定向调阅专属规范，严格隔离无关品类 | 杜绝上下文膨胀与跨品类交叉污染，生成质量 100% 聚焦 |
+| **五重深度隐私安全网** | 拦截 API Key、私有路径指纹、内部会话 ID、Git Remote Token、构建缓存，附带**真伪泄露案例比对表** | 100% 杜绝敏感凭据与个人开发环境泄露 |
 | **2026 社区与 CI 自动化库** | 交互式 YAML Issue Forms、PR 模板、`SECURITY.md`、**Node/Python 矩阵 CI** 与 **Dependabot** | 轻松获得 GitHub Community Profile 100% 满分并实现依赖自动安全更新 |
-| **全生态分发与发版实操** | **uv/PyPI、npm、HuggingFace、Chrome Web Store、Docker、Homebrew、Crates.io** 具体发版指南与 Release Checksums | 提供从本地代码到全球各大分发中心的全流程发版指令 |
-| **采用性验证门禁** | 干净 clone 验证安装、最小示例、测试、构建、来源许可与版本一致性 | 确保新用户可在 5 分钟内理解价值并完成首次运行 |
-| **安全发布双模式** | `public-safe` (分支/PR/CI) + `solo-fast` (直推) | 公开维护项目默认走 PR 流程；单人低风险改动可选择快速直推 |
-| **发现与增长策略** | Launch Kit、渠道选择、发布节奏、反馈闭环 | 为早期项目提供可复制的推广方法论 |
-| **元数据闭环验证** | Description 与 Topics 的实际写入与回读验证 | 不只在回复中列出，而是真正设置并验证 |
-| **轻量零依赖设计** | 纯 Python 标准库实现，100% 零外部依赖 | 易于部署和维护，无额外环境要求 |
+| **全生态分发与发版实操** | **uv/PyPI、npm、Hugging Face、Chrome Web Store、Docker、Homebrew、Crates.io** 具体发版指南与 Release Checksums | 提供从本地代码到全球各大分发中心的全流程发版指令 |
+| **轻量规范化工程架构** | 主干精简，单层 Reference Map 直达，配齐自动化回归自测 | 严守工程纪律，`skill-doctor` 37 项审查 100% PASS |
+
+---
+
+## 📊 开源准备全流程架构
+
+```
+[输入: 本地任意待开源项目 / 目录]
+                 │
+      [Step 0: 十大全景品类识别与定位]
+      精准判定: AI Skill / MCP Server / 模型权重 / CLI 工具 / 浏览器扩展 / IaC / ...
+                 │
+      [Step 1: 五重深度安全扫描]
+      拦截 API 密钥 / 私有路径指纹 / 内部会话 ID / Git URL 污染 / 垃圾缓存
+                 │
+      [Step 2: 2026 社区与 CI 补齐]
+      生成交互式 YAML Issue Forms / PR 模板 / SECURITY.md / CI / Dependabot
+                 │
+      [Step 3: 渐进式专属 README 门面渲染]
+      遵循渐进式披露，定向调阅专属品类完整骨架 (含动态 Shields 徽章)
+                 │
+      [Step 4: 全生态分发与包管理配置]
+      配置 uvx / bunx / HuggingFace / ChromeStore / gh skill / Checksums
+                 │
+      [Step 5: 干净环境回归自测]
+      运行 scripts/selftest.py，确保 100% 满分通过质量门禁
+                 │
+      [Step 6: 分阶段授权发布]
+      经用户明确确认后推送 GitHub、打 Tag 并发布 GitHub Release
+```
 
 ---
 
 ## 🚀 快速开始
 
-这是一个 AI Agent Skill，安装到任意 AI 编程助手后即可使用。
+这是一个标准的 AI Agent Skill —— 安装到你的 AI 助手后即可直接使用。
 
-### 它能做什么？
+### 方式 A：把一句话发给任意 Agent（最推荐、最通用）
 
-一句话：**把任意本地项目变成专业的 GitHub 开源仓库。** 自动补全 LICENSE、README、Issue/PR 模板等全套社区健康文件，隐私扫描确保无敏感信息泄露，最后推送到 GitHub。
+把下面这句话直接复制发送给你的 AI 助手，它会自动识别环境并克隆到正确的技能目录：
 
-### 典型使用场景
+> 请安装 github-oss-prep 技能：克隆 `https://github.com/hyt315/github-oss-prep` 到你的 skills 目录（如 `~/.claude/skills/github-oss-prep` 或 `~/.agents/skills/github-oss-prep`），并确认安装成功。
 
-- 你写了个工具/脚本，想开源但不知道怎么"包装" — 它帮你补齐所有标准文件
-- 你的项目 README 太简陋 — 它生成中英双语专业版
-- 你不确定有没有忘记删 API Key — 它自动扫描并提醒
-- 你不想手动创建 Issue 模板、PR 模板 — 它一键生成
+### 方式 B：GitHub CLI 2.90+（一行命令）
 
-### 怎么用
+```bash
+gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user
+```
 
-安装后直接告诉 AI 助手你的意图，Skill 会自动执行 **定位 → 扫描 → 整理 → 验证 → 仓库门面 → PR/发布 → Release → 发现与增长**。整理和 ZIP 交付不需要 GitHub 认证；远程发布、Release 和外部推广分别确认。
-
----
-
-## 📥 安装 / Installation
-
-### 一行命令安装
+### 方式 C：多平台手动安装
 
 | 平台 | 安装命令 |
-|------|----------|
+|---|---|
 | **Claude Code** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.claude/skills/github-oss-prep` |
 | **Codex** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.codex/skills/github-oss-prep` |
 | **Cursor** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.cursor/skills/github-oss-prep` |
+| **通用 Agents 目录** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.agents/skills/github-oss-prep` |
 
-> 安装后即可完成扫描、整理、隐私检查和 ZIP 交付，无需 GitHub Token。只有最终发布需要 GitHub 授权。
+### 方式 D：本地运行回归自测
 
-### GitHub 发布认证
-
-推荐顺序：
-
-1. 使用 AI 平台提供的官方 GitHub 连接器；
-2. 或在受信任终端运行 `gh auth login --web`；
-3. 两者均不可用时，Skill 仍会输出完整源码目录、ZIP、Description 和 Topics，供网页手动上传。
-
-不要把 PAT 写进公开仓库、聊天记录或 Git remote URL。需要 MCP 时，请使用 GitHub 当前维护的 [`github/github-mcp-server`](https://github.com/github/github-mcp-server)；旧的 `@modelcontextprotocol/server-github` npm 包已停止维护。
+```powershell
+python scripts/selftest.py
+```
 
 ---
 
-## 📥 下载 / Download
+## 🔒 安全与隐私原则
 
-### 源码下载
+- **先审后改（Audit Before Change）**：本地整理默认只读扫描并输出差异报告，绝不擅自强行覆盖用户现有文件。
+- **渐进式隔离（Progressive Isolation）**：处理特定项目时仅读取专属模板，杜绝上下文冗余与环境参数污染。
+- **五重严密防御**：对代码、文档、`.git/config` 与历史提交进行全面深度扫描，阻断任何敏感信息。
+- **分阶段明确授权**：本地开源整理、远程仓库创建、Release 打包分发与外部推广分别独立确认，绝不越权连带执行。
+
+---
+
+## 📥 下载与获取
 
 | 方式 | 命令 / 链接 |
-|------|------------|
+|---|---|
 | **HTTPS** | `git clone https://github.com/hyt315/github-oss-prep.git` |
 | **SSH** | `git clone git@github.com:hyt315/github-oss-prep.git` |
 | **GitHub CLI** | `gh repo clone hyt315/github-oss-prep` |
-| **ZIP 源码** | [下载 ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
-| **Tar 源码** | [下载 Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
+| **ZIP 压缩包** | [下载 ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
+| **Tar 归档** | [下载 Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
+| **单文件 (SKILL.md)** | `curl -O https://raw.githubusercontent.com/hyt315/github-oss-prep/main/SKILL.md` |
 
 ---
 
-## 💡 核心理念
+## 📖 深度参考文档导读
 
-- **先审后改**：保留有效内容；已有文件存在质量或安全问题时，展示差异后再修改
-- **按类型适配**：Skill 项目、代码项目、文档项目各有侧重
-- **可运行优先**：Community Profile 只是底线，干净环境可安装、可运行、可贡献才算完成
-- **PR 默认**：公开维护项目走分支、Draft PR、CI 和人工复核
-- **分步授权**：推送、Release、包发布和对外推广互不默认包含
-
----
-
-## 📁 文件结构
-
-```
-github-oss-prep/
-├── SKILL.md                          # Skill 核心定义
-├── README.md                         # 本文件
-├── LICENSE                           # MIT 协议
-├── .gitignore                        # Git 忽略规则
-├── CONTRIBUTING.md                   # 贡献指南
-├── CODE_OF_CONDUCT.md                # 行为准则
-├── SECURITY.md                       # 安全策略
-├── .github/
-│   ├── pull_request_template.md      # PR 模板
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.yml            # Bug 报告表单
-│       ├── feature_request.yml       # 功能建议表单
-│       └── doc_improvement.yml       # 文档改进表单
-└── references/                       # 参考文件
-    ├── readme-template.md            # README 模板
-    ├── description-guide.md          # Description 编写指南
-    ├── privacy-scan.md               # 隐私扫描规则
-    ├── mcp-push-guide.md             # 推送方案指南
-    ├── templates-and-formats.md      # 模板与格式合集
-    ├── release-and-distribution.md   # Release 与分发指南
-    ├── pr-and-release-workflow.md    # PR、CI、验证和发布门禁
-    ├── discovery-and-promotion.md    # 可发现性、Launch Kit 与推广闭环
-    ├── github-pat-setup.md           # PAT 配置教程
-    └── github-pat-comparison.md      # PAT 类型对比
-```
+| 参考文档 | 核心内容 | 推荐阅读时机 | 预估耗时 |
+|---|---|---|---|
+| 📑 [**十大品类完整 README 模板库 (`readme-template.md`)**](references/readme-template.md) | 10 大软件形态完整开箱即用 Markdown 骨架与现代终端运行器表 | 为项目生成或重构 README 时 | 4 分钟 |
+| 🛡️ [**五重隐私与安全扫描 (`privacy-scan.md`)**](references/privacy-scan.md) | 5 重扫描防御网、真伪泄露实战比对表与脱敏规则 | 执行本地安全自检与脱敏排查时 | 3 分钟 |
+| 🏛️ [**社区健康文件与 CI 模板 (`community-templates.md`)**](references/community-templates.md) | 现代交互式 YAML Issue Forms、Node/Python 矩阵 CI 工作流与 Dependabot | 补齐 GitHub 社区文件与持续集成时 | 3 分钟 |
+| 🚀 [**全渠道分发与发版指南 (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv、npm、HuggingFace、ChromeStore、Docker 发版实操、国内镜像源与 Checksums | 发布到全球平台或 GitHub Release 时 | 4 分钟 |
+| 🏷️ [**Description 与 Topics 指南 (`description-guide.md`)**](references/description-guide.md) | 精准 120 字仓库简介与高权重标签生成指南 | 设置 GitHub 仓库门面信息时 | 3 分钟 |
+| 🌐 [**开源发现与推广策略 (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Launch Kit 营销包、社交预览与全网发布渠道 | 准备发布与对外推广项目时 | 3 分钟 |
+| 🔐 [**GitHub 推送与 MCP 指引 (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | 官方 MCP 与标准 CLI 推送流程 | 执行远程推送与仓库创建时 | 2 分钟 |
+| 🚦 [**PR 与发布门禁工作流 (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | 分支、PR、CI 测试与发布自动化校验 | 建立持续集成与发版流水线时 | 3 分钟 |
 
 ---
 
-## 📚 端到端示例
+## 📄 开源协议
 
-假设有一个本地 Markdown 文档项目，想开源到 GitHub：
+本项目采用 [MIT 许可证](LICENSE) 开源。
 
-1. **安装**：克隆本仓库到 AI 助手的 skills 目录
-2. **扫描**：识别为文档项目 → 发现缺少 LICENSE、README、.gitignore
-3. **补齐**：生成对应文件，内容适配文档项目特性
-4. **审查**：隐私扫描通过，文件内容确认无误
-5. **交付**：确认仓库名和 Topics → 连接器/`gh` 发布，或输出 ZIP 手动上传
-6. **完成**：本地开源包一定可交付；授权可用时同步发布到 GitHub
+详见 [CHANGELOG.md](CHANGELOG.md) 了解版本演进历史。
 
 ---
 
-## 🤝 贡献
-
-请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)。
-
----
-
-## 📄 许可
-
-[MIT](LICENSE)
-
-版本变化见 [CHANGELOG.md](CHANGELOG.md)。
-
----
-
-## English
-
-## 📖 What is this?
-
-**GitHub OSS Prep** is an AI Agent Skill that transforms any local project into a professional GitHub open-source repository. It auto-detects project type, fills in missing community health files, scans for sensitive data, and pushes to GitHub — all in one workflow.
-
-### ✨ Core Features
-
-| Feature | Description |
-|---------|-------------|
-| 🔍 **Smart Scanning** | Identifies project type (Skill / Code / Docs) and checks against GitHub Community Profile standards |
-| 📝 **Auto-Fill Files** | Generates LICENSE, README, .gitignore, CONTRIBUTING, Issue/PR templates, and more |
-| 🛡️ **Privacy Protection** | Scans for API keys, emails, private IPs, real paths — with pre-push verification |
-| 📤 **Flexible Delivery** | Always produces a local ZIP; publishes through an official GitHub connector or authenticated `gh` CLI when available |
-| 🌐 **Bilingual Support** | All generated files support Chinese/English bilingual output |
-| 📦 **Multi-Platform** | Code projects support npm, PyPI, crates.io, Docker Hub, Homebrew distribution |
-
----
-
-## 🚀 Quick Start
-
-This is an AI Agent Skill — install it in any AI coding assistant and it's ready to use.
-
-### What it does
-
-In one sentence: **turn any local project into a professional GitHub open-source repo.** It auto-generates LICENSE, README, Issue/PR templates and other community health files, runs privacy scans to catch sensitive data, and pushes everything to GitHub.
-
-### Common use cases
-
-- You built a tool/script and want to open-source it but don't know how to "package" it — it fills in all the standard files
-- Your project's README is too bare — it generates a bilingual professional version
-- You're not sure if you forgot to remove an API key — it scans and alerts you
-- You don't want to manually create Issue templates and PR templates — it generates them in one shot
-
-### How to use
-
-Once installed, tell your AI assistant what you want. The Skill runs an adoption-focused workflow: **Position → Scan → Improve → Validate → Repository Surface → PR/Publish → Release → Discover**. Preparation and ZIP delivery never require GitHub authentication. Public projects default to a reviewable branch and Draft PR; remote publication, releases and external promotion require separate approval.
-
----
-
-## 📁 File Structure
-
-```
-github-oss-prep/
-├── SKILL.md                          # Core skill definition
-├── README.md                         # This file
-├── LICENSE                           # MIT License
-├── .gitignore                        # Git ignore rules
-├── CONTRIBUTING.md                   # Contribution guide
-├── CODE_OF_CONDUCT.md                # Code of conduct
-├── SECURITY.md                       # Security policy
-├── .github/
-│   ├── pull_request_template.md      # PR template
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.yml            # Bug report form
-│       ├── feature_request.yml       # Feature request form
-│       └── doc_improvement.yml       # Docs improvement form
-└── references/                       # Reference documents
-```
-
----
-
-## 📚 Examples
-
-Here's a real workflow: a local Markdown document project wants to go open-source:
-
-1. **Install**: Clone this repo into your AI assistant's skills directory
-2. **Scan**: Detected as docs project → Missing LICENSE, README, .gitignore
-3. **Fill**: Generated files tailored to the project
-4. **Review**: Privacy scan clean, content confirmed
-5. **Deliver**: Confirm repo name and Topics → connector/`gh` publish, or manual ZIP handoff
-6. **Done**: Open-source package is always delivered; GitHub publication follows when authentication is available
-
----
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
----
-
-## 📄 License
-
-[MIT](LICENSE)
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+> 🌏 **English: [README.en.md](./README.en.md)**
