@@ -1,17 +1,16 @@
-# GitHub Open Source Preparation / GitHub OSS Prep
+# 🚀 GitHub 开源准备 / GitHub OSS Prep
 
 <div align="center">
 
-**专业级开源项目准备工具：自动化生成社区健康文件、CI 工作流与全渠道分发方案**
+**将任意项目美化为专业级 GitHub 开源版本，补齐全套社区健康文件与 CI 自动化，构建专属门面与现代全渠道分发**
 
-**Professional open-source preparation tool: Automated generation of community health files, CI workflows, and multi-channel distribution strategies.**
+**Turn any project into a polished, GitHub-ready open-source repository with full community health files, CI automation, and tailored multi-channel distribution.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.2.0-green.svg)](https://github.com/hyt315/github-oss-prep/releases/tag/v3.2.0)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
 [![Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20Python)-brightgreen)](SKILL.md)
 [![GitHub Stars](https://img.shields.io/github/stars/hyt315/github-oss-prep?style=social)](https://github.com/hyt315/github-oss-prep/stargazers)
-[![Contributions](https://img.shields.io/badge/contributions-welcome-blue.svg)](CONTRIBUTING.md)
 
 [English](./README.en.md) | [中文](./README.md)
 
@@ -19,9 +18,11 @@
 
 ---
 
-## 📖 Overview
+## 中文
 
-**GitHub OSS Prep** is a professional AI Agent Skill designed for preparing projects for open-source publication on GitHub. It automatically scans project structure, identifies project types, generates missing community health files (LICENSE, README, Issue templates, etc.), performs privacy scanning to prevent sensitive information leakage, and supports one-click deployment to GitHub.
+## 📖 这是什么？
+
+**GitHub 开源准备** 是一个 AI Agent Skill，专为即将开源的项目设计。它会自动扫描项目结构、识别类型、补齐缺失的社区健康文件（LICENSE、README、Issue 模板等），并通过隐私扫描确保无敏感信息泄露，最后支持一键推送到 GitHub。
 
 ### ✨ 核心特性
 
