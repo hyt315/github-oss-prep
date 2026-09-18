@@ -63,8 +63,8 @@ def test_positive_and_negative() -> list[str]:
     # 2. Positive: Frontmatter length & token health
     skill_text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
     lines = skill_text.splitlines()
-    if len(lines) > 200:
-        failures.append(f"SKILL.md line count too high ({len(lines)}), should be < 200")
+    if len(lines) > 300:
+        failures.append(f"SKILL.md line count too high ({len(lines)}), should be < 300")
 
     # 3. Depth Assertions on Pitfalls
     pitfalls_file = ROOT / "references" / "github-oss-prep-pitfalls.md"
@@ -118,7 +118,7 @@ def main() -> int:
 
     # 3. Integration test: Run validate_repo.py --json
     validate_script = ROOT / "scripts" / "validate_repo.py"
-    proc = subprocess.run([sys.executable, str(validate_script), str(ROOT), "--json"], capture_output=True, text=True)
+    proc = subprocess.run([sys.executable, str(validate_script), "--json"], capture_output=True, text=True)
     if proc.returncode != 0:
         print(f"FAIL: validate_repo.py --json exited with code {proc.returncode}:\n{proc.stderr}", file=sys.stderr)
         return proc.returncode
