@@ -60,14 +60,15 @@ def main() -> int:
     
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
-    badge = re.search(r"version-([0-9]+\.[0-9]+\.[0-9]+)-", readme)
-    if not badge:
-        fail("README version badge not found")
-    version = badge.group(1)
-    if f"releases/tag/v{version}" not in readme:
-        fail("README badge link does not match badge version")
+    manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
+    version = manifest["version"]
+    # README may use either a static version badge (version-x.y.z-) or a dynamic
+    # release badge (github/v/release); the manifest is the single source of truth.
     if f"## [{version}]" not in changelog:
-        fail("CHANGELOG does not contain README badge version")
+        fail(f"CHANGELOG does not contain manifest version {version}")
+    badge = re.search(r"version-([0-9]+\.[0-9]+\.[0-9]+)-", readme)
+    if badge and badge.group(1) != version:
+        fail("README static badge version does not match manifest.json")
     
     secret_patterns = {
         "GitHub classic PAT": re.compile(r"ghp_[A-Za-z0-9]{30,}"),
