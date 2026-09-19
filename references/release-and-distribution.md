@@ -126,6 +126,9 @@ sha256sum dist/* > dist/checksums.txt
 gh release create v1.0.0 --title "v1.0.0 - Initial Release" --notes "发布说明" ./dist/*.zip ./dist/checksums.txt
 ```
 
+> ⚠️ **打了 tag ≠ 发了版**：GitHub 的"发行版（Releases）"页面只认 **Release 对象**，只推 tag 时页面不会变化（本仓库 `v3.3.0` 实测踩过：tag 在、Release 缺失，页面停留在 `v3.2.0`）。
+> 因此发布必须两步做完并**回读**：① `git push origin vX.Y.Z`（或一次性 URL 推 tag）② 创建 Release 对象（`gh release create` 或 `POST /repos/{owner}/{repo}/releases`），随后 `GET /repos/{owner}/{repo}/releases` 确认 `tag_name` 与 `name` 与本地一致。
+
 ---
 
 ## 8. Docker / OCI 镜像发布 (GitHub Packages / ghcr.io)

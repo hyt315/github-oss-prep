@@ -7,10 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+_No unreleased changes._
+
+## [3.3.1] - 2026-09-19
+
 ### Fixed
 
-- `.github/dependabot.yml` 收敛为仅 `github-actions`：本仓库没有 `package.json`/`pyproject.toml`，先前照抄模板里的 `npm` 与 `pip` 段，导致 `bec570b` 上 `pip` 与 `npm_and_yarn` 各 2 次 Dependabot 任务 failure（`github-actions` 两次均 success，已 API 回读确认）。
-- 模板文档补记该教训：只声明项目里真实存在的包生态。
+- `.github/dependabot.yml` 收敛为仅 `github-actions`：本仓库没有 `package.json`/`pyproject.toml`，而 `v3.3.0` 的快照照抄了模板里的 `npm` 与 `pip` 段，导致 `bec570b` 上 `pip` 与 `npm_and_yarn` 各 2 次 Dependabot 任务 failure（`github-actions` 两次均 success，已 API 回读确认）。`v3.3.1` 的 tag 快照即为修好的配置。
+- `references/community-templates.md` 补记该教训：**只声明项目里真实存在的包生态**，删掉用不到的段落而不是留作示例。
+
+### Changed
+
+- 发布纪律：`v3.3.0` 只推了 tag、没有 Release 对象（发行版页面停留在 v3.2.0），本轮补上 `v3.3.1` 的 GitHub Release，并把"tag + Release 两步都要做、且回读"写进流程。
 
 ## [3.3.0] - 2026-09-19
 
@@ -93,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed automatic token discovery from user directories and MCP configuration files.
 - Removed token-bearing Git remote URLs and instructions that display credentials.
 
+[3.3.1]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.3.1
 [3.3.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.3.0
 [3.2.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.2.0
 [3.1.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.1.0

@@ -1,7 +1,7 @@
 ---
 name: github-oss-prep
 description: "Use when preparing, publishing, launching, or improving a project for open-source adoption on GitHub. Triggers include GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、开源推广、oss prep、publish to GitHub, launch an open-source project, and prepare for open source."
-version: 3.3.0
+version: 3.3.1
 ---
 
 # GitHub 开源准备
