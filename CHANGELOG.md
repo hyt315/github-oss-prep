@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-_放置尚未发布的改动；发布时并入下一个版本号。_
+### Fixed
+
+- `.github/dependabot.yml` 收敛为仅 `github-actions`：本仓库没有 `package.json`/`pyproject.toml`，先前照抄模板里的 `npm` 与 `pip` 段，导致 `bec570b` 上 `pip` 与 `npm_and_yarn` 各 2 次 Dependabot 任务 failure（`github-actions` 两次均 success，已 API 回读确认）。
+- 模板文档补记该教训：只声明项目里真实存在的包生态。
 
 ## [3.3.0] - 2026-09-19
 

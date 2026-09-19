@@ -248,6 +248,7 @@ jobs:
 ## 5. Dependabot 自动化依赖安全更新 (`.github/dependabot.yml`)
 
 > 限额口径（官方 options reference）：`open-pull-requests-limit` **只作用于版本更新**，默认 **5**、可调（设大值等于取消限制）；**安全更新不受该限制、无数量上限**。
+> ⚠️ **只声明项目里真实存在的生态**：给没有 `package.json` 的仓库配 `npm`、没有 `pyproject.toml`/`requirements.txt` 的仓库配 `pip`，Dependabot 任务会以 failure 收场（本仓库实测踩过）。删掉用不到的段落，而不是留着当示例。
 
 ```yaml
 version: 2
@@ -262,14 +263,15 @@ updates:
         patterns:
           - "*"
 
-  # 监控 npm (若为 Node 项目)
+  # ↓↓ 以下两段仅在项目真的存在对应清单文件时保留，否则删除（否则任务失败）
+  # 监控 npm（需 package.json / package-lock.json）
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
 
-  # 监控 pip (若为 Python 项目)
+  # 监控 pip（需 pyproject.toml / requirements.txt）
   - package-ecosystem: "pip"
     directory: "/"
     schedule:

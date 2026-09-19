@@ -1,6 +1,8 @@
 version: 2
 updates:
-  # 监控 GitHub Actions（Action 以完整 SHA 锁定，由本生态负责滚动升级）
+  # 本仓库没有包清单文件（无 package.json / pyproject.toml / requirements.txt），
+  # 因此只监控 GitHub Actions。声明不存在的生态会让 Dependabot 任务直接失败
+  # （实测：npm_and_yarn 与 pip 两个 update 在 bec570b 上均为 failure）。
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -9,19 +11,3 @@ updates:
       actions-dependencies:
         patterns:
           - "*"
-
-  # 如为 Node 项目：监控 npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    # 说明：open-pull-requests-limit 仅作用于版本更新（默认 5，可调）；
-    # 安全更新不受该限制、无数量上限。（官方 dependabot options reference）
-
-  # 如为 Python 项目：监控 pip
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
