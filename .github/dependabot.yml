@@ -1,0 +1,27 @@
+version: 2
+updates:
+  # 监控 GitHub Actions（Action 以完整 SHA 锁定，由本生态负责滚动升级）
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions-dependencies:
+        patterns:
+          - "*"
+
+  # 如为 Node 项目：监控 npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    # 说明：open-pull-requests-limit 仅作用于版本更新（默认 5，可调）；
+    # 安全更新不受该限制、无数量上限。（官方 dependabot options reference）
+
+  # 如为 Python 项目：监控 pip
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5

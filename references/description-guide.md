@@ -1,6 +1,6 @@
 # Description 生成指南
 
-仓库 Description 是 GitHub 搜索和「第一眼」理解项目的重要信息。写好后在 Step 5 通过已授权的官方 GitHub 连接器或 GitHub CLI 实际设置 Description 与 Topics，并从仓库回读验证；无认证时将两者作为明确的待办和可复制内容交给用户手动填写，不能只生成后跳过。
+仓库 Description 是 GitHub 搜索和「第一眼」理解项目的重要信息。写好后在 Step 5 **按只读探测结果**选择路径（官方连接器 / 已登录的 `gh` / 同机 `github-upload` 流程）实际设置 Description 与 Topics，并从仓库回读验证；无可用认证时将两者作为明确的待办与可复制内容交给用户手动填写，不能只生成后跳过。
 
 ---
 
@@ -98,7 +98,7 @@
 ### SEO 优化要点
 
 **Description SEO 规则**：
-- **以主要关键词开头**：GitHub 搜索算法优先匹配开头的词
+- **以主要关键词开头**：便于人眼扫读与关键词匹配（GitHub 未公布描述字段的排序规则，不要把它当算法结论）
 - **提及平台/技术栈**：如 "for Kubernetes"、"built with Next.js"
 - **包含用例场景**：如 "self-hosted"、"CLI tool"
 

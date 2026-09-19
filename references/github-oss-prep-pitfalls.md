@@ -1,6 +1,6 @@
 # github-oss-prep 核心避坑库与官方规范基线
 
-<!-- skill-doctor: allow-block SEC002 -->
+<!-- 注：本文件含刻意示范的泄露样例（教学用途），相关行以 scan-ignore 标注；每处豁免都会在校验输出中作为 P2 显示 -->
 
 > 本指南聚合 GitHub 官方 2026 社区健康度标准、OpenSSF 供应链安全规范、顶级开源项目最佳实践与【冷门长尾探索池】中的生产级故障，为开源项目发布准备、安全脱敏与全渠道分发提供全景避坑与工业级基线。
 
@@ -17,15 +17,16 @@
 
 ## 一、 GitHub 官方规范与社区健康度基线
 
-### 1. Insights → Community 100% 完整门禁准则
-- **官方考评维度**：GitHub Insights 的 Community Standards 模块会实时检测仓库的 7 项核心基础设施，只有全量达标才能获得 100% 社区健康评级：
-  1. **Description**: 仓库首页右上角「About」简述与 Topics 主题标签；
-  2. **README**: 根目录或 `.github/` 下的标准项目门面；
-  3. **CODE_OF_CONDUCT**: 社区行为准则（推荐 Contributor Covenant 2.1）；
-  4. **CONTRIBUTING**: 贡献指南（开发环境搭建、分支规范、PR 提交流程）；
-  5. **LICENSE**: 明确的开源许可证（必须匹配 SPDX 标识符）；
-  6. **SECURITY.md**: 安全漏洞披露与响应策略；
-  7. **Issue / Pull Request Templates**: 规范化的问题报告与 PR 模板。
+### 1. 社区健康文件：官方口径（勿再写"7 件套 / 100%"）
+- **官方基线**：官方 "recommended community health files" 一节**用 "such as" 举例** README、CODE_OF_CONDUCT、LICENSE、CONTRIBUTING，并说明 **issue 模板可计分**。官方**没有**"7 项考评 / 100% 社区健康评级"这种口径——把非官方数字写进交付物属于自造标准。
+- **按需清单（不是分数项）**：
+  1. **README**：项目门面、快速开始、限制与求助渠道；
+  2. **LICENSE**：SPDX 标识符；**不能由组织级 `.github` 仓库兜底**，每个仓库必须自带；
+  3. **CODE_OF_CONDUCT**：多人协作时启用（当前 Contributor Covenant **3.0**，附版本 URL；本仓库自身暂为 2.1，升级需维护者确认）；
+  4. **CONTRIBUTING**：接受外部贡献时启用；
+  5. **SECURITY.md**：公开漏洞报告渠道（私有报告入口需在 Settings → Code security 开启）；
+  6. **Issue / PR 模板**：`.github/ISSUE_TEMPLATE/`（YAML 表单）与 `.github/pull_request_template.md`；
+  7. **Description / Topics**：门面信息，以 API 或网页设置，**不算文件项**。
 - **全局 `.github` 组织继承与覆盖机制**：
   - 可以在组织或个人账户下创建名为 `.github` 的特殊公开仓库，将 `CODE_OF_CONDUCT.md`、`CONTRIBUTING.md`、`SECURITY.md` 以及默认模板放入其中作为全账号全局兜底；
   - **⚠️ 踩坑警示**：Issue 和 PR 模板要实现跨仓库继承，`.github` 仓库必须是**公开（Public）**状态；如果目标仓库自身存在同名文件，将无条件覆盖全局默认配置。
@@ -64,7 +65,7 @@
 ### 2. CI/CD 供应链投毒与 GITHUB_TOKEN 权限过大
 - **病症**：直接在 GitHub Actions workflow 中使用第三方社区 Action，且未显式声明权限，依赖默认权限运行。
 - **供应链攻击路径**：
-  - GitHub 仓库默认赋予 `GITHUB_TOKEN` 过大的读写权限（默认可 push、release、写入 packages）；
+  - `GITHUB_TOKEN` 的默认权限随仓库创建时间与组织策略而变（新建个人仓库现为只读）；**永远显式声明 `permissions:`，不要依赖默认值**；
   - **标签漂移攻击（Tag Mutability）**：攻击者控制或劫持某个常用 Action 仓库后，恶意篡改已有标签（如强制覆盖 `v3` 或 `v4` tag），注入窃密恶意代码；
   - 恶意 Action 在 Runner 中直接读取环境变量中的所有 Secrets 或借由可写的 `GITHUB_TOKEN` 篡改 Release 构件与发布资产。
 - **防御对策**：
@@ -74,9 +75,11 @@
       contents: read
     ```
     仅在真正需要创建 Release 或部署的特定 Job 下窄幅开启 `contents: write`；
-  - **Pin 完整 40 位 Commit SHA**：在生产级 CI 中，所有第三方 Action 严禁直接使用分支或易变 tag，必须锁定不可变的 Git Commit SHA，并附带注释版本号：
+  - **Pin 完整 40 位 Commit SHA**：生产级 CI 中，**所有外部引用的 Action（含 GitHub 官方 `actions/*`，它们同样不是"可信即可省略"）**都不得使用分支或易变 tag，必须锁定不可变 commit SHA 并附版本号注释。组织策略可开启"必须锁完整 SHA"，届时**未锁定的工作流会直接失败**；例外是*可复用工作流*仍可按 tag 引用。写法：
     ```yaml
-    uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+    uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    # 注意：示例会过期。取"当前"SHA 的方法：gh api repos/actions/checkout/releases/latest
+    # 或交给 Dependabot(github-actions) 生成升级 PR，不要照抄本示例
     ```
   - **警惕 `pull_request_target` 触发器**：该触发器运行在目标基准分支上下文并拥有仓库 Secrets 访问权，严禁在此触发器下 checkout 并运行来自 Fork 分支的未审查代码；
   - **防范 Bash 脚本注入**：严禁直接在 `run:` 中拼接不可信输入（如 `${{ github.event.issue.title }}`），必须通过 `env:` 映射后在脚本中以环境变量（`$ISSUE_TITLE`）引用。
@@ -100,7 +103,7 @@
 
 ### 5. 极端隐蔽脱敏陷阱：会话指纹、绝对路径与 Git Remote 凭据
 - **本地绝对路径污染**：
-  - Windows 环境下的 `C:\Users\<用户名>\`、Linux/macOS 下的 `/home/<username>/`，不仅破坏跨平台可移植性，还会直接泄露作者的真实姓名或公司内网主机命名规则；
+  - Windows 环境下的 `C:\Users\{用户名}\`、Linux/macOS 下的 `/home/{username}/`，不仅破坏跨平台可移植性，还会直接泄露作者的真实姓名或公司内网主机命名规则； <!-- scan-ignore: windows-user-profile-path, windows-absolute-path (示例，非真实路径) -->
   - 必须使用相对路径或系统环境变量（如 `$HOME` / `%USERPROFILE%`）替代。
 - **`.git/config` 内嵌明文 Token 泄漏**：
   - 开发者通过带有 Token 的 URL（如 `https://<token>@github.com/org/repo.git`）克隆或推送代码；
@@ -138,28 +141,31 @@
 
 为保证开源发布前的绝对只读安全性，以下核心安全核验算法作为 scripts/ 辅助工具的标准规范：
 
-### 1. 凭据与敏感路径只读扫描探针 (Python 原生无依赖)
+### 1. 凭据与敏感路径只读扫描探针（引用唯一真相源）
+
+规则**不在这里重复定义**——统一从 `scripts/secret-rules.json` 加载，保证扫描器、自测与文档永远同源：
+
 ```python
-import re
+import json, re
 from pathlib import Path
 
-# 经典高危敏感正则指纹
-SENSITIVE_PATTERNS = {
-    "GitHub PAT": re.compile(r"gh[pousr]_[A-Za-z0-9_]{36,255}"),
-    "OpenAI/Claude API Key": re.compile(r"sk-[a-zA-Z0-9_-]{20,}"),
-    "Slack/Discord Webhook": re.compile(r"https://(?:hooks\.slack\.com|discord\.com/api/webhooks)/[A-Za-z0-9/_.-]+"),
-    "Windows User Path": re.compile(r"[A-Za-z]:\[Uu]sers\[a-zA-Z0-9_.-]+\?[a-zA-Z0-9_.-]*"),
-    "Git Credential in URL": re.compile(r"https://[^:\s]+:[^@\s]+@github\.com"),
-}
+RULES = json.loads(Path("scripts/secret-rules.json").read_text(encoding="utf-8"))
 
-def scan_file_safety(file_path: Path) -> list[str]:
+def compile_rules(rules):
+    items = rules["credential_patterns"] + rules.get("path_patterns", []) + rules.get("private_ip_patterns", [])
+    return [(i["id"], i["severity"], re.compile(i["regex"]), i["label"]) for i in items]
+
+def scan_file_safety(file_path: Path) -> list[tuple[str, str]]:
+    rules = compile_rules(RULES)
     violations = []
-    text = file_path.read_text(encoding="utf-8", errors="ignore")
-    for name, pattern in SENSITIVE_PATTERNS.items():
-        if pattern.search(text):
-            violations.append(name)
+    for lineno, line in enumerate(file_path.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+        for rule_id, severity, pattern, label in rules:
+            if pattern.search(line):
+                violations.append((f"{file_path}:{lineno}", f"{severity} {rule_id} ({label})"))
     return violations
 ```
+
+要点：按行扫描便于定位；`<!-- scan-ignore: <rule-id> (reason) -->` 由扫描器统一处理，且每次豁免都会在输出中作为 P2 显示。
 
 ### 2. GitHub Actions 供应链安全审计探针
 ```python
@@ -174,14 +180,20 @@ def audit_workflow_security(workflow_path: Path) -> list[str]:
     if "permissions:" not in text:
         issues.append("缺少顶层 permissions 声明，存在过度提权风险")
         
-    # 检查是否存在未锁定 SHA 的社区 Action
+    # 检查所有外部 Action 是否锁定 40 位 SHA（actions/* 同样需要，不得豁免）
     for line in text.splitlines():
         line = line.strip()
         if line.startswith("uses:"):
-            action = line.split("uses:")[1].strip()
-            if not action.startswith("actions/") and not action.startswith("./"):
-                if "@" in action and len(action.split("@")[1]) != 40:
-                    issues.append(f"第三方 Action 未锁定 40 位 Commit SHA: {action}")
+            action = line.split("uses:")[1].split("#")[0].strip()
+            if action.startswith("./") or action.startswith("docker://"):
+                continue
+            if "@" not in action or len(action.split("@")[1]) != 40:
+                issues.append(f"外部 Action 未锁定 40 位 Commit SHA: {action}")
+    # 额外高危模式
+    if "pull_request_target" in text:
+        issues.append("使用了 pull_request_target：禁止在此触发器下 checkout 并运行 Fork 代码")
+    if re.search(r"\$\{\{\s*github\.event\.[^}]+\}\}", text):
+        issues.append("run: 中疑似直接拼接不可信输入，请改用 env: 传值")
                     
     return issues
 ```

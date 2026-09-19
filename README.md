@@ -22,7 +22,7 @@
 ## 📖 这是什么？
 
 将代码、智能体或知识库项目推送到 GitHub 开源时，开发者往往面临这些繁琐痛点：
-- 缺少合规的 `LICENSE`、`CODE_OF_CONDUCT.md`、`SECURITY.md` 或现代 YAML 格式的 Issue 表单，导致 GitHub Insights → Community 健康度无法达到 100%；
+- 缺少合规的 `LICENSE`、`CODE_OF_CONDUCT.md`、`CONTRIBUTING.md` 或现代 YAML 格式的 Issue 表单，社区健康文件不齐（GitHub 官方未提供"满分/百分比"口径，本技能按官方点名文件逐一核对）；
 - README 结构泛化千篇一律，无法突出 AI 技能、MCP Server、大模型/GGUF、系统 CLI、浏览器扩展或全栈 Web 应用的独特核心价值；
 - 缺少 `uvx`、`bunx`、`pnpm dlx`、Hugging Face、Chrome Web Store 的具体发版指令与 CI 矩阵测试；
 - 不慎把本地绝对路径（`<user_home>`）、私有 Agent 会话标记、甚至 API 密钥与 Git 凭据推送到公共仓库造成泄露。
@@ -35,12 +35,12 @@
 
 | 核心模块 | 覆盖功能 | 带来价值 |
 |---|---|---|
-| **十大全景品类 README 引擎** | 覆盖 AI Skill、MCP Server、AI 模型/GGUF、CLI 工具、多媒体、SDK、浏览器扩展、IaC 配置、Web 应用、Awesome 清单 | 告别泛化概念，直接复制填空，精准呈现各类项目核心卖点 |
-| **渐进式披露执行铁律** | 依据品类判定结果定向调阅专属规范，严格隔离无关品类 | 杜绝上下文膨胀与跨品类交叉污染，生成质量 100% 聚焦 |
-| **五重深度隐私安全网** | 拦截 API Key、私有路径指纹、内部会话 ID、Git Remote Token、构建缓存，附带**真伪泄露案例比对表** | 100% 杜绝敏感凭据与个人开发环境泄露 |
-| **2026 社区与 CI 自动化库** | 交互式 YAML Issue Forms、PR 模板、`SECURITY.md`、**Node/Python 矩阵 CI** 与 **Dependabot** | 轻松获得 GitHub Community Profile 100% 满分并实现依赖自动安全更新 |
+| **分类主表 + 品类 README 引擎** | `references/category-map.md` 用 12 类主表 + 三轴 + 旗标做判定（唯一分类源）；`readme-template.md` 提供 10 份骨架、通用底座 12 节与**逐空判据**（`<!-- 判据 -->`/`<!-- 反例 -->`/`<!-- 可删 -->`） | 先定类再取模板；填空处同时给出"怎样算写好"，避免只套格式不判断 |
+| **渐进式披露执行铁律** | 依据品类判定结果定向调阅专属规范，严格隔离无关品类 | 减少上下文膨胀与跨品类交叉污染 |
+| **五重深度隐私安全网** | 凭据/PAT/PEM 私钥、路径与私网指纹、会话标记、Git Remote 凭据、构建缓存；规则唯一真相源 `scripts/secret-rules.json` | 拦住现行格式的凭据泄露；覆盖范围与已知盲区在 `privacy-scan.md` 明示 |
+| **2026 社区与 CI 自动化库** | 交互式 YAML Issue Forms、PR 模板、`SECURITY.md`、**Node/Python 矩阵 CI（锁 SHA + 顶层只读）** 与 **Dependabot 配置** | 社区健康文件按官方口径齐备；CI 供应链加固、依赖自动更新 |
 | **全生态分发与发版实操** | **uv/PyPI、npm、Hugging Face、Chrome Web Store、Docker、Homebrew、Crates.io** 具体发版指南与 Release Checksums | 提供从本地代码到全球各大分发中心的全流程发版指令 |
-| **轻量规范化工程架构** | 主干精简，单层 Reference Map 直达，配齐自动化回归自测 | 严守工程纪律，`skill-doctor` 37 项审查 100% PASS |
+| **可验证工程架构** | 校验器可指向任意项目（`validate_repo.py <dir>`）、分级 finding、fixture 回归（真阳必检、干净样例不误报） | 门禁可复核：每条结论都能用命令复现，未测量不出口绿灯 |
 
 ---
 
@@ -91,7 +91,8 @@
 ### 方式 B：GitHub CLI 2.90+（一行命令）
 
 ```bash
-gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user
+# gh skill 目前为 Public Preview（命令与 flag 可能变动），先 `gh skill --help` 确认
+gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin
 ```
 
 ### 方式 C：多平台手动安装
@@ -146,19 +147,20 @@ python scripts/selftest.py
 
 ## 📖 深度参考文档导读
 
-| 参考文档 | 核心内容 | 推荐阅读时机 | 预估耗时 |
+| 参考文档 | 核心内容 | 推荐阅读时机 | 篇幅 |
 |---|---|---|---|
-| 📑 [**十大品类完整 README 模板库 (`readme-template.md`)**](references/readme-template.md) | 10 大软件形态完整开箱即用 Markdown 骨架与现代终端运行器表 | 为项目生成或重构 README 时 | 4 分钟 |
-| 🚨 [**开源准备避坑库与官方规范基线 (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | GitHub Insights 100% 门禁、Git 历史凭据残留洗库与 CI 供应链 Action 锁定 | 评估安全基线与排查深水陷阱时 | 4 分钟 |
-| 🛡️ [**五重隐私与安全扫描 (`privacy-scan.md`)**](references/privacy-scan.md) | 5 重扫描防御网、真伪泄露实战比对表与脱敏规则 | 执行本地安全自检与脱敏排查时 | 3 分钟 |
-| 🏛️ [**社区健康文件与 CI 模板 (`community-templates.md`)**](references/community-templates.md) | 现代交互式 YAML Issue Forms、Node/Python 矩阵 CI 工作流与 Dependabot | 补齐 GitHub 社区文件与持续集成时 | 3 分钟 |
-| 🚀 [**全渠道分发与发版指南 (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv、npm、HuggingFace、ChromeStore、Docker 发版实操、国内镜像源与 Checksums | 发布到全球平台或 GitHub Release 时 | 4 分钟 |
-| 🏷️ [**Description 与 Topics 指南 (`description-guide.md`)**](references/description-guide.md) | 精准 120 字仓库简介与高权重标签生成指南 | 设置 GitHub 仓库门面信息时 | 3 分钟 |
-| 🌐 [**开源发现与推广策略 (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Launch Kit 营销包、社交预览与全网发布渠道 | 准备发布与对外推广项目时 | 3 分钟 |
-| 🔐 [**GitHub 推送与 MCP 指引 (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | 官方 MCP 与标准 CLI 推送流程 | 执行远程推送与仓库创建时 | 2 分钟 |
-| 🚦 [**PR 与发布门禁工作流 (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | 分支、PR、CI 测试与发布自动化校验 | 建立持续集成与发版流水线时 | 3 分钟 |
-| 🔑 [**GitHub 凭据方案对比 (`github-pat-comparison.md`)**](references/github-pat-comparison.md) | 官方连接器、GitHub CLI 与 PAT 的权限与安全对比 | 选择推送认证方式时 | 2 分钟 |
-| 🔒 [**最小权限 PAT 创建指引 (`github-pat-setup.md`)**](references/github-pat-setup.md) | 在 GitHub 官方页面创建最小权限个人访问令牌的步骤 | 明确选择 PAT 方式时 | 1 分钟 |
+| 🗺️ [**分类主表与判定路由 (`category-map.md`)**](references/category-map.md) | 12 类主表、三轴与旗标、主产物判定算法、路由回归用例 | 扫描项目、需要定 `category_id` 时 | 9.7 KB |
+| 📑 [**十大品类完整 README 模板库 (`readme-template.md`)**](references/readme-template.md) | 10 大软件形态完整开箱即用 Markdown 骨架与现代终端运行器表 | 为项目生成或重构 README 时 | ~39.2 KB |
+| 🚨 [**开源准备避坑库与官方规范基线 (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | 社区健康文件官方口径、Git 历史凭据残留洗库与 CI 供应链 Action 锁定 | 评估安全基线与排查深水陷阱时 | ~16.3 KB |
+| 🛡️ [**五重隐私与安全扫描 (`privacy-scan.md`)**](references/privacy-scan.md) | 5 重扫描防御网、真伪泄露实战比对表与脱敏规则 | 执行本地安全自检与脱敏排查时 | ~7.2 KB |
+| 🏛️ [**社区健康文件与 CI 模板 (`community-templates.md`)**](references/community-templates.md) | 现代交互式 YAML Issue Forms、Node/Python 矩阵 CI 工作流与 Dependabot | 补齐 GitHub 社区文件与持续集成时 | ~9.7 KB |
+| 🚀 [**全渠道分发与发版指南 (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv、npm、HuggingFace、ChromeStore、Docker 发版实操、国内镜像源与 Checksums | 发布到全球平台或 GitHub Release 时 | ~7.5 KB |
+| 🏷️ [**Description 与 Topics 指南 (`description-guide.md`)**](references/description-guide.md) | 精准 120 字仓库简介与高权重标签生成指南 | 设置 GitHub 仓库门面信息时 | ~4.8 KB |
+| 🌐 [**开源发现与推广策略 (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Launch Kit 营销包、社交预览与全网发布渠道 | 准备发布与对外推广项目时 | ~2.6 KB |
+| 🔐 [**GitHub 推送与 MCP 指引 (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | 官方 MCP 与标准 CLI 推送流程 | 执行远程推送与仓库创建时 | ~5.2 KB |
+| 🚦 [**PR 与发布门禁工作流 (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | 分支、PR、CI 测试与发布自动化校验 | 建立持续集成与发版流水线时 | ~2.3 KB |
+| 🔑 [**GitHub 凭据方案对比 (`github-pat-comparison.md`)**](references/github-pat-comparison.md) | 官方连接器、GitHub CLI 与 PAT 的权限与安全对比 | 选择推送认证方式时 | ~2.6 KB |
+| 🔒 [**最小权限 PAT 创建指引 (`github-pat-setup.md`)**](references/github-pat-setup.md) | 在 GitHub 官方页面创建最小权限个人访问令牌的步骤 | 明确选择 PAT 方式时 | ~2.2 KB |
 
 ---
 
@@ -179,10 +181,14 @@ github-oss-prep/
 ├── manifest.json                     # 技能元数据清单
 ├── agents/                           # 多 Agent 平台元数据
 ├── scripts/
-│   ├── validate_repo.py              # 仓库结构、规范与隐私安全校验器
+│   ├── secret-rules.json             # 凭据/路径规则的**唯一真相源**（扫描器与测试共用）
+│   ├── validate_repo.py              # 仓库结构、规范与隐私安全校验器（可指向任意目录）
 │   └── selftest.py                   # 自动化回归自测脚本
 ├── tests/
-│   └── test_skill.py                 # Pytest 自动化测试套件入口
+│   ├── test_skill.py                 # stdlib unittest 入口（含门禁红/绿样例）
+│   └── fixtures/
+│       ├── leaked-repo/              # 故意含假凭据：断言必须被检出
+│       └── clean-repo/               # 干净样例：断言不误报
 ├── .github/
 │   ├── CODEOWNERS                    # 代码审查者配置
 │   ├── pull_request_template.md      # 标准 PR 模板
@@ -193,6 +199,7 @@ github-oss-prep/
 │       ├── feature_request.yml       # 交互式功能建议表单
 │       └── config.yml                # Issue 模板选择器配置
 └── references/                       # 深度参考文档
+    ├── category-map.md               # 唯一分类源：12 类主表 + 判定路由
     ├── github-oss-prep-pitfalls.md   # 开源准备核心避坑库与官方规范基线
     ├── readme-template.md            # 十大品类专属 README 完整模板库
     ├── privacy-scan.md               # 五重深度隐私与环境安全扫描指南
@@ -217,7 +224,7 @@ github-oss-prep/
 | 阶段 / 角色 | 推荐技能 | 核心使命与能力 | GitHub 仓库 |
 |---|---|---|---|
 | 📦 **开源前准备** | [**`github-oss-prep`**](https://github.com/hyt315/github-oss-prep) | 自动化生成规范门面、中英双语 README、CI 工作流、社区资产与合规审计 | [hyt315/github-oss-prep](https://github.com/hyt315/github-oss-prep) |
-| 🩺 **质量体检** | [**`skill-doctor`**](https://github.com/hyt315/skill-doctor) | 50+ 项工业级静态规则 + 动态实跑自测，确保 Agent Skill 100% 满分无死角 | [hyt315/skill-doctor](https://github.com/hyt315/skill-doctor) |
+| 🩺 **质量体检** | [**`skill-doctor`**](https://github.com/hyt315/skill-doctor) | 50+ 项工业级静态规则 + 动态实跑自测（结论均可用命令复核） | [hyt315/skill-doctor](https://github.com/hyt315/skill-doctor) |
 | ⚙️ **开源后运营** | [**`github-oss-ops`**](https://github.com/hyt315/github-oss-ops) | 智能分流 Issue、AI 垃圾防御、PR 辅助审查、GHSA 私有漏洞协同与发版全渠道广播 | [hyt315/github-oss-ops](https://github.com/hyt315/github-oss-ops) |
 | 🚀 **贡献者导航** | [**`github-oss-contribute`**](https://github.com/hyt315/github-oss-contribute) | 面向贡献者的全程向导：Fork 同步、Rebase 冲突消解、DCO 签名、反 AI Slop 质量门禁 | [hyt315/github-oss-contribute](https://github.com/hyt315/github-oss-contribute) |
 
@@ -235,6 +242,21 @@ github-oss-prep/
   A: 技能严格遵循渐进式披露架构，将各领域的详细模板下沉到 `references/` 独立模块中，避免 AI 上下文过载与交叉污染。
 
 ---
+
+## ⚠️ 已知限制
+
+按本技能自己的"§9 已知限制"标准，如实列出它做不到的事：
+
+- **不验证运行期行为**：它整理文件、扫描凭据、检查链接与版本一致性，但**不会**真的安装你的包或跑你的测试；"干净环境跑通"这一步必须你（或 CI）来做。
+- **不扫历史与远程**：默认只扫工作树。要查提交历史里的凭据，需另行运行 `gitleaks`/`trufflehog`（本技能文档已点名它们，但未内建）。
+- **分类有边界**：主表当前 12 类；桌面 App、移动 App、硬件、游戏、研究复现等**没有专属骨架**，此时按底座 12 节 + 品类增量写，并在事实卡标 `template=missing`，不会硬套模板冒充专属。
+- **凭据检测有盲区**：规则是模式匹配（`scripts/secret-rules.json`），不是高熵检测；自定义格式或已泄露进历史的密钥仍可能漏，故所有豁免会以 P2 明示、发布前仍需人工复核。
+- **许可建议不是法律意见**：分许可表帮你想清"什么资产配什么许可"，重大选择请找法务；模型/数据类还需自行确认上游许可链。
+- **发布不越权**：远程推送、Tag、Release、对外推广各需单独授权；本技能不会自己替你发布。
+
+## 🆘 支持
+
+卡住了：先查 [Issues](https://github.com/hyt315/github-oss-prep/issues) 与 [Discussions](https://github.com/hyt315/github-oss-prep/discussions)（提问请到 Discussions），提交时请附可复现步骤与你跑的那条命令。响应节奏见 [SECURITY.md](SECURITY.md)（漏洞）与 [SUPPORT.md](SUPPORT.md)（一般问题）。
 
 ## 🤝 参与贡献
 

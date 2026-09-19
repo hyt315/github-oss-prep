@@ -1,138 +1,125 @@
 #!/usr/bin/env python3
-"""Regression test runner for github-oss-prep skill.
+"""Regression self-test for github-oss-prep.
 
-Usage: python scripts/selftest.py
-Runs:
-  1. Positive validation of files, references, and AST syntax
-  2. Negative security assertions (asserting verifier catches bad inputs)
-  3. Depth assertions on pitfall knowledge base
-  4. Integration test with validate_repo.py --json
+Design rule: this file must NOT re-declare scanner regexes. It imports the
+single source of truth (scripts/secret-rules.json via validate_repo) and
+proves that real-format credentials are actually detected.
 """
+
+from __future__ import annotations
+
 import ast
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import validate_repo  # noqa: E402
+
+REQUIRED_FILES = [
+    "SKILL.md",
+    "README.md",
+    "README.en.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "manifest.json",
+    "scripts/secret-rules.json",
+    "scripts/validate_repo.py",
+    "tests/fixtures/leaked-repo/SECURITY.md",
+    "tests/fixtures/clean-repo/README.md",
+    "references/readme-template.md",
+    "references/privacy-scan.md",
+    "references/github-oss-prep-pitfalls.md",
+]
+
+FIXTURE_LEAK = ROOT / "tests" / "fixtures" / "leaked-repo"
+FIXTURE_CLEAN = ROOT / "tests" / "fixtures" / "clean-repo"
 
 
-def test_syntax_ast() -> list[str]:
-    """Validate Python syntax across all internal scripts using ast.parse."""
-    failures = []
-    scripts_dir = ROOT / "scripts"
-    if scripts_dir.is_dir():
-        for py_file in scripts_dir.glob("*.py"):
-            try:
-                ast.parse(py_file.read_text(encoding="utf-8"), filename=py_file.name)
-            except SyntaxError as e:
-                failures.append(f"AST syntax error in {py_file.name}: {e}")
-    tests_dir = ROOT / "tests"
-    if tests_dir.is_dir():
-        for py_file in tests_dir.glob("*.py"):
-            try:
-                ast.parse(py_file.read_text(encoding="utf-8"), filename=py_file.name)
-            except SyntaxError as e:
-                failures.append(f"AST syntax error in {py_file.name}: {e}")
-    return failures
+def test_syntax_ast() -> None:
+    for pattern in ("scripts/*.py", "tests/*.py"):
+        for path in ROOT.glob(pattern):
+            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
 
-def test_positive_and_negative() -> list[str]:
-    failures: list[str] = []
+def test_required_files() -> None:
+    missing = [name for name in REQUIRED_FILES if not (ROOT / name).is_file()]
+    assert not missing, f"missing files: {missing}"
 
-    # 1. Positive: Core files present
-    required_files = [
-        ROOT / "SKILL.md",
-        ROOT / "README.md",
-        ROOT / "README.en.md",
-        ROOT / "manifest.json",
-        ROOT / "references" / "readme-template.md",
-        ROOT / "references" / "privacy-scan.md",
-        ROOT / "references" / "community-templates.md",
-        ROOT / "references" / "release-and-distribution.md",
-        ROOT / "references" / "github-oss-prep-pitfalls.md",
-        ROOT / "scripts" / "validate_repo.py",
-        ROOT / "scripts" / "selftest.py",
-        ROOT / "tests" / "test_skill.py",
-    ]
-    for rf in required_files:
-        if not rf.exists():
-            failures.append(f"Missing required file: {rf.name}")
 
-    # 2. Positive: Frontmatter length & token health
-    skill_text = (ROOT / "SKILL.md").read_text(encoding="utf-8")
-    lines = skill_text.splitlines()
-    if len(lines) > 300:
-        failures.append(f"SKILL.md line count too high ({len(lines)}), should be < 300")
+def test_skill_md_line_budget() -> None:
+    lines = len((ROOT / "SKILL.md").read_text(encoding="utf-8").splitlines())
+    assert lines <= 300, f"SKILL.md grew to {lines} lines (>300); move detail into references/"
 
-    # 3. Depth Assertions on Pitfalls
-    pitfalls_file = ROOT / "references" / "github-oss-prep-pitfalls.md"
-    if pitfalls_file.is_file():
-        p_text = pitfalls_file.read_text(encoding="utf-8")
-        depth_keywords = [
-            "git-filter-repo",
-            "permissions:",
-            "contents: read",
-            "YAML Issue Forms",
-            "OIDC Trusted Publishing",
-        ]
-        for kw in depth_keywords:
-            if kw not in p_text:
-                failures.append(f"Pitfalls document missing depth assertion keyword: '{kw}'")
 
-    # 4. DY002 Negative Assertions (Assert checkers catch bad inputs / should fail)
-    secret_pat = re.compile(r"ghp_[A-Za-z0-9]{36}")
-    if not secret_pat.search("ghp_123456789012345678901234567890123456"):  # skill-doctor: allow
-        failures.append("Negative test: secret pattern failed to catch dummy classic PAT")
+def test_rules_single_source() -> None:
+    """Known credential regexes must exist only in scripts/secret-rules.json."""
+    signatures = ["gh[pousr]_[A-Za-z0-9]{36", "AKIA|ASIA", "pypi-AgEIcHlwaS5vcmc", "BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY"]
+    offenders = []
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or ".git" in path.parts or path.name == "secret-rules.json":
+            continue
+        if path.name == Path(__file__).name:  # this test names the signatures on purpose
+            continue
+        if path.suffix.lower() in {".png", ".jpg", ".pdf", ".zip"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for sig in signatures:
+            if sig in text:
+                offenders.append(f"{path.relative_to(ROOT)}: {sig}")
+    assert not offenders, f"duplicated scanner patterns found: {offenders}"
 
-    personal_pat = re.compile(r"[A-Za-z]:\\Users\\[a-zA-Z0-9_-]+[\\/]")  # skill-doctor: allow
-    if not personal_pat.search("C:\\Users\\alice\\Desktop\\test\\"):  # skill-doctor: allow
-        failures.append("Negative test: personal path pattern failed to catch dummy Windows path")
 
-    # Negative assertion: tampered dummy content should trigger error in pattern
-    tampered_secret = "OPENAI_KEY = 'sk-test12345678901234567890abcdef'"  # skill-doctor: allow
-    openai_pat = re.compile(r"sk-[A-Za-z0-9-_]{20,}")
-    if not openai_pat.search(tampered_secret):
-        failures.append("Negative test: tampered secret should fail validation")
+def test_leaked_fixture_is_detected() -> None:
+    """P0 regression: real-format credentials in a repo must be caught."""
+    findings = validate_repo.scan_tree(FIXTURE_LEAK)
+    ids = {f["id"] for f in findings if f["severity"] == "P0"}
+    expected = {"openai-style-key", "aws-access-key-id", "private-key-block"}
+    missing = expected - ids
+    assert not missing, f"scanner missed {missing} in leaked fixture; findings={sorted(ids)}"
 
-    return failures
+
+def test_clean_fixture_passes() -> None:
+    findings = [f for f in validate_repo.scan_tree(FIXTURE_CLEAN) if f["severity"] == "P0"]
+    assert not findings, f"false positives in clean fixture: {findings}"
+
+
+def test_repo_validation_integration() -> None:
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "validate_repo.py"), "--json"],
+        capture_output=True,
+        text=True,
+        cwd=ROOT,
+    )
+    payload = json.loads(result.stdout)
+    assert payload["status"] == "PASS", f"validate_repo failed: {payload}"
+    assert result.returncode == 0, f"validate_repo exited {result.returncode}"
 
 
 def main() -> int:
-    # 1. AST syntax test
-    ast_failures = test_syntax_ast()
-    if ast_failures:
-        print("FAIL: AST Syntax verification failed:", file=sys.stderr)
-        for f in ast_failures:
-            print(f" - {f}", file=sys.stderr)
+    checks = [value for name, value in sorted(globals().items()) if name.startswith("test_") and callable(value)]
+    failed = []
+    for check in checks:
+        try:
+            check()
+            print(f"PASS {check.__name__}")
+        except AssertionError as exc:
+            failed.append(check.__name__)
+            print(f"FAIL {check.__name__}: {exc}")
+        except Exception as exc:  # noqa: BLE001
+            failed.append(check.__name__)
+            print(f"ERROR {check.__name__}: {exc!r}")
+    if failed:
+        print(f"\nSELFTEST FAIL ({len(failed)}/{len(checks)} failed)")
         return 1
-
-    # 2. Positive & Negative tests
-    failures = test_positive_and_negative()
-    if failures:
-        print("FAIL: Selftest failed with errors:", file=sys.stderr)
-        for f in failures:
-            print(f" - {f}", file=sys.stderr)
-        return 1
-
-    # 3. Integration test: Run validate_repo.py --json
-    validate_script = ROOT / "scripts" / "validate_repo.py"
-    proc = subprocess.run([sys.executable, str(validate_script), "--json"], capture_output=True, text=True)
-    if proc.returncode != 0:
-        print(f"FAIL: validate_repo.py --json exited with code {proc.returncode}:\n{proc.stderr}", file=sys.stderr)
-        return proc.returncode
-
-    try:
-        report = json.loads(proc.stdout)
-        if report.get("status") != "PASS":
-            print(f"FAIL: validate_repo report status is {report.get('status')}: {report.get('errors')}", file=sys.stderr)
-            return 1
-    except json.JSONDecodeError as e:
-        print(f"FAIL: validate_repo output is not valid JSON: {e}\n{proc.stdout}", file=sys.stderr)
-        return 1
-
-    print("SELFTEST PASS (all AST syntax, positive, negative, and integration checks passed)")
+    print(f"\nSELFTEST PASS ({len(checks)}/{len(checks)} checks passed)")
     return 0
 
 

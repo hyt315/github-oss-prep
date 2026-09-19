@@ -30,4 +30,4 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 ## Questions?
 
-Open a [Discussion](https://github.com/<owner>/<repo>/discussions) or use the Question issue template.
+Open a [Discussion](https://github.com/hyt315/github-oss-prep/discussions) if you have a usage question.

@@ -23,7 +23,7 @@
 
 | 软件形态 | 优先分发渠道 | 推荐现代命令 | 核心配置文件 |
 |---|---|---|---|
-| **AI Agent 技能** | Agent 一句话自装<br>`gh skill install` | `git clone` 到 skills 目录 | `SKILL.md`<br>`manifest.json` |
+| **AI Agent 技能** | Agent 一句话自装<br>`gh skill install --pin`<br>`gh skill publish` | `git clone` 到 skills 目录（`--pin` 锁版本） | `SKILL.md`<br>`manifest.json` |
 | **MCP Server 端** | npm / PyPI / npx | `npx -y {pkg}`<br>`uvx {pkg}` | `package.json`<br>`pyproject.toml` |
 | **AI 模型 / 数据集** | Hugging Face / Ollama | `ollama run {repo}`<br>`hf download` | `Modelfile`<br>Model Card |
 | **Python CLI / SDK** | PyPI (支持 `uvx` / `uv tool`) | `uvx {pkg}`<br>`uv tool install {pkg}` | `pyproject.toml` (`[project.scripts]`) |
@@ -52,18 +52,20 @@
 
 ### 3.1 上传到 Hugging Face
 ```bash
-# 1. 登录
-huggingface-cli login
+# 1) 登录（huggingface-cli 已废弃且不再可用，改用 hf）
+hf auth login
 
-# 2. 上传模型权重与 GGUF
-huggingface-cli upload <username>/<model-name> ./models/model-q4_k_m.gguf .
+# 2) 上传模型权重与 GGUF（<local_path> <path_in_repo>）
+hf upload {username}/{model-name} ./models/model-q4_k_m.gguf .
+hf upload {username}/{model-name} ./data . --repo-type dataset   # 数据集用 --repo-type dataset
 ```
+> 权重与 GGUF 属大文件：走 Git LFS（`hf` 自动处理）；README 里说明克隆需要 LFS，并给出 `hf download {username}/{model-name}` 的替代下载方式。
 
 ### 3.2 发布到 Ollama
 ```bash
 # 编写 Modelfile (FROM ./model-q4_k_m.gguf)
-ollama create <username>/<model-name> -f Modelfile
-ollama push <username>/<model-name>
+ollama create {username}/{model-name} -f Modelfile
+ollama push {username}/{model-name}
 ```
 
 ---
@@ -71,12 +73,14 @@ ollama push <username>/<model-name>
 ## 4. Python 现代化 CLI 与库发布 (uv / PyPI)
 
 ```bash
-# 1. 使用 uv 构建
+# 1) 构建 sdist + wheel。建议显式声明 [build-system]：缺省时 uv 会静默回退到 legacy setuptools 后端（能构建成功，但产物可能不是你想要的）
 uv build
 
-# 2. 发布到 PyPI
-uv publish --token <YOUR_PYPI_TOKEN>
+# 2) 发布到 PyPI
+uv publish --token "$UV_PUBLISH_TOKEN"     # 或用 UV_PUBLISH_TOKEN 环境变量；--token/--username/--password 均受支持
+# CI 中优先 Trusted Publishing(OIDC)：不需要任何长期 token
 ```
+> 凭据用环境变量或 CI secret，别写进命令行（会进 shell 历史与进程表）；可选：`twine check dist/*` 校验元数据。
 
 ---
 
@@ -127,10 +131,10 @@ gh release create v1.0.0 --title "v1.0.0 - Initial Release" --notes "发布说�
 ## 8. Docker / OCI 镜像发布 (GitHub Packages / ghcr.io)
 
 ```bash
-echo $GITHUB_TOKEN | docker login ghcr.io -u <username> --password-stdin
-docker build -t ghcr.io/<owner>/<repo>:1.0.0 -t ghcr.io/<owner>/<repo>:latest .
-docker push ghcr.io/<owner>/<repo>:1.0.0
-docker push ghcr.io/<owner>/<repo>:latest
+echo $GITHUB_TOKEN | docker login ghcr.io -u {username} --password-stdin
+docker build -t ghcr.io/{owner}/{repo}:1.0.0 -t ghcr.io/{owner}/{repo}:latest .
+docker push ghcr.io/{owner}/{repo}:1.0.0
+docker push ghcr.io/{owner}/{repo}:latest
 ```
 
 ---
@@ -141,8 +145,8 @@ docker push ghcr.io/<owner>/<repo>:latest
 ```ruby
 class MyTool < Formula
   desc "My awesome tool"
-  homepage "https://github.com/<owner>/<repo>"
-  url "https://github.com/<owner>/<repo>/archive/refs/tags/v1.0.0.tar.gz"
+  homepage "https://github.com/{owner}/{repo}"
+  url "https://github.com/{owner}/{repo}/archive/refs/tags/v1.0.0.tar.gz"
   sha256 "abcdef1234567890..."
   license "MIT"
 
@@ -167,4 +171,4 @@ cargo publish
 | **Python / pip / uv** | 清华大学镜像源 | `pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple` |
 | **Rust / Cargo** | 字节跳动 / 清华源 | 配置 `~/.cargo/config.toml` |
 | **Homebrew** | 清华镜像 | 配置 `HOMEBREW_BREW_GIT_REMOTE` |
-| **GitHub Release** | GitHub Proxy 加速 | `https://ghproxy.com/https://github.com/...` |
+| **GitHub Release** | 官方域名优先；确需加速请**自建** gh-proxy 类反代 | 公共演示域名（含 ghproxy 系）无运营方问责与来源保证，**不要当可信基础设施**；绝不经代理传递认证；下载后校验官方 `checksums.txt`(SHA-256)，或改用 GitHub 原生完整性能力（immutable release、`gh release verify-asset`、artifact attestation） |

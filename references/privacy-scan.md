@@ -34,15 +34,19 @@
 
 ## 2. 扫描规则与正则定义
 
-### 2.1 凭据扫描规则
-- OpenAI API Key: `sk-[A-Za-z0-9-_]{20,}`
-- Anthropic API Key: `sk-ant-[A-Za-z0-9-_]{20,}`
-- GitHub Classic PAT: `ghp_[A-Za-z0-9]{36}`
-- GitHub Fine-Grained PAT: `github_pat_[A-Za-z0-9_]{82}`
-- SSH 私钥头部: `-----BEGIN (?:RSA|OPENSSH|EC|DSA) PRIVATE KEY-----`
+### 2.1 凭据扫描规则（唯一真相源）
 
-### 2.2 本地绝对路径与机器指纹规则
-- Windows 个人主目录: `C:\\Users\\` <!-- skill-doctor: allow -->
+规则**不在本文件重复罗列**——全部定义在 `scripts/secret-rules.json`，由 `scripts/validate_repo.py` 与 `scripts/selftest.py` 共同加载，文档只描述覆盖范围：
+
+- 凭据：GitHub Classic / Fine-grained PAT、OpenAI 系（含 `sk-proj-`/`sk-ant-`）、Anthropic、Stripe、AWS（`AKIA`/`ASIA`）、Google API Key、Hugging Face、npm、PyPI、Slack、SendGrid、Telegram、JWT、Azure 存储密钥、URL 内嵌凭据
+- 私钥：PEM 私钥块（含无算法前缀的 PKCS#8）
+- 路径与网络：Windows 任意用户名（含非 ASCII）、Unix 家目录、WSL/挂载路径、RFC1918 私网 IP
+- 文件名级拦截：`.env`（`.env.example` 除外）、`*.pem`、`*.key`、`*.p12`、`*.pfx`、`id_rsa*`
+
+维护规则：新增或调整只改 `secret-rules.json`；`selftest.py::test_rules_single_source` 会阻止任何文件重复声明正则。
+
+### 2.2 本地绝对路径与机器指纹规则（正则以 `scripts/secret-rules.json` 为准）
+- Windows 个人主目录: `C:\\Users\\` <!-- scan-ignore: windows-user-profile-path (规则示例本身) -->
 - 本地工作盘符路径: `(?:[D-Z]:\\[^\r\n]+)`
 - Unix 个人主目录: `/home/[a-z0-9_-]+/` 或 `/Users/[a-z0-9_-]+/`
 
@@ -52,7 +56,7 @@
 
 ### 2.4 Git Remote URL 凭据污染
 - 检查 `.git/config` 中的 `url = https://...` 是否包含嵌入的 Token（如 `https://<token>@github.com`）。
-- **治理**：必须使用不带 Token 的纯净 URL：`https://github.com/<owner>/<repo>.git`。
+- **治理**：必须使用不带 Token 的纯净 URL：`https://github.com/{owner}/{repo}.git`。
 
 ### 2.5 垃圾构建产物拦截清单
 - Python: `__pycache__/`, `*.pyc`, `.pytest_cache/`, `.venv/`
@@ -65,13 +69,13 @@
 
 | 示例代码 / 文本 | 判断结果 | 原因与治理说明 |
 |---|---|---|
-| `sk-example1234567890abcdef...` <!-- skill-doctor: allow --> | ❌ **严重泄露** | 真实 API 密钥，必须彻底移除并立即在服务商后台吊销 |
-| `export API_KEY="<placeholder_key>"` <!-- skill-doctor: allow --> | ✅ **安全合规** | 明确的占位符，用于指引用户填入自己的 Key |
+| `sk-example1234567890abcdef...` <!-- scan-ignore: openai-style-key (示例字符串，非真实凭据) --> | ❌ **严重泄露** | 真实 API 密钥，必须彻底移除并立即在服务商后台吊销 |
+| `export API_KEY="<placeholder_key>"`  | ✅ **安全合规** | 明确的占位符，用于指引用户填入自己的 Key |
 | `git remote set-url origin https://ghp_xxx@github.com/...` | ❌ **严重泄露** | `.git/config` 中包含明文 Token，必须清理 |
-| `git clone https://github.com/<owner>/<repo>.git` | ✅ **安全合规** | 纯净的标准 Git URL |
-| `C:\Users\alice\Desktop\my-project` <!-- skill-doctor: allow --> | ❌ **环境泄露** | 包含开发者的真实 Windows 用户名与绝对路径 |
+| `git clone https://github.com/{owner}/{repo}.git` | ✅ **安全合规** | 纯净的标准 Git URL |
+| `C:\Users\alice\Desktop\my-project` <!-- scan-ignore: windows-user-profile-path, windows-absolute-path (示例，非真实路径) --> | ❌ **环境泄露** | 包含开发者的真实 Windows 用户名与绝对路径 |
 | `~/.claude/skills/<repo-name>` | ✅ **安全合规** | 跨平台相对主目录标准规范路径 |
-| `192.168.1.100:8080` / `10.0.0.5` | ❌ **内部泄露** | 暴露了真实的内网 IP 拓扑 |
+| `192.168.1.100:8080` / `10.0.0.5` | ❌ **内部泄露** | 暴露了真实的内网 IP 拓扑 | <!-- scan-ignore: rfc1918-ip (示例，非真实内网) -->
 | `127.0.0.1:3000` / `localhost:8080` | ✅ **安全合规** | 本机回环调试地址，公开安全 |
 
 ---
@@ -91,7 +95,7 @@
 | 敏感类型 | 错误示例 (严禁提交) | 标准脱敏占位符 (合规) |
 |---|---|---|
 | **API 密钥** | `sk-proj-abc12345...` | `your_api_key_here` 或 `YOUR_API_KEY` |
-| **GitHub 仓库所有者** | 私有调试账号 | `<owner>` 或 `{owner}` |
-| **本地安装路径** | `D:\skills\my-skill` | `~/.claude/skills/<repo>` 或 `~/.agents/skills/<repo>` |
+| **GitHub 仓库所有者** | 私有调试账号 | `{owner}`（统一写法，勿写真实账号名） |
+| **本地安装路径** | `D:\skills\my-skill` | `~/.claude/skills/{repo}` 或 `~/.agents/skills/{repo}` | <!-- scan-ignore: windows-absolute-path (示例路径) -->
 | **电子邮箱** | 真实个人邮箱 | `username@example.com` |
-| **服务器地址** | `192.168.1.100` | `127.0.0.1` 或 `example.com` |
+| **服务器地址** | `192.168.1.100` | `127.0.0.1` 或 `example.com` | <!-- scan-ignore: rfc1918-ip (示例，非真实内网) -->

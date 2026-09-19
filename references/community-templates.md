@@ -1,6 +1,6 @@
 # GitHub 2026 官方社区健康文件库与模板规范
 
-> 对标：GitHub Insights → Community Standards 100% 满分考核标准与自动化流水线。
+> 对标：GitHub 官方社区健康文件口径（README/CODE_OF_CONDUCT/LICENSE/CONTRIBUTING 为点名文件、issue 模板可计分）与最小权限自动化流水线。**不要写"满分/百分比"这类非官方表述。**
 
 ---
 
@@ -57,12 +57,11 @@ body:
     attributes:
       label: "操作系统 / Operating System"
       options:
-        - "Windows 11 (24H2)"
-        - "Windows 11 (22H2 / 23H2)"
-        - "Windows 10"
+        - "Windows"
         - "macOS"
         - "Linux"
-        - "Other"
+        - "Docker / 容器"
+        - "其他 / Other"
     validations:
       required: true
   - type: checkboxes
@@ -106,12 +105,23 @@ body:
 ```
 
 ### 1.3 模板全局配置 (`.github/ISSUE_TEMPLATE/config.yml`)
+**写法一（默认）：保留自由 Issue 入口**——模板没覆盖的反馈仍可提交。
 ```yaml
-blank_issues_enabled: false
+blank_issues_enabled: true
 contact_links:
   - name: "📖 项目文档 / Documentation"
     url: "https://github.com/{owner}/{repo}#readme"
     about: "在提交 Issue 前请先查阅官方文档"
+```
+
+**写法二（强制走模板）：仅当已有第三种入口时使用**——必须同时提供 Question 模板，或把用户导向 Discussions；
+否则等于堵住所有非模板反馈（本仓库采用写法二，因为 `config.yml` 里配了 Questions→Discussions 链接）。
+```yaml
+blank_issues_enabled: false
+contact_links:
+  - name: "💬 Questions & Discussions"
+    url: "https://github.com/{owner}/{repo}/discussions"
+    about: "提问请到 Discussions，不要开 Issue。"
 ```
 
 ---
@@ -146,17 +156,24 @@ contact_links:
 ```markdown
 # 安全策略 / Security Policy
 
+> 私有漏洞报告按钮需要在仓库 **Settings → Code security** 中启用（`GitHub Private Vulnerability Reporting`）；仅提交本文件不会自动开启该入口。
+
 ## 支持版本 / Supported Versions
 
-| 版本 (Version) | 支持状态 (Supported) |
-|---|---|
-| 最新版本 (Latest) | :white_check_mark: |
-| 旧版本 (< Latest) | :x: |
+| 版本 (Version) | 支持状态 (Supported) | 停止支持 (EOL) |
+|---|---|---|
+| 2.x（当前） | :white_check_mark: 接收修复 | 待定 |
+| 1.x | :warning: 仅安全修复 | 2026-12-31 |
+| < 1.0 | :x: 不接收 | 已停止 |
 
 ## 报告安全漏洞 / Reporting a Vulnerability
 
-如果发现任何安全漏洞或敏感信息泄露风险，**请勿公开发布 Issue**。
-请通过 GitHub 官方的 [Private Vulnerability Reporting](https://github.com/{owner}/{repo}/security/advisories/new) 提交私密通报，维护者将在 48 小时内进行响应与修复。
+发现漏洞或敏感信息泄露风险时，**请勿公开发布 Issue**。请通过以下任一渠道私密通报：
+- [GitHub Private Vulnerability Reporting](https://github.com/{owner}/{repo}/security/advisories/new)
+- 邮件：`security@example.com`（若提供 PGP，请在此给出公钥指纹）
+
+**受理范围**：本仓库代码与发布产物；**不在范围**：依赖项自身的已知漏洞（请上报上游）。
+**响应节奏（按实际能力填写，不要承诺做不到的时限）**：确认收到 {N} 个工作日内；修复或缓解目标 90 天内，期间通过私密通报同步进展。
 ```
 
 ---
@@ -173,16 +190,22 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        # Node 18/20 均已 EOL（20 的 EOL 为 2026-04-30）；26 于 2026-10-28 转 LTS 后可加入
+        # 滚动来源：https://endoflife.date/nodejs
+        node-version: [22.x, 24.x]
     steps:
-      - uses: actions/checkout@v4
+      # 外部 Action 一律锁定完整 commit SHA；由 Dependabot(github-actions) 负责滚动
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
@@ -200,16 +223,21 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        # 3.10 的 EOL 为 2026-10-31，故从 3.11 起；3.14 于 2025-10-07 发布
+        # 滚动来源：https://endoflife.date/python
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m unittest discover tests
@@ -218,6 +246,8 @@ jobs:
 ---
 
 ## 5. Dependabot 自动化依赖安全更新 (`.github/dependabot.yml`)
+
+> 限额口径（官方 options reference）：`open-pull-requests-limit` **只作用于版本更新**，默认 **5**、可调（设大值等于取消限制）；**安全更新不受该限制、无数量上限**。
 
 ```yaml
 version: 2

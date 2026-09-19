@@ -7,4 +7,4 @@
 - **讨论**：GitHub [Discussions](https://github.com/hyt315/github-oss-prep/discussions)（需要时）。
 - **漏洞**：通过 GitHub [Private Vulnerability Reporting](https://github.com/hyt315/github-oss-prep/security/advisories/new) 私下报告，不要发公开 Issue。
 
-> 本项目按"尽力而为"原则维护，不承诺特定响应时间；请给出可复现步骤。
+> 一般问题按"尽力而为"处理，不设固定 SLA；**漏洞响应时限以 [SECURITY.md](SECURITY.md) 为唯一口径**。提交时请附可复现步骤。

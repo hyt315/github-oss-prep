@@ -28,3 +28,17 @@ audit-report.txt
 *.log
 scratch/
 tmp/
+
+# Credentials and local secrets (mirrors scripts/secret-rules.json blocked_filenames)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+credentials.json

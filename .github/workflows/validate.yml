@@ -4,16 +4,27 @@ on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      # 外部 Action 一律锁定完整 commit SHA（更新由 Dependabot github-actions 负责）
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
-      - run: python3 scripts/validate_repo.py
+      - name: Fixture regression (real positives caught, clean sample clean)
+        run: python scripts/selftest.py
+      - name: Unit tests (stdlib unittest, no extra deps)
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+      - name: Repository checks
+        run: python scripts/validate_repo.py
