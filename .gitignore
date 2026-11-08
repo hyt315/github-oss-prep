@@ -29,7 +29,7 @@ audit-report.txt
 scratch/
 tmp/
 
-# Credentials and local secrets (mirrors scripts/secret-rules.json blocked_filenames)
+# Credentials and local secrets (covers at least scripts/secret-rules.json blocked_filenames)
 .env
 .env.*
 !.env.example
@@ -41,4 +41,6 @@ tmp/
 *.pfx
 id_rsa
 id_ed25519
+id_ecdsa
+id_dsa
 credentials.json

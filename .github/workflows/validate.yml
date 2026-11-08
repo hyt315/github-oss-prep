@@ -19,6 +19,8 @@ jobs:
     steps:
       # 外部 Action 一律锁定完整 commit SHA（更新由 Dependabot github-actions 负责）
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # full history for the --history scan
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
@@ -27,4 +29,6 @@ jobs:
       - name: Unit tests (stdlib unittest, no extra deps)
         run: python -m unittest discover -s tests -p "test_*.py" -v
       - name: Repository checks
-        run: python scripts/validate_repo.py
+        run: python scripts/validate_repo.py --strict
+      - name: History scan (P0 in any past commit blocks)
+        run: python scripts/validate_repo.py --history

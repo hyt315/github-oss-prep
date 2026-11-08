@@ -1,291 +1,159 @@
 ---
 name: github-oss-prep
 description: "Use when preparing, publishing, launching, or improving a project for open-source adoption on GitHub. Triggers include GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、开源推广、oss prep、publish to GitHub, launch an open-source project, and prepare for open source."
-version: 3.3.1
+license: MIT
+metadata:
+  version: "3.3.2"
 ---
 
 # GitHub 开源准备
 
-将任意项目美化为适合 GitHub 发布的版本，补齐全套社区健康文件，输出专业级仓库。
+把一个项目整理成适合在 GitHub 公开的仓库：补齐社区健康文件，做隐私与许可检查，写好 README 与仓库门面，再按授权推送、发版和推广。
 
-## 核心理念
+## 核心原则
 
-- **先审后改，不盲目覆盖**：保留有效内容；已有文件若过时、残缺或存在风险，先展示差异与理由，获批后再修改
-- **按项目类型适配**：Skill 项目、代码项目、文档项目的侧重点不同
-- **对齐 GitHub 社区健康文件规范（按官方口径）**：README / CODE_OF_CONDUCT / LICENSE / CONTRIBUTING 等为官方点名文件，issue 模板可计分；SECURITY、资助与支持类文件按协作规模取用。官方未使用"满分/百分比"口径，本技能也不以"分数"为目标
-- **可运行比"文件齐全"更重要**：用干净环境验证安装、最小示例、测试与打包路径
-- **PR 默认、直推可选**：公开维护项目默认走分支、PR、CI 和人工复核；个人引导期可在明确授权后直推
-- **确认后再发布**：生成内容后展示给用户确认，远程仓库、Release、包平台和外部推广分别授权
+- **先审后改**：保留有效内容；已有文件过时、残缺或有风险时，先给出差异和理由，获批再改。
+- **按项目类型适配**：先判定类型，再取对应模板，不套通用模板。
+- **按 GitHub 官方口径**：README、LICENSE、CODE_OF_CONDUCT、CONTRIBUTING、SECURITY、Issue/PR 模板逐项核对内容；community profile 的健康百分比只看文件在不在，不以它为目标。
+- **能跑比文件齐更重要**：在干净环境里验证安装、最小示例、测试和打包。
+- **不带走作者的电脑**：交付物里不能出现作者的用户名、本地路径、代理端口、"在我电脑上实测"式的环境快照、真实邮箱和凭据。
+- **授权逐级给**：改文件、对外发布、对外推广各自单独确认，前一步的同意不延伸到后一步。
 
----
+## 三道确认闸
 
-## 运行模式与前置条件
+| 闸 | 时机 | 给用户看什么 |
+|---|---|---|
+| 闸 1：改文件前 | Step 1 扫描后 | 定位卡、项目类型、缺失/薄弱/风险清单、打算新建和修改的文件 |
+| 闸 2：对外发布前 | Step 3–4 完成后 | 事实卡（见文末）、diff 摘要、仓库名、可见性、Description、Topics、版本号 |
+| 闸 3：对外推广前 | Release 之后 | Launch Kit 文案与渠道清单 |
 
-开源整理、隐私扫描、README 与社区文件生成、源码 ZIP 打包均不需要 GitHub 认证。只有用户明确要求"现在发布到 GitHub"时才进入认证检查。
+闸与闸之间不再逐步询问；遇到 P0 失败或超出已确认范围的改动时，立即停下来问。
 
-**认证与推送策略（只读探测后选择路径，详见 `references/mcp-push-guide.md`）**：
-1. 推送前做**只读探测**：连接器可用性 / `gh` 是否存在 / 两条网络可达性 / `GITHUB_TOKEN` 是否存在
-2. 连接器弹窗或报"字符串绑定无效"、或 `gh` 不存在时：按 `mcp-push-guide.md` 的本机路径执行，或把推送阶段移交同机 `github-upload` 技能；其他平台保留连接器或 `gh auth login --web` 路径
-3. 绝不扫描用户主目录/编辑器/MCP 配置找 Token；一次性凭据只存在于 shell 变量，永不落盘
+## 运行模式与认证
 
----
+整理、隐私扫描、README 与社区文件生成、源码 ZIP 打包都不需要 GitHub 认证。只有用户明确要求"现在发布到 GitHub"时才做认证检查：
+
+1. 先做**只读探测**：连接器能否完成一次真实操作、`gh` 是否存在并已登录、`github.com` 与 `api.github.com` 是否可达、`GITHUB_TOKEN` 是否存在（只判断有无）。
+2. 按 `references/mcp-push-guide.md` 的判定表选路径 A（REST API + 一次性凭据推送）、B（连接器或 `gh`）或 C（交付 ZIP 与网页上传说明）。
+3. 不扫描用户主目录、编辑器或 MCP 配置找 token；token 不进 URL、不落盘、不回显；需要代理时向用户要地址，不猜端口。
 
 ## 工作流程
 
 ```
-Step 0: 定位（目标用户 + 核心价值 + 可验证结果）
-    ↓
-Step 1: 扫描（识别类型 + 检查缺失、薄弱与风险项）
-    ↓
-Step 2: 整理（补齐缺失文件 + 经确认改进薄弱文件）
-    ↓
-Step 3: 验证（内容 + 隐私 + 来源许可 + 干净环境运行）
-    ↓
-Step 4: 仓库门面（README + Description + Topics + 社交预览）
-    ↓
-Step 5: 发布确认 → 分支/PR（默认）或个人直推（可选）
-    ↓
-Step 6: Release + 多平台分发 + 版本一致性验证
-    ↓
-Step 7: 发现与增长（Launch Kit + 定向发布 + 反馈闭环）
+Step 0 定位 → Step 1 扫描 →【闸 1】→ Step 2 整理 → Step 3 验证 → Step 4 门面
+→【闸 2】→ Step 5 推送 → Step 6 Release 与分发 →【闸 3】→ Step 7 推广
 ```
 
----
+### Step 0：定位
 
-## Step 0: 定位与成功标准
+用现有资料回答四个问题，输出一张定位卡（目标用户、核心承诺、最小示例、证据、非目标）：
 
-开始改文件前先用现有项目资料回答四个问题：
+1. **谁会用**：首要用户一类，次要用户最多两类。
+2. **解决什么**：在什么场景下，原来多麻烦，现在少几步。
+3. **五分钟证明**：新用户能复现的最小示例和预期输出。
+4. **本次边界**：区分准备开源、发布 GitHub、创建 Release、对外推广。
 
-1. **谁会用**：首要用户只能有一类，次要用户最多两类
-2. **解决什么**：用"用户在什么场景下，原来多麻烦，现在少几步"描述
-3. **五分钟证明**：确定一个新用户可复现的最小示例和预期输出
-4. **本次边界**：区分"准备开源""发布 GitHub""创建 Release""对外推广"，不得把前一步授权扩展到后一步
+详见 `references/discovery-and-promotion.md`。
 
-输出一张简短定位卡：目标用户、核心承诺、最小示例、证据、非目标。详见 `references/discovery-and-promotion.md`。
+### Step 1：扫描
 
----
+1. **判定类型**：按 `references/category-map.md` §3 执行（指纹 → 候选集 → 主产物一问 → 旗标 → 生命周期），产出**一个** `category_id`；落不进就记 `general` + `router=unresolved`，不硬套。
+2. **核对社区健康文件**：README、LICENSE、CODE_OF_CONDUCT、CONTRIBUTING、SECURITY（根目录、`.github/` 或 `docs/`），Issue 表单与 PR 模板（`.github/`）。`LICENSE` 不能由组织级 `.github` 仓库兜底；Description 与 Topics 不是文件，但发布时必须设置。
+3. **跑一次基线扫描**：`python scripts/validate_repo.py <项目目录> --strict --history`，记下 P0/P1 命中。
 
-## Step 1: 扫描项目
+### Step 2：整理
 
-### 1.1 判定项目类型（唯一分类源：`references/category-map.md`）
+- README 按类型取模板：先读 `references/readme-template.md`（总纲与《品类增量》），再只打开 `references/readme-templates/` 下对应的那一份骨架。
+- 已有文件按"准确、清楚、可运行、可维护"评估，只在确有收益时改，并给出摘要或 diff；不为统一模板抹掉项目原有表达。
+- 中文项目可全中文，建议保留英文摘要。
 
-👉 动作：按该文件 §3 顺序执行——指纹 → 候选集 → **主产物一问**（"新用户 5 分钟内会执行或打开的那一个东西是什么"）→ 旗标 → 生命周期，产出**一个** `category_id`；落不进记 `general` + `router=unresolved`，**禁止硬套最像的一类**。
+| 文件 | 要点 |
+|---|---|
+| README.md | 一句话价值、结果图或真实输出、最短安装、最小示例 |
+| LICENSE | 按 `category-map.md` 的许可默认选择；内容、数据、模型不要默认 MIT |
+| CODE_OF_CONDUCT.md | Contributor Covenant 3.0，附版本 URL |
+| CONTRIBUTING.md | 贡献流程、分支规范、PR 要求 |
+| SECURITY.md | 私有漏洞报告渠道、响应时间、支持版本 |
 
-| 分类结果 | 决定什么 | 额外检查项 |
-|---|---|---|
-| `skill` / `mcp-server` | 品类 1/2 模板与增量、宿主矩阵、分发渠道 | frontmatter 契约、`references/` 结构、副作用与权限声明 |
-| `library` / `cli` / `app` / `extension` / `iac` / `env-config` / `ci-automation` | 对应模板、必写增量、分发渠道、许可默认 | CI/CD、构建与依赖声明、干净环境可运行 |
-| `model` / `dataset` / `content` | 分许可表、必写增量（来源/隐私/偏倚/引用） | 再分发权与许可链、素材署名、版本与撤回策略 |
+模板与 CI 样例见 `references/community-templates.md`。
 
-### 1.2 对照标准检查缺失文件
+### Step 3：验证
 
-GitHub 官方社区健康文件（Insights → Community 面板 + 默认社区健康文件机制，按官方原句引用）：
+**P0（任一失败即阻止公开发布）**：秘密或个人信息进入当前树或历史；代码、素材、数据的分发权不明；干净 clone 无法按 README 跑通。
 
-| # | 文件 | 位置 |
-|---|------|------|
-| 1 | Description | GitHub 网页 / API 创建时设置 |
-| 2 | README.md | 根目录 / `.github/` / `docs/` |
-| 3 | LICENSE | 根目录 / `.github/` / `docs/` |
-| 4 | CODE_OF_CONDUCT.md | 根目录 / `.github/` / `docs/` |
-| 5 | CONTRIBUTING.md | 根目录 / `.github/` / `docs/` |
-| 6 | SECURITY.md | 根目录 / `.github/` / `docs/` |
-| 7 | Issue / PR Templates | `.github/ISSUE_TEMPLATE/`、`.github/pull_request_template.md` |
+- [ ] `validate_repo.py --strict --history` 无 P0；P1 逐条处理或在事实卡里写明豁免理由
+- [ ] 无真实 Key/Token、真实邮箱、手机号、证件号、含真实用户名的路径、私网 IP、代理端口和本机环境描述；占位符（`<your-token>`、`example@example.com`）不算泄露
+- [ ] 历史提交里有泄露时：先在平台轮换吊销凭据，再经用户同意重写历史
+- [ ] 第三方依赖、NOTICE、字体与素材署名完整
+- [ ] 从干净目录按 README 完成安装、最小示例、测试和构建；未测试的平台写"未验证"
+- [ ] 无残留占位符（`{owner}`、`{repo}`），相对链接与锚点有效，下载链接分支与默认分支一致，README 小于 512 KB
 
-> 口径说明：官方"recommended community health files"一节用 "such as" 举例 README/CODE_OF_CONDUCT/LICENSE/CONTRIBUTING，issue 模板可计分；**Description 与 Topics 不以文件形式参与计数**，`LICENSE` 不能由组织级 `.github` 仓库兜底。不要使用"7 件套/满分"这类非官方表述。
+验证方法与门禁见 `references/pr-and-release-workflow.md`，扫描范围与盲区见 `references/privacy-scan.md`。
 
----
+### Step 4：仓库门面
 
-## Step 2: 补齐并改进文件
+- Description：120 字符以内，`功能 + 亮点`，不写"一个用于…的项目"、不写版本号。规则与案例见 `references/description-guide.md`。
+- Topics：5–10 个目标用户真会搜的成熟词。
+- 社交预览图 1280×640，展示用途或结果。
+- README 首屏："一句话价值 + 结果图/GIF + 最短安装 + 最小示例"。
 
-> **检查点**：向用户展示 Step 1 的结果（项目类型 + 缺失清单），确认后进入补齐。
+### Step 5：推送
 
-**生成要点**：
-- 中英双语（中文项目可全中文，建议保留英文摘要）
-- 内容精准适配项目类型，不套通用模板
-- 生成前先简要说明将要创建的内容，获得用户认可
-- 已有文件先按"准确、清楚、可运行、可维护"评分；只在确有收益时提出修改，并展示摘要或 diff
-- 不因文件存在就自动判定合格，也不为统一模板而抹掉项目原有表达
+- 默认 `public-safe`：从最新默认分支开短分支 → 修改并验证 → Draft PR → 人复核 → CI 通过后 Squash Merge。
+- 单人维护、改动低风险且用户明确同意时，可用 `solo-fast` 直推。决策表见 `references/pr-and-release-workflow.md`。
+- **元数据是必做项**：推送后实际设置 Description 和 Topics，并从 GitHub 回读核对；做不到就标 `待手动设置`，给出精确值和网页路径。
+- 发布后至少回读：仓库 URL、可见性、默认分支、Description、Topics、文件树、最新 CI 状态。
 
-| 文件 | 生成要点 |
-|------|----------|
-| README.md | 适配项目类型，突出核心价值，含快速开始和使用示例 |
-| LICENSE | 根据项目类型选择合适的许可证（推荐 MIT/Apache 2.0） |
-| CODE_OF_CONDUCT.md | 采用 Contributor Covenant（当前 3.0，附版本 URL；本仓库暂仍为 2.1，升级需维护者确认） |
-| CONTRIBUTING.md | 贡献流程、分支规范、PR 提交指南 |
-| SECURITY.md | 私有漏洞报告渠道、响应 SLA、支持版本矩阵 |
+### Step 6：Release 与分发
 
----
+- 按 SemVer 定版本号，按 Keep a Changelog 写说明；规范见 `references/pr-and-release-workflow.md` 的「Release 规范」。
+- 只推 tag 不算发版，必须创建 Release 对象。
+- 按类型选分发渠道（`uv publish`、`npm publish`、Hugging Face、Chrome Web Store、Release 资产），见 `references/release-and-distribution.md`。
+- 核对版本号、CHANGELOG、Badge、Tag、Release 标题与安装链接一致。
+- 纯文档或方法论项目只做 GitHub Release。
 
-## Step 3: 验证与审查
+### Step 7：推广
 
-> **检查点**：向用户展示 Step 2 生成的文件列表和内容摘要，确认后进行审查。
-
-### 3.1 内容质量审查
-
-- [ ] README 5 秒内可懂，至少一个可运行示例
-- [ ] 无敏感信息（API Key、邮箱、内网路径）
-- [ ] 文件引用路径正确（相对路径），中英双语结构对应
-- [ ] Emoji 图标增强可读性，核心特性用表格展示
-- [ ] README 引用 LICENSE，不超过 512 KB
-- [ ] 无残留未替换占位符（如 `{owner}`、`{repo}`、`<your-token>` 等）
-- [ ] 下载链接的分支名与仓库实际默认分支一致
-
-### 3.2 隐私二次验证
-
-推送前最终检查（防止 Step 2 生成的文件引入新泄露）：
-- [ ] 所有文件中无真实 API Key / Token / Secret
-- [ ] 无真实邮箱、手机号、身份证号、包含真实用户名的文件路径
-- [ ] 无私网 IP、内网域名、数据库连接串
-- [ ] 占位符（`你的 API 密钥`、`example@xxx.com`）不算泄露，保留
-
-### 3.3 来源、许可与可复现性门禁
-
-- [ ] 项目代码、逆向分析产物、图片、字体、音频、数据集和示例内容均有可公开分发的权利或许可证
-- [ ] 第三方依赖、NOTICE、字体/素材署名与许可证文件完整
-- [ ] 不只扫描工作区，还检查将要提交的 Git 树与可访问历史中是否含秘密
-- [ ] 从干净目录或全新 clone 按 README 完成安装、最小示例、测试和构建
-- [ ] Windows/macOS/Linux 支持范围写清楚；未测试的平台明确标为未验证
-- [ ] 一键脚本失败时有可执行的手动步骤和故障排查
-
-验证方法与发布门禁见 `references/pr-and-release-workflow.md`。任何 P0（秘密、许可不明、无法复现）失败都必须阻止公开发布。
-
----
-
-## Step 4: 仓库门面与 Description
-
-按规则生成仓库简介。**规则 + 模板 + 案例 + Topics 建议** 详见 `references/description-guide.md`。
-
-简要原则：
-- 120 字以内，`功能 + 亮点`
-- 禁止「一个用于…的项目」式废话、版本号
-- 按项目类型选用模板
-
-同时准备：
-- 5–10 个准确 Topics，优先使用目标用户会搜索的成熟词
-- 1280×640 社交预览图方案，展示用途或结果
-- README 首屏的"一句话价值 + 结果图/GIF + 最短安装 + 最小示例"
-- 3 个真实示例或一个 60–90 秒演示
-
----
-
-## Step 5: 推送到 GitHub
-
-### 5.1 展示确认清单
-
-向用户展示仓库名、Description、Topics、文件列表，**等待明确确认**。
-
-### 5.2 创建仓库 + 推送
-
-**方案选择**：优先使用当前平台已安装的官方 GitHub 连接器；否则使用已完成 `gh auth login --web` 的 GitHub CLI；两者都不可用时交付 ZIP 和网页上传说明。详细流程见 `references/mcp-push-guide.md`。
-
-**仓库元数据是发布必做项，不是建议项**：远程仓库创建或代码推送成功后，必须实际设置已确认的 Description 和 Topics，并从 GitHub 回读验证。不能只在回复中列出 Topics。若当前认证方式无法修改元数据，则把每个未完成项标为 `待手动设置`，给出精确值与网页路径。
-
-发布后最少验证：仓库 URL、可见性、默认分支、Description、Topics、README/文件树和最新 CI 状态。
-
-### 5.3 选择变更路径
-
-默认使用 `public-safe`：
-1. 从最新默认分支创建短生命周期分支
-2. AI 修改、运行验证并提交
-3. 推送分支并创建 Draft PR
-4. 展示 diff、验证结果和剩余风险，由人复核
-5. CI 通过后 Squash Merge
-
-仅当项目由单人维护、改动低风险且用户明确同意时使用 `solo-fast` 直推。完整决策表见 `references/pr-and-release-workflow.md`。
-
----
-
-## Step 6: Release + 多平台分发
-
-> **检查点**：Step 5 推送完成后进入本步骤。如果是纯文档/方法论项目，可跳过 6.2-6.4，只做 6.1。
-
-### 6.1 创建首个 GitHub Release
-
-语义化版本号 (SemVer 2.0.0)：`vMAJOR.MINOR.PATCH`
-
-| 变更类型 | 版本影响 | 示例 |
-|----------|----------|------|
-| 向后兼容的新功能 | 次版本增加 | v1.0.0 → v1.1.0 |
-| 向后兼容的修复 | 修订号增加 | v1.1.0 → v1.1.1 |
-| 不兼容的变更 | 主版本增加 | v1.1.0 → v2.0.0 |
-
-补充：**0.y.z 为初始开发阶段**（破坏性变更同样升主版本，`1.0.0` 才定义公共 API）；预发布（`-alpha.1`）优先级低于正式版、构建元数据（`+build.1`）不参与比较；`0.x` 不要承诺兼容性。
-
-**发布内容**：
-- 标题：`v{版本号} - {简短描述}`
-- 说明：按 Keep a Changelog 六类条目组织——Added / Changed / Deprecated / Removed / Fixed / **Security**（漏洞修复必须记入 Security），另含已知限制与升级指引
-- 资产:ZIP 源码、Checksums 文件、安装包（如有）
-
-### 6.2 多平台分发
-
-依据项目类型匹配对应的发版流程：`uv publish`、`npm publish`、`huggingface-cli upload`、Chrome Web Store 上架或 Release 资产。详见 `references/release-and-distribution.md`。
-
-### 6.3 版本一致性验证
-
-确保版本号、CHANGELOG、Badge、Tag、Release 标题与安装链接一致。
-
----
-
-## Step 7: 发现与增长
-
-### 7.1 Launch Kit 准备
-
-👉 动作：读取 `references/discovery-and-promotion.md#launch-kit`，按其 5 件套（一句话 / 短帖 / 长帖 / 素材 / 支持）从**同一张事实卡**逐渠道改写，不复用同一条广告文案。
-
-### 7.2 渠道选择
+- 按 `references/discovery-and-promotion.md#launch-kit` 的 5 件套，从**同一张事实卡**逐渠道改写，不复用同一条广告文案。
+- 只选目标用户真实存在的 2–3 个首发渠道，遵守各社区的自我推广规则。
 
 | 目标用户 | 优先渠道 | 内容重点 |
 |---|---|---|
-| 开发者/Agent 用户 | GitHub Topics、技术社区、Show HN | 可运行演示、架构、限制、贡献入口 |
+| 开发者 / Agent 用户 | GitHub Topics、技术社区、Show HN | 可运行演示、架构、限制、贡献入口 |
 | 中文开发者 | 掘金、V2EX、知乎、公众号 | 使用场景、教程、真实效果和源码链接 |
-| 创作者/非技术用户 | B 站、小红书、Product Hunt | 前后对比、操作视频、模板和上手成本 |
+| 创作者 / 非技术用户 | B 站、小红书、Product Hunt | 前后对比、操作视频、模板和上手成本 |
 
-只选择目标用户真实存在的 2–3 个首发渠道。遵守社区自我推广规则。
-
-### 7.3 发布节奏
-
-👉 动作：读取 `references/discovery-and-promotion.md#发布节奏`，按 T-7 → T0 → T+7 → T+30 执行；早期项目以"三位陌生用户跑通"为成功标准，不用 Star 数代替真实采用。
-
----
+- 节奏按 T-7 → T0 → T+7 → T+30；早期以"三位陌生用户跑通"为成功标准，不用 Star 数代替真实采用。
 
 ## Reference Map
 
-- 🗺️ **[分类主表与判定路由（唯一分类源）](references/category-map.md)** - 12 类主表 + 三轴 + 旗标 + 判定算法 + 路由回归用例（约 9.7 KB）
-- 📑 **[十大品类完整 README 模板库](references/readme-template.md)** - 10 大软件形态完整开箱即用 Markdown 骨架（22.1 KB）
-- 🚨 **[开源准备避坑库与官方规范基线](references/github-oss-prep-pitfalls.md)** - 社区健康文件官方口径、Git 历史凭据洗库与 CI 供应链 Action 锁定（16.1 KB）
-- 🛡️ **[五重隐私与安全扫描](references/privacy-scan.md)** - 5 重扫描防御网、真伪泄露比对表；规则唯一真相源在 `scripts/secret-rules.json`（7.2 KB）
-- 🏛️ **[社区健康文件与 CI 模板](references/community-templates.md)** - YAML Issue Forms、Node/Python 矩阵 CI（SHA 锁定）与 Dependabot（9.2 KB）
-- 🚀 **[全渠道分发与发版指南](references/release-and-distribution.md)** - uv、npm、Hugging Face、ChromeStore、Docker 发版实操与 Checksums（6.9 KB）
-- 🏷️ **[Description 与 Topics 指南](references/description-guide.md)** - ≤120 字符仓库简介与 Topics 生成指南（4.8 KB）
-- 🌐 **[开源发现与推广策略](references/discovery-and-promotion.md)** - Launch Kit 营销包、社交预览与发布渠道（2.6 KB）
-- 🔐 **[GitHub 推送指引（探测后选路）](references/mcp-push-guide.md)** - 只读探测 → 路径 A/B/C；与 `github-upload` 技能的关系（5.2 KB）
-- 🚦 **[PR、CI 与发布门禁工作流](references/pr-and-release-workflow.md)** - 分支、PR、CI 测试与发布自动化校验（2.3 KB）
-- 🔑 **[GitHub 凭据方案对比](references/github-pat-comparison.md)** - Fine-grained 与 Classic PAT 的能力与限制对比（2.6 KB）
-- 🔒 **[认证与凭据最小化指引](references/github-pat-setup.md)** - 只读探测、一次性凭据与 PAT 选择（2.2 KB）
----
+- 🗺️ [分类主表与判定路由](references/category-map.md)：唯一分类源，主表、旗标、判定算法、路由回归用例（约 9.7 KB）
+- 📑 [README 模板总纲](references/readme-template.md)：前置事实清单、通用底座 12 节、Badge、安装表格、《品类增量》（约 12.4 KB）；各品类骨架在 `references/readme-templates/`，每份 2–5 KB，只读对应那一份
+- 🚨 [避坑库与官方规范基线](references/github-oss-prep-pitfalls.md)：社区健康文件口径、历史凭据清理、CI 供应链（约 17.2 KB）
+- 🛡️ [隐私与安全扫描](references/privacy-scan.md)：五重扫描的自动化范围与盲区；规则唯一真相源是 `scripts/secret-rules.json`（约 8.5 KB）
+- 🏛️ [社区健康文件与 CI 模板](references/community-templates.md)：Issue 表单、SHA 锁定的 CI、Dependabot（约 9.8 KB）
+- 🚀 [分发与发版指南](references/release-and-distribution.md)：uv、npm、Hugging Face、Chrome Web Store、Docker 与 Checksums（约 7.8 KB）
+- 🏷️ [Description 与 Topics 指南](references/description-guide.md)（约 4.7 KB）
+- 🌐 [发现与推广策略](references/discovery-and-promotion.md)：Launch Kit、社交预览、渠道（约 2.5 KB）
+- 🔐 [GitHub 推送指引](references/mcp-push-guide.md)：只读探测 → 路径 A/B/C；token 不进 URL、不落盘（约 5.7 KB）
+- 🚦 [PR、CI 与发布门禁](references/pr-and-release-workflow.md)：分支、PR、门禁、Release 规范（约 3.1 KB）
+- 🔑 [GitHub 凭据方案对比](references/github-pat-comparison.md)：Fine-grained 与 Classic PAT（约 2.5 KB）
+- 🔒 [认证与凭据最小化](references/github-pat-setup.md)：只读探测、一次性凭据、PAT 选择（约 2.7 KB）
 
-## 交付规范：分层诊断事实卡 (Fact Card)
+## 交付：开源就绪事实卡
 
-在阶段 5 验证完成后，向用户汇报标准 Markdown 格式分层事实卡：
+在 Step 3 验证完成后、闸 2 时提交。**每个测量值必须来自当次命令的真实输出**；没跑的项写 `未测量`、判定 `⚪ 未测量`，并视为阻断项。不得照抄示例数字。
 
-### 📊 github-oss-prep 仓库开源就绪事实卡
-
-**填写铁律**：每个"测量实值"必须来自**当次命令的真实输出**；未运行该项检查时必须写 `未测量`（判定为 `⚪ 未测量`），并且视为 P0 阻断项。禁止照抄示例数字或默认绿色。
-
-| 层级 | 检查项 | 测量实值 | 产生命令（附执行时间） | 判定结果 |
+| 层级 | 检查项 | 测量值 | 命令（附执行时间） | 判定 |
 |---|---|---|---|:---:|
-| L1 隐私安全 | 凭据 P0 / 路径与私网 P1 命中数 | {SECRETS_P0_HITS} / {PATH_P1_HITS} | `python scripts/validate_repo.py --json`（{RUN_AT}） | {SECRETS_VERDICT} / {PATH_VERDICT} |
-| L1 隐私安全 | 全历史凭据（可选） | {HISTORY_RESULT} | `gitleaks detect`（{RUN_AT}） | {HISTORY_VERDICT} |
-| L2 社区健康 | 官方点名健康文件 + issue 模板 | {COMMUNITY_FILES_PRESENT} | `ls` / `validate_repo.py` 文件清单（{RUN_AT}） | {COMMUNITY_VERDICT} |
-| L3 供应链安全 | workflow 顶层 permissions 与 Action SHA 锁定 | {CI_PIN_RESULT} | `python scripts/validate_repo.py` 检查项 `CI-PIN`（{RUN_AT}） | {CI_VERDICT} |
-| L3 自动化工程 | selftest 回归 | {SELFTEST_RESULT} | `python scripts/selftest.py`（{RUN_AT}） | {SELFTEST_VERDICT} |
+| L1 隐私安全 | 当前树 P0 / P1 命中数 | {P0} / {P1} | `python scripts/validate_repo.py <dir> --strict`（{RUN_AT}） | {VERDICT} |
+| L1 隐私安全 | 历史提交与提交邮箱 | {HISTORY} | `python scripts/validate_repo.py <dir> --history`；可加 `gitleaks git`（{RUN_AT}） | {VERDICT} |
+| L2 社区健康 | 健康文件与 Issue/PR 模板 | {FILES} | `validate_repo.py` 文件清单（{RUN_AT}） | {VERDICT} |
+| L3 供应链 | workflow 顶层 permissions 与 Action SHA 锁定 | {CI_PIN} | `validate_repo.py` 规则 `ci-pin-*`（{RUN_AT}） | {VERDICT} |
+| L3 自动化 | 项目自带测试 / 本技能 selftest | {TESTS} | 项目测试命令或 `python scripts/selftest.py`（{RUN_AT}） | {VERDICT} |
 
-判定取值：`🟢 通过` / `🟡 部分` / `🔴 失败` / `⚪ 未测量`。豁免项（`scan-ignore`）必须在表中单列一行说明理由。
-
-【治理与发布建议（须用户明确授权后手动执行）】：
-1. 确认上述指标均达标后，方可由用户授权执行远程分支推送与 Release 打包
-2. 若发现历史提交包含敏感数据，先在云平台轮转吊销 Token，并提供回退对策后方可重写历史
+判定取值：`🟢 通过` / `🟡 部分` / `🔴 失败` / `⚪ 未测量`。豁免项（`scan-ignore`）单列一行写理由。
 
 ---
 
-> 🌏 **English**: See `README.en.md` for the English version of this skill.
+> 🌏 English: see `README.en.md`.

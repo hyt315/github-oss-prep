@@ -9,16 +9,27 @@
 
 按 `mcp-push-guide.md` 的判定表选择路径。**任何路径都不要**：请求或打印 token、把凭据写进 remote URL 并持久化、把凭据放进文件或提交、运行 `gh auth status --show-token`、为找凭据扫描用户主目录 / 编辑器配置 / MCP 配置。
 
-## 本机事实（2026-09-19 复核）
+## 常见环境与对应做法（按探测结果套用，不要照抄某台机器）
 
-- `gh` CLI **不存在**；
-- `github.com` 直连被重置（TLS 握手失败），git 推送需代理 `http://127.0.0.1:7897`；
-- `api.github.com` 直连稳定可用（REST 建仓 / 设置元数据 / 回读验证走它）；
-- token 位于 **User 级环境变量 `GITHUB_TOKEN`**，通过 PowerShell 读取到 shell 变量后一次性使用，用完 `GH=` 清空。
+| 探测结果 | 做法 |
+|---|---|
+| 没有 `gh` | 用 REST API 建仓、设置元数据、回读验证；git 只负责推送 |
+| `github.com` 直连失败、`api.github.com` 可达 | 推送时临时加代理：`git -c http.proxy=<proxy> push …`，`<proxy>` 由用户提供，不写进文件 |
+| token 已在环境变量里 | 只判断"有没有"，读到 shell 变量后一次性使用，用完立即清空 |
 
 ## 一次性使用原则
 
-一次推送的完整形态：`git -c http.proxy=<proxy> push "https://$GH@github.com/{owner}/{repo}.git" main`。要点：**不** `git remote set-url`（避免 token 固化到 `.git/config`）；命令回显由 git 自动脱敏；推送完成后立即清空变量。若所在组织要求更严格的凭据策略，改用短期凭据（GitHub App / OIDC），不要长期 PAT。
+推送时让 git 通过**临时凭据助手**向环境变量要 token，命令行参数里只出现变量名，不出现 token 本身（直接写进 `https://<token>@github.com/...` 会出现在进程列表和部分错误信息里）：
+
+```bash
+export GH_PUSH_TOKEN="$GH"        # 只在当前 shell 进程内
+git -c credential.helper= \
+    -c 'credential.helper=!f() { echo username=x-access-token; echo "password=$GH_PUSH_TOKEN"; }; f' \
+    push https://github.com/{owner}/{repo}.git main
+unset GH_PUSH_TOKEN GH
+```
+
+要点：第一个空的 `credential.helper=` 屏蔽系统已配置的凭据管理器，避免 token 被它存下；**不** `git remote set-url`（避免 token 固化到 `.git/config`）；推送完成后立即 `unset`。若所在组织要求更严格的凭据策略，改用短期凭据（GitHub App / OIDC），不要长期 PAT。
 
 ## PAT 选择（仅当用户明确需要）
 

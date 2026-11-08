@@ -1,6 +1,6 @@
 # GitHub 2026 官方社区健康文件库与模板规范
 
-> 对标：GitHub 官方社区健康文件口径（README/CODE_OF_CONDUCT/LICENSE/CONTRIBUTING 为点名文件、issue 模板可计分）与最小权限自动化流水线。**不要写"满分/百分比"这类非官方表述。**
+> 对标：GitHub 官方社区健康文件口径（README/CODE_OF_CONDUCT/LICENSE/CONTRIBUTING 为点名文件、issue 模板可计分；community profile 的 `health_percentage` 只看文件在不在，不以它为目标）与最小权限自动化流水线。**不要写"满分/百分比"这类非官方表述。**
 
 ---
 
@@ -20,7 +20,7 @@
 
 ## 1. 现代交互式 YAML Issue Forms
 
-GitHub 官方已全面推荐使用 YAML 格式的 Issue Forms 替代传统 Markdown 模板。
+YAML 格式的 Issue Forms 比 Markdown 模板更易收集结构化信息（官方文档仍标注为 public preview，字段可能变动）。
 
 ### 1.1 Bug 反馈表单 (`.github/ISSUE_TEMPLATE/bug_report.yml`)
 ```yaml
@@ -156,7 +156,7 @@ contact_links:
 ```markdown
 # 安全策略 / Security Policy
 
-> 私有漏洞报告按钮需要在仓库 **Settings → Code security** 中启用（`GitHub Private Vulnerability Reporting`）；仅提交本文件不会自动开启该入口。
+> 私有漏洞报告按钮需要在仓库 **Settings → Advanced Security** 中启用（`GitHub Private Vulnerability Reporting`）；仅提交本文件不会自动开启该入口。
 
 ## 支持版本 / Supported Versions
 
@@ -198,9 +198,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Node 18/20 均已 EOL（20 的 EOL 为 2026-04-30）；26 于 2026-10-28 转 LTS 后可加入
+        # Node 18/20 均已 EOL；26 自 2026-10-28 起为 LTS
         # 滚动来源：https://endoflife.date/nodejs
-        node-version: [22.x, 24.x]
+        node-version: [22.x, 24.x, 26.x]
     steps:
       # 外部 Action 一律锁定完整 commit SHA；由 Dependabot(github-actions) 负责滚动
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -231,13 +231,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # 3.10 的 EOL 为 2026-10-31，故从 3.11 起；3.14 于 2025-10-07 发布
+        # 3.10 已于 2026-10 EOL，故从 3.11 起；3.15 于 2026-10 发布
         # 滚动来源：https://endoflife.date/python
-        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.11", "3.12", "3.13", "3.14", "3.15"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m unittest discover tests
@@ -247,7 +247,7 @@ jobs:
 
 ## 5. Dependabot 自动化依赖安全更新 (`.github/dependabot.yml`)
 
-> 限额口径（官方 options reference）：`open-pull-requests-limit` **只作用于版本更新**，默认 **5**、可调（设大值等于取消限制）；**安全更新不受该限制、无数量上限**。
+> 限额口径（官方 options reference）：`open-pull-requests-limit` **只作用于版本更新**，默认 **5**、可调（设大值等于取消限制）；**安全更新另有固定上限：最多 10 个未关闭的 PR，不可调**。
 > ⚠️ **只声明项目里真实存在的生态**：给没有 `package.json` 的仓库配 `npm`、没有 `pyproject.toml`/`requirements.txt` 的仓库配 `pip`，Dependabot 任务会以 failure 收场（本仓库实测踩过）。删掉用不到的段落，而不是留着当示例。
 
 ```yaml

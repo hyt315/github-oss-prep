@@ -1,6 +1,6 @@
 # 分类主表与判定路由（唯一分类源）
 
-> **本文件是本项目唯一的分类系统。** 扫描（Step 1）、README 模板选择（Step 4）、分发渠道（Step 6）、许可默认（Step 2）都引用同一 `category_id`。
+> **本文件是本项目唯一的分类系统。** 扫描（Step 1）、README 模板选择（Step 2）、分发渠道（Step 6）、许可默认（Step 2）都引用同一 `category_id`。
 > 背景：技能内曾并存三套互不映射的分类（4 类 / 9 类 / 10 类）。现已合并——`SKILL.md` 只保留指向本文件的判定动作。
 
 ---
@@ -9,7 +9,7 @@
 
 | 轴 | 取值 | 决定什么 |
 |---|---|---|
-| **轴 1 产物形态** | 下表 12 个 `category_id`（**唯一主类**） | 安装/验证方式、专属章节、分发渠道、许可默认 |
+| **轴 1 产物形态** | 下表 13 个 `category_id`（12 类 + `general` 兜底，**唯一主类**） | 安装/验证方式、专属章节、分发渠道、许可默认 |
 | **轴 2 首要受众** | `dev`（写代码的人）/ `platform`（运维·平台工程）/ `creator`（非技术·创作者）/ `research`（研究者）/ `enterprise`（采购·合规） | 术语密度、是否必须图形化演示、是否要合规与审计段落 |
 | **轴 3 生命周期** | `incubating`(<1.0) / `ga` / `maintenance` / **`archived`** | 稳定性承诺、是否接受贡献、**归档态必须写状态横幅与替代品**（`0.x` 不得承诺兼容） |
 
@@ -27,7 +27,7 @@
 
 ---
 
-## 2. 主表：12 类
+## 2. 主表：12 类 + `general` 兜底
 
 「进入判据」是**候选生成**（命中≠确定），最终由 §3 的主产物问题确认。
 
@@ -39,10 +39,10 @@
 | `dataset` | 数据集 | 数据文件为主（`parquet`/`csv`/图像目录）+ dataset card / DVC | 与 `model` 分离：本类必写来源、去标识、schema、切分 | HF datasets、Kaggle、Zenodo、Release 资产 | CC-BY-4.0 / CDLA-Permissive-2.0 / ODbL（按再分发权决定） | 品类 3 的**数据集增量**（正文缺，见 `13`） |
 | `library` | 类库 / SDK | 被 import：`package.json` 有 `main`/`exports` 无 `bin`；`pyproject` 无 `[project.scripts]`；`Cargo.toml` 有 `[lib]` | 若同时提供可执行命令 → 以「用户 5 分钟内跑什么」定主类，另一记为次产物 | npm / PyPI / crates.io / Maven Central（**Portal token 流程**）/ NuGet / Go proxy | 宽松（MIT/Apache-2.0）；重专利域选 Apache-2.0 | 品类 5 |
 | `cli` | 命令行 / TUI 工具 | `package.json` 有 `bin`；`[project.scripts]`；`[[bin]]`；Cobra/argparse main | 若默认起 HTTP 服务 → `app`；若只是库的可选入口 → `library` | 包管理器（winget/brew/scoop/choco/AUR）、`uvx`/`npx`、Release 二进制 + 校验和 | MIT / Apache-2.0 | 品类 4 |
-| `app` | 完整应用 / Web 服务 | 监听端口 + `Dockerfile`/`compose.yml` + `.env.example` | 前端构建产物为主的站点 → `frontend` | Docker/OCI、PaaS 一键部署、云市场 | Apache-2.0（SaaS 注意 AGPL 差异） | 品类 9（现最弱，见 `13`） |
-| `extension` | 宿主插件（浏览器 / 编辑器 / 平台） | 浏览器：`manifest.json` 含 `manifest_version`；VS Code：`package.json` 有 `contributes`+`.vsixmanifest`；Obsidian：`manifest.json` 含 `id` | 子型 `browser`/`vscode`/`other-host` 决定商店与审核章节 | Chrome Web Store / Edge / VS Code Marketplace + Open VSX / Obsidian | MIT（权限与隐私声明必写） | 品类 8 |
+| `app` | 完整应用 / Web 服务 | 监听端口 + `Dockerfile`/`compose.yml` + `.env.example` | 前端构建产物为主的站点或媒体生成工具仍归本类，README 改用品类 7 骨架 | Docker/OCI、PaaS 一键部署、云市场 | Apache-2.0（SaaS 注意 AGPL 差异） | 品类 9（前端/媒体子型用品类 7） |
+| `extension` | 宿主插件（浏览器 / 编辑器 / 平台） | 浏览器：`manifest.json` 含 `manifest_version`；VS Code：`package.json` 有 `engines.vscode`+`contributes`；Obsidian：`manifest.json` 含 `id` | 子型 `browser`/`vscode`/`other-host` 决定商店与审核章节 | Chrome Web Store / Edge / VS Code Marketplace + Open VSX / Obsidian | MIT（权限与隐私声明必写） | 品类 8 |
 | `iac` | 基础设施模块 / Chart | `*.tf`+`variables.tf`/`outputs.tf`；或 `Chart.yaml`；或 `kustomization.yaml`/CFN 模板 | **个人环境配置不属本类** → `env-config` | Terraform Registry、Helm repo 或 OCI chart、CloudFormation 公共段 | Apache-2.0（含云厂商示例素材时分许可） | 品类 6（当前正文只有 Terraform，见 `13`） |
-| `env-config` | dotfiles / devcontainer / 开发机模板 | `Brewfile`、`.bashrc`/`.zshrc` 集、`stow` 目录、`.devcontainer/`、`.files.zsh` | 无「安装即运行」语义：README 须声明"这不是可分发软件" | 无（仅仓库 + 引导脚本） | MIT 或 CC0（**密钥旗标强制为真**） | 品类 6 的 **dotfiles 增量**（正文缺） |
+| `env-config` | dotfiles / devcontainer / 开发机模板 | `Brewfile`、`.bashrc`/`.zshrc` 集、`stow` 目录、`.devcontainer/`、`.files.zsh` | 无「安装即运行」语义：README 须声明"这不是可分发软件" | 无（仅仓库 + 引导脚本） | MIT 或 CC0（**`user-data` 旗标强制为真**） | 品类 6 的 **dotfiles 增量**（正文缺） |
 | `ci-automation` | CI/CD 与工程构件 | `action.yml`；`.pre-commit-hooks.yaml`；可复用 workflow；CI orb/模板 | 若同时是 CLI → 主类看"用户调用方式"（在流水线里被调用 → 本类） | GitHub Marketplace、Gitlab 模板、PyPI/npm（action 的 CLI 伴生包） | MIT + **完整 SHA 锁定文档**、major tag 滚动策略 | 无（用 `general` 底座 + §4 增量） |
 | `content` | 文档 / 课程 / 清单 | 纯 Markdown 为主，无构建产物；`SUMMARY.md`/课程大纲/收录准则 | 若代码示例可运行 → 主类仍看"用户跑什么"；否则 `content` | GitHub Pages、文档站、awesome 列表 PR | **CC-BY-4.0 / CC0（勿用 MIT 覆盖内容）** | 品类 10 |
 | `general` | 兜底类 | 无法归入以上 12 类 | **禁止硬套最像的一类**：产出 `category_id=general` + `router=unresolved`，并把形态回写本表候选池 | 按实际产物 | 代码宽松 + 素材按类型分许可 | 底座 12 节 + 最相近 2 类增量 |
@@ -68,15 +68,14 @@
 
 | `category_id` | 模板状态 | 现在怎么办 |
 |---|---|---|
-| `dataset` / `env-config` / `ci-automation` / `mobile`（未来） | 无专属骨架 | 用 `readme-base.md` 底座 12 节 + 本表"必写增量"列；并在事实卡写 `template=missing` |
-| `app`（品类 9） | 有骨架但过弱（2 章节） | 按 `13` 的重写样例替换；未替换前标注 `template=weak` |
-| `iac` / `content` 等 | 完整 | 直接用 |
+| `dataset` / `env-config` / `ci-automation` / `mobile`（未来） | 无专属骨架 | 用 `readme-template.md` 的「通用底座 12 节」 + 本表"必写增量"列；并在事实卡写 `template=missing` |
+| 其余（含 `app` 品类 9） | 完整 | 直接用 `readme-templates/` 下对应骨架 |
 
-**各 `category_id` 的必写增量（3–6 条）** 见 `readme-template.md` 的《品类增量》一节；两者不一致时**以本表为准**。
+**各 `category_id` 的必写增量（3–6 条）** 见 `readme-template.md` 的《品类增量》一节，那里是权威版；本表各列只做摘要，不一致时改本表。
 
 ---
 
-## 5. 路由回归用例（`tests/test_category_router.py` 的期望）
+## 5. 路由回归用例（期望结果，尚未写成自动化测试）
 
 ```
 {"SKILL.md + scripts/*.py"}                       → skill
@@ -87,7 +86,7 @@
 {"pyproject [project.scripts] + README 安装"}     → cli
 {"Dockerfile + compose.yml + .env.example"}        → app
 {"manifest.json manifest_version:3"}               → extension(browser)
-{"package.json contributes + .vsixmanifest"}       → extension(vscode)
+{"package.json engines.vscode + contributes"}      → extension(vscode)
 {"main.tf + variables.tf + outputs.tf"}            → iac
 {"Chart.yaml + templates/ + values.yaml"}          → iac（Helm 子型，走增量）
 {"Brewfile + .zshrc + stow/"}                      → env-config（user-data 旗标自动=真）

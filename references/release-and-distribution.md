@@ -23,7 +23,7 @@
 
 | 软件形态 | 优先分发渠道 | 推荐现代命令 | 核心配置文件 |
 |---|---|---|---|
-| **AI Agent 技能** | Agent 一句话自装<br>`gh skill install --pin`<br>`gh skill publish` | `git clone` 到 skills 目录（`--pin` 锁版本） | `SKILL.md`<br>`manifest.json` |
+| **AI Agent 技能** | Agent 一句话自装<br>`gh skill install {owner}/{repo} {skill} --pin v1.2.0`<br>`gh skill publish` | `git clone` 到 skills 目录（`--pin` 后必须跟 tag 或 commit SHA） | `SKILL.md`<br>`manifest.json` |
 | **MCP Server 端** | npm / PyPI / npx | `npx -y {pkg}`<br>`uvx {pkg}` | `package.json`<br>`pyproject.toml` |
 | **AI 模型 / 数据集** | Hugging Face / Ollama | `ollama run {repo}`<br>`hf download` | `Modelfile`<br>Model Card |
 | **Python CLI / SDK** | PyPI (支持 `uvx` / `uv tool`) | `uvx {pkg}`<br>`uv tool install {pkg}` | `pyproject.toml` (`[project.scripts]`) |
@@ -56,7 +56,7 @@
 hf auth login
 
 # 2) 上传模型权重与 GGUF（<local_path> <path_in_repo>）
-hf upload {username}/{model-name} ./models/model-q4_k_m.gguf .
+hf upload {username}/{model-name} ./models/model-q4_k_m.gguf model-q4_k_m.gguf   # 单个文件：第二个参数是仓库里的文件名
 hf upload {username}/{model-name} ./data . --repo-type dataset   # 数据集用 --repo-type dataset
 ```
 > 权重与 GGUF 属大文件：走 Git LFS（`hf` 自动处理）；README 里说明克隆需要 LFS，并给出 `hf download {username}/{model-name}` 的替代下载方式。
@@ -77,7 +77,8 @@ ollama push {username}/{model-name}
 uv build
 
 # 2) 发布到 PyPI
-uv publish --token "$UV_PUBLISH_TOKEN"     # 或用 UV_PUBLISH_TOKEN 环境变量；--token/--username/--password 均受支持
+export UV_PUBLISH_TOKEN=...   # 只放在环境变量里，uv 会自动读取
+uv publish
 # CI 中优先 Trusted Publishing(OIDC)：不需要任何长期 token
 ```
 > 凭据用环境变量或 CI secret，别写进命令行（会进 shell 历史与进程表）；可选：`twine check dist/*` 校验元数据。
@@ -93,6 +94,8 @@ npm pack --dry-run
 # 2. 正式发布
 npm publish --access public
 ```
+
+> 凭据：npm 已不再支持长期 classic token，可写的 granular token 有效期有限且强制 2FA。CI 中优先 **Trusted Publishing（OIDC）**：npm CLI ≥ 11.5.1，workflow 设 `permissions: id-token: write`，无需保存任何 token，并自动生成 provenance。
 
 ---
 
@@ -113,12 +116,12 @@ Compress-Archive -Path manifest.json, src, icons, popup -DestinationPath extensi
 ### 7.1 生成 SHA-256 校验和
 ```powershell
 # Windows PowerShell
-Get-FileHash -Path "dist/*" -Algorithm SHA256 | ForEach-Object { "$($_.Hash)  $($_.Path | Split-Path -Leaf)" } | Out-File -Encoding utf8 dist/checksums.txt
+Get-FileHash -Path "dist/*" -Algorithm SHA256 | Where-Object { $_.Path -notlike "*checksums.txt" } | ForEach-Object { "$($_.Hash)  $($_.Path | Split-Path -Leaf)" } | Out-File -Encoding ascii dist/checksums.txt   # ascii：PowerShell 5.1 的 utf8 会写 BOM，Linux 上 sha256sum -c 会失败
 ```
 
 ```bash
 # Linux / macOS
-sha256sum dist/* > dist/checksums.txt
+(cd dist && sha256sum *.zip *.tar.gz > checksums.txt)   # 进入目录再算，记录的是文件名而不是 dist/ 路径
 ```
 
 ### 7.2 一键发布 Release

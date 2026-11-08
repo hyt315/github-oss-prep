@@ -103,6 +103,90 @@ def test_repo_validation_integration() -> None:
     assert result.returncode == 0, f"validate_repo exited {result.returncode}"
 
 
+def test_ci_pin_check() -> None:
+    """CI-PIN: tag-pinned actions and a missing permissions block are reported; SHA pins are not."""
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        wf = Path(tmp) / ".github" / "workflows"
+        wf.mkdir(parents=True)
+        (wf / "bad.yml").write_text("on: push\njobs:\n  a:\n    steps:\n      - uses: actions/checkout@v4\n", encoding="utf-8")
+        (wf / "good.yml").write_text(
+            "on: push\npermissions:\n  contents: read\njobs:\n  a:\n    steps:\n"
+            "      - uses: actions/checkout@" + "a" * 40 + " # v4\n      - uses: ./local-action\n", encoding="utf-8")
+        found = {(Path(f["file"]).name, f["id"]) for f in validate_repo.scan_tree(Path(tmp))}
+    assert ("bad.yml", "ci-pin-sha") in found, found
+    assert ("bad.yml", "ci-pin-permissions") in found, found
+    assert not {i for n, i in found if n == "good.yml" and i.startswith("ci-pin")}, found
+
+
+def test_crlf_and_metadata_version() -> None:
+    """A CRLF SKILL.md (Windows checkout) with metadata.version must parse and match manifest."""
+    import shutil
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        for rel in validate_repo.REQUIRED + ["manifest.json", "CHANGELOG.md"]:
+            dst = root / rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(ROOT / rel, dst)
+        skill = (root / "SKILL.md").read_text(encoding="utf-8")
+        (root / "SKILL.md").write_bytes(skill.replace("\n", "\r\n").encode("utf-8"))
+        findings = []
+        validate_repo.check_skill_profile(root, findings)
+    bad = [f for f in findings if f["id"] in {"frontmatter", "version-mismatch"}]
+    assert not bad, bad
+
+
+def test_anchor_slug_matches_github() -> None:
+    assert validate_repo._slug("📖 这是什么？") == "-这是什么"
+    assert validate_repo._slug("Quick Start") == "quick-start"
+    assert validate_repo._slug("#快速开始-quick-start".lstrip("#")) == validate_repo._slug("快速开始 Quick Start")
+
+
+def test_scanner_regressions() -> None:
+    """v3.3.2 fixes: target under build/, sk- word boundary, local proxy, .env variants, .git/config."""
+    import tempfile
+    rules = validate_repo.load_rules()
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp) / "build" / "proj"  # a target that itself lives under a skip_dirs name
+        (root / ".git").mkdir(parents=True)
+        aws = "AKIA" + "Q3EGRJ7XNZ5VW2LM"
+        (root / "a.txt").write_text(aws + "\n", encoding="utf-8")
+        (root / "b.md").write_text("risk-assessment-framework-tools and task-runner-for-continuous-work\n", encoding="utf-8")
+        (root / "c.md").write_text("git -c http.proxy=http://127.0.0.1:" + "7897 push\n", encoding="utf-8")
+        (root / ".env.local").write_text("X=1\n", encoding="utf-8")
+        tok = "ghp_" + "Zq8" * 12
+        (root / ".git" / "config").write_text('[remote "origin"]\n\turl = https://' + tok + "@github.com/o/r.git\n", encoding="utf-8")
+        found = {(Path(f["file"]).name, f["id"]) for f in validate_repo.scan_tree(root, rules)}
+    assert ("a.txt", "aws-access-key-id") in found, found
+    assert not {i for n, i in found if n == "b.md"}, found
+    assert ("c.md", "local-proxy-config") in found and ("c.md", "loopback-proxy-port") in found, found
+    assert ("config", "github-classic-pat") in found or ("config", "credential-in-url") in found, found
+    assert ("a.txt", "blocked-file") not in found and (".env.local", "blocked-file") in found, found
+
+
+def test_history_scan_finds_removed_leak() -> None:
+    """A leak deleted in a later commit is still reported by --history."""
+    import shutil
+    import tempfile
+    if not shutil.which("git"):
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        run = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True, capture_output=True)  # noqa: E731
+        run("init", "-q")
+        run("config", "user.name", "t")
+        run("config", "user.email", "t@users.noreply.github.com")
+        (root / "x.md").write_text("proxy 127.0.0.1:" + "7897\n", encoding="utf-8")
+        run("add", ".")
+        run("commit", "-qm", "a")
+        (root / "x.md").write_text("clean\n", encoding="utf-8")
+        run("commit", "-qam", "b")
+        ids = {f["id"] for f in validate_repo.scan_history(root)}
+    assert "loopback-proxy-port" in ids, ids
+    assert "history-author-email" not in ids, ids
+
+
 def main() -> int:
     checks = [value for name, value in sorted(globals().items()) if name.startswith("test_") and callable(value)]
     failed = []

@@ -22,9 +22,9 @@
 - **按需清单（不是分数项）**：
   1. **README**：项目门面、快速开始、限制与求助渠道；
   2. **LICENSE**：SPDX 标识符；**不能由组织级 `.github` 仓库兜底**，每个仓库必须自带；
-  3. **CODE_OF_CONDUCT**：多人协作时启用（当前 Contributor Covenant **3.0**，附版本 URL；本仓库自身暂为 2.1，升级需维护者确认）；
+  3. **CODE_OF_CONDUCT**：多人协作时启用（当前 Contributor Covenant **3.0**，附版本 URL；本仓库自身已采用 3.0）；
   4. **CONTRIBUTING**：接受外部贡献时启用；
-  5. **SECURITY.md**：公开漏洞报告渠道（私有报告入口需在 Settings → Code security 开启）；
+  5. **SECURITY.md**：公开漏洞报告渠道（私有报告入口需在 Settings → Advanced Security 开启）；
   6. **Issue / PR 模板**：`.github/ISSUE_TEMPLATE/`（YAML 表单）与 `.github/pull_request_template.md`；
   7. **Description / Topics**：门面信息，以 API 或网页设置，**不算文件项**。
 - **全局 `.github` 组织继承与覆盖机制**：
@@ -45,7 +45,7 @@
   - 明确支持维护的版本矩阵（Supported Versions table），标明哪些旧版本已停止接收安全更新；
   - 明确私有漏洞报告渠道：引导至 GitHub Private Vulnerability Reporting（安全公告通道）或专用安全邮箱（如 `security@example.com`）；
   - **🚨 致命禁区**：严禁在 SECURITY.md 中让用户在 Public Issues 中提交安全漏洞与零日漏洞（0-day），这会导致安全问题瞬间公之于众，危害所有下游用户；
-  - 承诺响应 SLA：标明收到报告后的初步确认时限（建议 ≤ 48 小时）与修复进展通报周期。
+  - 承诺响应 SLA：标明收到报告后的初步确认时限（按维护者实际能力填写，GitHub 不设强制时限）与修复进展通报周期。
 
 ---
 
@@ -55,7 +55,7 @@
 - **病症**：在代码或配置文件中误提交了 `.env`、API Key、数据库密码或私有 Token，随后在下一个 Commit 中将该文件删除并提交。开发者误以为“文件已经没了，仓库很安全”。
 - **底层机理与致命风险**：
   - Git 是基于快照与对象图存储（Content-Addressable Storage）的版本控制系统，所有历史上提交过的 Blob 对象均永久固化在 `.git/objects` 历史树中；
-  - 公网爬虫、黑客工具（如 TruffleHog、Gitleaks）以及 GitHub Secret Scanning 在仓库转为 Public 或 Push 的 2 秒内就会完成全历史爬取并自动利用泄露的凭据；
+  - 公网爬虫、黑客工具（如 TruffleHog、Gitleaks）以及 GitHub Secret Scanning 在仓库转为 Public 或 Push 后可能在数分钟内就扫到并利用泄露的凭据；
   - 单纯执行 `git rm` 毫无防范效果！
 - **防御与处置三铁律**：
   1. **第一动作：立即轮转吊销（Rotate & Revoke）**！一旦推送到远程仓库，无论是否立即撤回，一律视为凭据已泄露，必须先在云平台将密钥失效，再进行技术清理；
@@ -78,9 +78,10 @@
   - **Pin 完整 40 位 Commit SHA**：生产级 CI 中，**所有外部引用的 Action（含 GitHub 官方 `actions/*`，它们同样不是"可信即可省略"）**都不得使用分支或易变 tag，必须锁定不可变 commit SHA 并附版本号注释。组织策略可开启"必须锁完整 SHA"，届时**未锁定的工作流会直接失败**；例外是*可复用工作流*仍可按 tag 引用。写法：
     ```yaml
     uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-    # 注意：示例会过期。取"当前"SHA 的方法：gh api repos/actions/checkout/releases/latest
+    # 注意：示例会过期。取某个 tag 对应的 SHA：gh api repos/actions/checkout/commits/v7.0.1 --jq .sha
     # 或交给 Dependabot(github-actions) 生成升级 PR，不要照抄本示例
     ```
+  - **工作流依赖锁文件**：GitHub 现已提供 workflow 依赖锁文件（`gh actions-lock` 生成 `.github/workflows/actions.lock`），保护强于在文件里逐行锁 SHA，且满足"必须锁 SHA"策略；已启用时以锁文件为准。
   - **警惕 `pull_request_target` 触发器**：该触发器运行在目标基准分支上下文并拥有仓库 Secrets 访问权，严禁在此触发器下 checkout 并运行来自 Fork 分支的未审查代码；
   - **防范 Bash 脚本注入**：严禁直接在 `run:` 中拼接不可信输入（如 `${{ github.event.issue.title }}`），必须通过 `env:` 映射后在脚本中以环境变量（`$ISSUE_TITLE`）引用。
 
@@ -105,9 +106,14 @@
 - **本地绝对路径污染**：
   - Windows 环境下的 `C:\Users\{用户名}\`、Linux/macOS 下的 `/home/{username}/`，不仅破坏跨平台可移植性，还会直接泄露作者的真实姓名或公司内网主机命名规则； <!-- scan-ignore: windows-user-profile-path, windows-absolute-path (示例，非真实路径) -->
   - 必须使用相对路径或系统环境变量（如 `$HOME` / `%USERPROFILE%`）替代。
+- **本机网络与环境指纹**：
+  - 文档或脚本里写着作者自己的代理地址和端口（如 `http.proxy=…127.0.0.1:<端口>`）、"本机实测"之类的环境快照、token 放在哪个环境变量里、哪个域名直连不通，都会暴露作者的网络环境；回环地址外人连不上，但它仍是个人信息，也会让别人照抄后失败。 <!-- scan-ignore: machine-specific-claim, local-proxy-config (规则说明本身) -->
+  - 一律改成占位符（`<proxy>`）加"按探测结果套用"的条件写法；`scripts/secret-rules.json` 的 `local_env_patterns` 会拦截常见代理端口与"本机实测"类表述。 <!-- scan-ignore: machine-specific-claim, local-proxy-config (规则说明本身) -->
+- **提交元数据里的邮箱**：
+  - 删文件不会删提交作者信息。不想公开真实邮箱时，提交前把 `user.email` 设为 GitHub 的 noreply 地址；`validate_repo.py --history` 会列出历史里出现过的非 noreply 邮箱。
 - **`.git/config` 内嵌明文 Token 泄漏**：
   - 开发者通过带有 Token 的 URL（如 `https://<token>@github.com/org/repo.git`）克隆或推送代码；
-  - 该 Token 会以明文形式永久固化在本地 `.git/config` 中，若后续打包整个项目（如 ZIP）交付或误将 `.git` 文件夹公开，特权 Token 就会直接泄露。
+  - 克隆时写进 URL 的 Token 会以明文形式永久固化在本地 `.git/config` 中；推送时临时写进 URL 也会出现在进程列表里，若后续打包整个项目（如 ZIP）交付或误将 `.git` 文件夹公开，特权 Token 就会直接泄露。
 - **AI Agent 会话标记与调试元数据污染**：
   - 包含各类 AI 编程助手（如 Antigravity, Claude Code, Cursor 等）的内部调试标记、Conversation ID、Workspace 绝对路径与隐藏的 `.doctor/`、`.system_generated/` 临时追踪目录，必须在开源前彻底纳入 `.gitignore` 或物理清理。
 
@@ -123,10 +129,10 @@
   4. **权威状态徽章（Badges）**：配置精准的 Shields.io 动态徽章（CI Build Status, Latest Release, License, Python/Node Version），拒绝无效或报错的死链徽章。
 
 ### 2. GitHub 发现度（SEO）与 Topics 优化矩阵
-- **About 描述黄金长度**：控制在 100~140 个字符，包含核心痛点动词与搜索关键词，不要堆砌无意义的形容词；
+- **About 描述黄金长度**：控制在 120 个字符以内（GitHub 上限 350），包含核心痛点动词与搜索关键词，不要堆砌无意义的形容词；
 - **Topics 标签工业级标准**：
   - 必须使用全小写连字符命名（kebab-case）；
-  - 配备 5~8 个核心标签，覆盖：1) 核心功能（如 `open-source`, `security-scanning`）；2) 目标生态（如 `github`, `cli`, `agent-skill`）；3) 语言/架构（如 `python`, `mcp`）。
+  - 配备 5–10 个核心标签，覆盖：1) 核心功能（如 `open-source`, `security-scanning`）；2) 目标生态（如 `github`, `cli`, `agent-skill`）；3) 语言/架构（如 `python`, `mcp`）。
 
 ### 3. 就近内联动作与渐进式披露（Progressive Disclosure）
 - **根除弱引用漂移**：主工作流中禁止出现“详见某某文档”、“可参考某某文件”等非确定性弱引导；
@@ -167,33 +173,7 @@ def scan_file_safety(file_path: Path) -> list[tuple[str, str]]:
 
 要点：按行扫描便于定位；`<!-- scan-ignore: <rule-id> (reason) -->` 由扫描器统一处理，且每次豁免都会在输出中作为 P2 显示。
 
-### 2. GitHub Actions 供应链安全审计探针
-```python
-import yaml
-from pathlib import Path
+### 2. GitHub Actions 供应链安全审计
 
-def audit_workflow_security(workflow_path: Path) -> list[str]:
-    issues = []
-    text = workflow_path.read_text(encoding="utf-8", errors="ignore")
-    
-    # 检查是否缺少 top-level permissions: contents: read
-    if "permissions:" not in text:
-        issues.append("缺少顶层 permissions 声明，存在过度提权风险")
-        
-    # 检查所有外部 Action 是否锁定 40 位 SHA（actions/* 同样需要，不得豁免）
-    for line in text.splitlines():
-        line = line.strip()
-        if line.startswith("uses:"):
-            action = line.split("uses:")[1].split("#")[0].strip()
-            if action.startswith("./") or action.startswith("docker://"):
-                continue
-            if "@" not in action or len(action.split("@")[1]) != 40:
-                issues.append(f"外部 Action 未锁定 40 位 Commit SHA: {action}")
-    # 额外高危模式
-    if "pull_request_target" in text:
-        issues.append("使用了 pull_request_target：禁止在此触发器下 checkout 并运行 Fork 代码")
-    if re.search(r"\$\{\{\s*github\.event\.[^}]+\}\}", text):
-        issues.append("run: 中疑似直接拼接不可信输入，请改用 env: 传值")
-                    
-    return issues
-```
+不要另写探针：`scripts/validate_repo.py` 的 `ci-pin-permissions`（缺顶层 permissions）与 `ci-pin-sha`（外部 Action 未锁 40 位 SHA，含 `- uses:` 写法）已覆盖。`pull_request_target` 与在 `run:` 里直接拼接 `${{ github.event.* }}` 仍需人工看一眼。
+

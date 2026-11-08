@@ -9,6 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No unreleased changes._
 
+## [3.3.2] - 2026-11-08
+
+Patch release: fixes and tightening only, no new workflow steps.
+
+### Security
+
+- **The skill's own docs leaked the author's environment.** `mcp-push-guide.md` and `github-pat-setup.md` carried a local proxy port, a "tested on this machine" snapshot and where the token lived. Both are rewritten as conditional, machine-neutral steps; the proxy is now a value the user supplies.
+- **Token no longer goes into argv.** Pushing uses a one-shot credential helper that reads the token from an environment variable; REST calls pass the `Authorization` header through stdin (`curl -H @-`). `uv publish` reads `UV_PUBLISH_TOKEN` from the environment instead of `--token`.
+- **New scanner rules** (`local_env_patterns`): proxy settings on loopback, well-known proxy-client ports, and "本机实测"-style environment claims (P1). <!-- scan-ignore: machine-specific-claim (规则说明本身) -->
+- **History scan**: `validate_repo.py --history` scans every line ever added and lists non-noreply commit emails; CI runs it with full history. Obvious placeholder keys in history are reported as P2 instead of blocking.
+- `.git/config` is now read for token-bearing remote URLs; committed build/cache folders are reported (P1).
+- `.env.*`, `credentials.json`, `id_ecdsa`, `id_dsa` added to blocked file names.
+
+### Fixed
+
+- Scanner skipped every file when the target folder itself sat under a directory named `build`, `dist`, `venv`, etc., and still reported PASS.
+- `openai-style-key` had no left boundary, so words like `risk-assessment-…` raised P0.
+- `credential-in-url` missed the bare `https://<token>@host` form and `http://`.
+- Output crashed on Windows consoles and pipes that are not UTF-8.
+- CI-PIN check was cited in the fact card but not implemented; `ci-pin-permissions` and `ci-pin-sha` now exist.
+- CRLF / BOM files, GitHub-style heading anchors, and malformed `manifest.json` are handled.
+- Model weights, datasets and files over 5 MB are no longer read as text.
+- Docs: wrong Codex skills path (`~/.agents/skills`), `gh skill install --pin` without a value, single-file download marked as preview-only, dead `skill-doctor` link removed, references to files that do not exist (`13`, `readme-base.md`, `tests/test_category_router.py`) removed, `frontend` category that does not exist mapped to `app`, contradictory "authoritative source" claims resolved, 12 vs 13 category count, Topics (5–10) and Description (≤120) unified, Dependabot security-update limit (10), SemVer and checksum command details, PowerShell install-script review step.
+- README templates: nested code fences broke rendering; a comment inside a benchmark table split it; license badges now use the repository's detected license.
+
+### Changed
+
+- `SKILL.md` trimmed from 292 to about 160 lines; the four confirmation points became three gates (before editing files, before publishing, before promotion). Release rules moved to `pr-and-release-workflow.md`.
+- `readme-template.md` split into an index plus one skeleton file per category under `references/readme-templates/`, so an agent reads about 12 KB plus one 2–5 KB file instead of 38 KB.
+- Frontmatter version moved to `metadata.version` (the Agent Skills spec has no top-level `version`); `license` added.
+- `CODE_OF_CONDUCT.md` upgraded to Contributor Covenant 3.0.
+- CI runs the repository check with `--strict`; Node matrix adds 26.x, Python matrix adds 3.15 in the templates.
+- `privacy-scan.md` states which layers are automated and which remain manual.
+
 ## [3.3.1] - 2026-09-19
 
 ### Fixed
@@ -44,7 +78,7 @@ _No unreleased changes._
 - **Badge semantics fixed**: License badges derive from the taxonomy's default column instead of hard-coding MIT; platform badges point at a real compatibility section and release badges at the releases page.
 - **Dogfooding**: README gains "Known limitations" and "Support" sections (the skill's own §9/§11 rule), and `README.en.md` was re-synced with the Chinese README (table header, sizes, new sections).
 - RFC1918 scanner rule now validates octets (previously `10.669.606.225` matched); the link checker ignores inline code spans.
-- **Two adversarial review rounds** were run against this plan set and are recorded in `优化参考/15-核查对照表.md`; five claims of mine were refuted there and corrected across the docs.
+- **Two adversarial review rounds** were run against this plan set (notes kept outside the repository); five claims of mine were refuted there and corrected across the docs.
 
 ### Fixed
 
@@ -101,6 +135,7 @@ _No unreleased changes._
 - Removed automatic token discovery from user directories and MCP configuration files.
 - Removed token-bearing Git remote URLs and instructions that display credentials.
 
+[3.3.2]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.3.2
 [3.3.1]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.3.1
 [3.3.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.3.0
 [3.2.0]: https://github.com/hyt315/github-oss-prep/releases/tag/v3.2.0

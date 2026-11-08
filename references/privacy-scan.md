@@ -20,15 +20,27 @@
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │ 第 1 重: 敏感凭据深度扫描 (OpenAI, Anthropic, Gemini, GitHub PAT ghp_/github_pat_, SSH) │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 第 2 重: 机器指纹与私有路径扫描 (本地用户目录、私有工作区盘符、开发机用户名)           │
+│ 第 2 重: 机器指纹与私有路径扫描 (用户目录、盘符路径、本机代理端口、环境快照式表述)   │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ 第 3 重: 私有 Agent 与内部会话标记扫描 (内部会话 UUID, 内部 Agent 名称, 私有环境别名) │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
-│ 第 4 重: Git 本地配置与凭据 URL 专项扫描 (.git/config Remote Token URL, Commit 历史)   │
+│ 第 4 重: Git 凭据 URL 与提交历史扫描 (Remote Token URL, 历史提交, 提交邮箱)          │
 ├────────────────────────────────────────────────────────────────────────────────────────┤
 │ 第 5 重: 构建产物与缓存泄漏扫描 (__pycache__, node_modules, renders, .idea, .DS_Store) │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+**哪几重由脚本自动完成、哪几重要人工看**（如实标注，别把人工项当成已自动覆盖）：
+
+| 重 | 自动化 | 命令 / 规则组 | 仍需人工 |
+|---|---|---|---|
+| 1 凭据 | ✅ | `validate_repo.py`：`credential_patterns`、`blocked_filenames` | 新格式或自定义格式的密钥 |
+| 2 机器指纹 | ✅ | `path_patterns`、`private_ip_patterns`、`local_env_patterns` | 文中提到的真实用户名、主机名、公司名 |
+| 3 Agent 会话标记 | ❌ | 暂无规则 | 全部人工：会话 ID、内部 Agent 名、私有工作区别名 |
+| 4 Git 凭据与历史 | ✅ | `validate_repo.py --history`（历史中新增的每一行 + 提交邮箱） | `.git/config` 的 remote URL：`git remote -v` 看一眼 |
+| 5 构建产物与缓存 | ⚠️ 部分 | 扫描时跳过这些目录，但**不报错** | 用 `git ls-files` 确认它们没被提交 |
+
+> 发布前用 `--strict` 运行：私有路径、内网 IP 和本机环境指纹都是 P1，只有 `--strict` 才会让检查失败。
 
 ---
 
@@ -41,21 +53,22 @@
 - 凭据：GitHub Classic / Fine-grained PAT、OpenAI 系（含 `sk-proj-`/`sk-ant-`）、Anthropic、Stripe、AWS（`AKIA`/`ASIA`）、Google API Key、Hugging Face、npm、PyPI、Slack、SendGrid、Telegram、JWT、Azure 存储密钥、URL 内嵌凭据
 - 私钥：PEM 私钥块（含无算法前缀的 PKCS#8）
 - 路径与网络：Windows 任意用户名（含非 ASCII）、Unix 家目录、WSL/挂载路径、RFC1918 私网 IP
-- 文件名级拦截：`.env`（`.env.example` 除外）、`*.pem`、`*.key`、`*.p12`、`*.pfx`、`id_rsa*`
+- 本机环境：回环地址上的代理配置、代理客户端常用端口、"本机实测"类环境快照 <!-- scan-ignore: machine-specific-claim (规则说明本身) -->
+- 文件名级拦截：`.env`、`.env.*`（`.env.example` 等模板除外）、`credentials.json`、`*.pem`、`*.key`、`*.p12`、`*.pfx`、`id_rsa`/`id_ed25519`/`id_ecdsa`/`id_dsa`
+- 不读的文件：图片、压缩包、模型权重与数据文件（`.gguf`、`.safetensors`、`.parquet` 等）和超过 5 MB 的文件，后者会以 P2 列出
 
 维护规则：新增或调整只改 `secret-rules.json`；`selftest.py::test_rules_single_source` 会阻止任何文件重复声明正则。
 
-### 2.2 本地绝对路径与机器指纹规则（正则以 `scripts/secret-rules.json` 为准）
-- Windows 个人主目录: `C:\\Users\\` <!-- scan-ignore: windows-user-profile-path (规则示例本身) -->
-- 本地工作盘符路径: `(?:[D-Z]:\\[^\r\n]+)`
-- Unix 个人主目录: `/home/[a-z0-9_-]+/` 或 `/Users/[a-z0-9_-]+/`
+### 2.2 本地路径与机器指纹
 
-### 2.3 私有 Agent 会话标记规则
-- 会话 UUID 指纹: `[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`
-- 私有内部环境/Agent 标记（如未公开的私有模型或内部测试代号）
+覆盖范围见 2.1，正则只在 `scripts/secret-rules.json` 里。
+
+### 2.3 私有 Agent 会话标记（人工检查，暂无规则）
+- 会话 UUID、Conversation ID、未公开的内部模型或测试代号、Agent 的临时追踪目录；
+- UUID 在正常代码里也很常见，自动规则误报太多，所以这一项靠人工判断。
 
 ### 2.4 Git Remote URL 凭据污染
-- 检查 `.git/config` 中的 `url = https://...` 是否包含嵌入的 Token（如 `https://<token>@github.com`）。
+- `validate_repo.py` 会读取 `.git/config`，`url = https://...` 里嵌入了 Token 即报 P0。
 - **治理**：必须使用不带 Token 的纯净 URL：`https://github.com/{owner}/{repo}.git`。
 
 ### 2.5 垃圾构建产物拦截清单
@@ -76,7 +89,8 @@
 | `C:\Users\alice\Desktop\my-project` <!-- scan-ignore: windows-user-profile-path, windows-absolute-path (示例，非真实路径) --> | ❌ **环境泄露** | 包含开发者的真实 Windows 用户名与绝对路径 |
 | `~/.claude/skills/<repo-name>` | ✅ **安全合规** | 跨平台相对主目录标准规范路径 |
 | `192.168.1.100:8080` / `10.0.0.5` | ❌ **内部泄露** | 暴露了真实的内网 IP 拓扑 | <!-- scan-ignore: rfc1918-ip (示例，非真实内网) -->
-| `127.0.0.1:3000` / `localhost:8080` | ✅ **安全合规** | 本机回环调试地址，公开安全 |
+| `127.0.0.1:3000` / `localhost:8080` | ✅ **安全合规** | 项目自身的回环调试地址，公开安全 |
+| `http.proxy=http://127.0.0.1:<代理端口>` | ❌ **环境泄露** | 作者自己的代理配置；回环地址外人连不上，但暴露了作者的网络环境，别人照抄也会失败 |
 
 ---
 
@@ -85,7 +99,7 @@
 以下情况在扫描时属于安全内容，无需报错：
 - `[YOUR_API_KEY]`、`<your-token>`、`YOUR_SECRET_TOKEN` —— 占位符；
 - `example@example.com`、`user@domain.com` —— 示范邮箱；
-- `localhost:3000`、`127.0.0.1` —— 本机标准调试端口；
+- `localhost:3000`、`127.0.0.1` —— 项目自身的调试端口（**例外**：出现在代理配置里、或是 7890/7897/1080/10809 这类代理客户端常用端口时，按环境泄露处理）；
 - 正则表达式定义本身（如扫描工具自身的模式匹配代码）。
 
 ---

@@ -22,7 +22,7 @@
 ## 📖 What is this?
 
 When open-sourcing projects on GitHub, developers frequently hit these hurdles:
-- Missing `LICENSE`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md` or modern YAML Issue Forms — the official community-health baseline names these files (there is no official "100% / percentage" score to chase);
+- Missing `LICENSE`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md` or modern YAML Issue Forms — the official community-health baseline names these files (GitHub's community profile reports a health percentage, but it only checks that files exist; this skill reviews their content instead of chasing the score);
 - Generic, one-size-fits-all README layouts that fail to highlight the distinct value of AI Agent Skills, MCP Servers, Model weights/GGUF, system CLI tools, browser extensions, or fullstack apps;
 - Missing concrete publishing instructions for `uvx`, `bunx`, `pnpm dlx`, Hugging Face, Chrome Web Store, or CI matrix testing;
 - Accidental leaks of local machine paths, private agent session fingerprints, API tokens, or Git credentials into public repositories.
@@ -37,8 +37,8 @@ When open-sourcing projects on GitHub, developers frequently hit these hurdles:
 |---|---|---|
 | **Taxonomy Router + 10 README Skeletons** | `references/category-map.md` is the single classification source (12 archetypes, three axes, flags, decision algorithm); `readme-template.md` adds a 12-section base and per-blank acceptance criteria | Classify first, then pick a skeleton; every blank states what "done" looks like |
 | **10 Universal Archetype Engines** | Tailored, copy-paste-ready Markdown skeletons for AI Skills, MCP Servers, Models/GGUF, CLI tools, Multimedia, SDKs, Extensions, IaC, Web Apps, Awesome Lists | Replaces generic templates with concrete structures and package manager matrices |
-| **Progressive Disclosure Architecture** | Loads only the specific archetype template matched in Step 0 | Eliminates context bloat and prevents cross-archetype pollution |
-| **5-Layer Deep Security Net** | Credentials/PATs/PEM keys, path and private-network fingerprints, session markers, Git remote credentials, build caches; single source of truth in `scripts/secret-rules.json` | Blocks current credential formats; coverage and known blind spots are documented in `privacy-scan.md` |
+| **Progressive Disclosure Architecture** | Loads only the specific archetype template matched in Step 1 | Eliminates context bloat and prevents cross-archetype pollution |
+| **Layered Security Scan** | Credentials/PATs/PEM keys, path, private-network and local-proxy fingerprints, `.git/config` remote credentials, commit history and author emails, committed build caches (agent session markers stay a manual check); single source of truth in `scripts/secret-rules.json` | Blocks current credential formats; coverage and known blind spots are documented in `privacy-scan.md` |
 | **2026 Community & CI Profile Pack** | Interactive YAML Issue Forms, PR template, `SECURITY.md`, Node/Python matrix CI (SHA-pinned, read-only token) and Dependabot config | Covers the official health-file baseline and hardens the CI supply chain |
 | **All-Ecosystem Distribution Guides** | Practical publishing workflows for uv/PyPI, npm, Hugging Face, Chrome Web Store, Docker, Homebrew, Crates.io, Release Checksums | End-to-end guidance from local source to global package registries |
 | **Verifiable Architecture** | Validator works on any target directory (`validate_repo.py <dir>`), severity-graded findings, fixture regressions (real positives caught, clean sample stays clean) | Every claim is reproducible by command; nothing is reported green unless measured |
@@ -90,7 +90,8 @@ Send this to your AI assistant and it will detect the platform and clone to the 
 ### Option B: GitHub CLI 2.90+ (one command)
 
 ```bash
-gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user
+gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin v3.3.2
+# SKILL.md sits at the repo root; if gh cannot find the skill, use Option C
 ```
 
 ### Option C: Manual per-platform install
@@ -98,7 +99,6 @@ gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --sc
 | Platform | Command |
 |---|---|
 | **Claude Code** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.claude/skills/github-oss-prep` |
-| **Codex** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.codex/skills/github-oss-prep` |
 | **Cursor** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.cursor/skills/github-oss-prep` |
 | **General Agents** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.agents/skills/github-oss-prep` |
 
@@ -114,7 +114,7 @@ python scripts/selftest.py
 
 Suppose you have a local Python CLI utility, MCP Server, or browser extension ready to open-source:
 
-1. **Trigger & Scan**: Send "help me prepare this project for open-source" → Auto-detects archetype, executes 5-layer privacy audit, and cleans build caches;
+1. **Trigger & Scan**: Send "help me prepare this project for open-source" → Auto-detects archetype, scans current files and commit history, and lists path fingerprints, local-environment details and committed caches for review;
 2. **Generate Community & CI Files**: Creates GitHub 2026-compliant YAML Issue Forms, `SECURITY.md`, `LICENSE`, and Node/Python matrix CI workflows;
 3. **Progressive Facade Rendering**: Progressively loads dedicated archetype template, generating bilingual READMEs with modern CLI matrices (`uvx`/`bunx`) and config blocks;
 4. **Validate & Distribute**: Runs `selftest.py` locally, outputs clean reviewable project bundle, and publishes to GitHub, Release assets, and global registries upon explicit approval.
@@ -125,7 +125,7 @@ Suppose you have a local Python CLI utility, MCP Server, or browser extension re
 
 - **Audit Before Change**: Reads and audits locally by default, generating diffs before creating or modifying any files.
 - **Progressive Isolation**: Only loads relevant archetype references, preventing context pollution.
-- **5-Layer Deep Defense**: Comprehensive scans across code, docs, `.git/config`, and commit history to prevent leaks.
+- **Layered scanning**: Pattern scans across code, docs, `.git/config` and commit history; credentials block the release, and what cannot be detected automatically (such as agent session markers) is listed as a manual check.
 - **Staged Approvals**: Local preparation, remote repo creation, Release packaging, and external promotion are approved independently.
 
 ---
@@ -139,7 +139,7 @@ Suppose you have a local Python CLI utility, MCP Server, or browser extension re
 | **GitHub CLI** | `gh repo clone hyt315/github-oss-prep` |
 | **ZIP** | [Download ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
 | **Tarball** | [Download Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
-| **Single file (SKILL.md)** | `curl -O https://raw.githubusercontent.com/hyt315/github-oss-prep/main/SKILL.md` |
+| **Single file (SKILL.md)** | `curl -O https://raw.githubusercontent.com/hyt315/github-oss-prep/main/SKILL.md` (preview only: it cannot run without `references/` and `scripts/`) |
 
 ---
 
@@ -148,17 +148,17 @@ Suppose you have a local Python CLI utility, MCP Server, or browser extension re
 | Reference Guide | Core Focus | When to Read | Size |
 |---|---|---|---|
 | 🗺️ [**Taxonomy & Routing Map (`category-map.md`)**](references/category-map.md) | 12 archetypes, audience/lifecycle axes, flags, decision algorithm, router regression cases | When classifying a project and picking `category_id` | ~9.7 KB |
-| 📑 [**10 Universal Archetype README Engines (`readme-template.md`)**](references/readme-template.md) | Complete copy-pasteable Markdown skeletons and 2026 CLI runner tables | When generating or rewriting READMEs | ~22.3 KB |
-| 🚨 [**OSS Prep Killer Pitfalls & Baselines (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | Official community-health baseline, Git history secret scrubbing & CI supply-chain action pinning | When auditing safety baselines and avoiding deep pitfalls | ~16.1 KB |
-| 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | 5-layer interception rules, real-leak comparison table, and sanitization | When performing security audits and sanitization | ~7.2 KB |
-| 🏛️ [**Community Profile & CI Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, Node/Python matrix CI, and Dependabot | When completing GitHub Community Standards & CI | ~9.7 KB |
-| 🚀 [**All-Ecosystem Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv, npm, HuggingFace, ChromeStore, Docker publishing, and Checksums | When publishing to registries or GitHub Release | ~7.2 KB |
-| 🏷️ [**Description & Topics Guide (`description-guide.md`)**](references/description-guide.md) | Concise 120-char repository description and topic selection | When configuring repo surface metadata | ~4.8 KB |
-| 🌐 [**Discoverability & Launch Kit (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Promotion strategies, social previews, and channel checklists | When launching or publicizing a project | ~2.6 KB |
-| 🔐 [**GitHub Push & MCP Guide (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | Official MCP server setup and standard CLI push workflows | When pushing code and creating remote repos | ~5.2 KB |
-| 🚦 [**PR, CI & Release Gates (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | Branches, PRs, CI testing, and release gating rules | When establishing CI pipelines and release gates | ~2.3 KB |
-| 🔑 [**GitHub Credential Comparison (`github-pat-comparison.md`)**](references/github-pat-comparison.md) | Permission and security comparison across the official connector, GitHub CLI, and PATs | When choosing a push authentication method | ~2.6 KB |
-| 🔒 [**Least-Privilege PAT Setup (`github-pat-setup.md`)**](references/github-pat-setup.md) | Creating a least-privilege personal access token on GitHub's official page | When a PAT is explicitly chosen | ~2.2 KB |
+| 📑 [**10 Universal Archetype README Engines (`readme-template.md`)**](references/readme-template.md) | Complete copy-pasteable Markdown skeletons and 2026 CLI runner tables | When generating or rewriting READMEs | ~12.4 KB (+10 skeleton files, 2–5 KB each) |
+| 🚨 [**OSS Prep Killer Pitfalls & Baselines (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | Official community-health baseline, Git history secret scrubbing & CI supply-chain action pinning | When auditing safety baselines and avoiding deep pitfalls | ~17.2 KB |
+| 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | 5-layer interception rules, real-leak comparison table, and sanitization | When performing security audits and sanitization | ~8.5 KB |
+| 🏛️ [**Community Profile & CI Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, Node/Python matrix CI, and Dependabot | When completing GitHub Community Standards & CI | ~9.8 KB |
+| 🚀 [**All-Ecosystem Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv, npm, HuggingFace, ChromeStore, Docker publishing, and Checksums | When publishing to registries or GitHub Release | ~8.4 KB |
+| 🏷️ [**Description & Topics Guide (`description-guide.md`)**](references/description-guide.md) | Concise 120-char repository description and topic selection | When configuring repo surface metadata | ~4.7 KB |
+| 🌐 [**Discoverability & Launch Kit (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Promotion strategies, social previews, and channel checklists | When launching or publicizing a project | ~2.5 KB |
+| 🔐 [**GitHub Push & MCP Guide (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | Official MCP server setup and standard CLI push workflows | When pushing code and creating remote repos | ~5.7 KB |
+| 🚦 [**PR, CI & Release Gates (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | Branches, PRs, CI testing, and release gating rules | When establishing CI pipelines and release gates | ~3.1 KB |
+| 🔑 [**GitHub Credential Comparison (`github-pat-comparison.md`)**](references/github-pat-comparison.md) | Permission and security comparison across the official connector, GitHub CLI, and PATs | When choosing a push authentication method | ~2.5 KB |
+| 🔒 [**Least-Privilege PAT Setup (`github-pat-setup.md`)**](references/github-pat-setup.md) | Creating a least-privilege personal access token on GitHub's official page | When a PAT is explicitly chosen | ~2.7 KB |
 
 ---
 
@@ -184,7 +184,7 @@ github-oss-prep/
 │   └── selftest.py                   # Automated regression test runner
 ├── tests/
 │   ├── fixtures/                   # leaked-repo (must be caught) + clean-repo (must stay clean)
-│   └── test_skill.py                 # Pytest automated test suite entry
+│   └── test_skill.py                 # stdlib unittest entry
 ├── .github/
 │   ├── CODEOWNERS                    # Code owners config
 │   ├── pull_request_template.md      # Standard PR template
@@ -195,8 +195,10 @@ github-oss-prep/
 │       ├── feature_request.yml       # Interactive Feature request form
 │       └── config.yml                # Template selector config
 └── references/                       # In-depth reference guides
+    ├── category-map.md               # Single classification source: 12 categories + general, routing
+    ├── readme-templates/             # 10 category skeletons; read only the one for your category_id
     ├── github-oss-prep-pitfalls.md   # OSS Prep Killer Pitfalls & Baselines
-    ├── readme-template.md            # 10 Universal Archetype complete README template engines
+    ├── readme-template.md            # README template index: base sections, badges, install tables, per-category additions
     ├── privacy-scan.md               # 5-Layer deep privacy and environment scan guide
     ├── community-templates.md        # GitHub 2026 Community Profile & CI pack
     ├── release-and-distribution.md   # All-ecosystem package distribution guides
@@ -219,7 +221,6 @@ A complete, production-ready toolchain for open-source maintainers and contribut
 | Stage / Role | Recommended Skill | Core Mission & Capabilities | GitHub Repository |
 |---|---|---|---|
 | 📦 **Pre-Launch Prep** | [**`github-oss-prep`**](https://github.com/hyt315/github-oss-prep) | Automated repository scaffolding, bilingual READMEs, CI workflows, and compliance checks | [hyt315/github-oss-prep](https://github.com/hyt315/github-oss-prep) |
-| 🩺 **Quality Doctor** | [**`skill-doctor`**](https://github.com/hyt315/skill-doctor) | 50+ industrial static rules plus a dynamic selftest runner (results reproducible by command) | [hyt315/skill-doctor](https://github.com/hyt315/skill-doctor) |
 | ⚙️ **Post-Launch Ops** | [**`github-oss-ops`**](https://github.com/hyt315/github-oss-ops) | Issue triage, AI hallucination defense, PR review, GHSA vulnerability SOP, and multi-channel broadcasting | [hyt315/github-oss-ops](https://github.com/hyt315/github-oss-ops) |
 | 🚀 **Contributor Navigator** | [**`github-oss-contribute`**](https://github.com/hyt315/github-oss-contribute) | End-to-end contributor guide: Fork syncing, Rebase conflict resolution, DCO signing, and anti-AI slop gates | [hyt315/github-oss-contribute](https://github.com/hyt315/github-oss-contribute) |
 
@@ -240,8 +241,8 @@ A complete, production-ready toolchain for open-source maintainers and contribut
 
 ## ⚠️ Known Limitations
 
-- **No runtime verification**: it prepares files, scans credentials and checks links/versions, but does **not** install your package or run your tests — clean-environment verification stays with you or CI.
-- **Working tree only**: commit history and remote refs are not scanned by default; run `gitleaks`/`trufflehog` separately for history.
+- **Scripts do not verify runtime behaviour**: the bundled scripts prepare files, scan credentials and check links/versions, but do not install your package or run your tests; the agent running the skill does that in Step 3, or your CI does.
+- **History scan is pattern-based**: `validate_repo.py --history` scans every line ever added plus commit emails, without entropy detection; add `gitleaks`/`trufflehog` for stronger checks. Forks and caches of the remote are out of reach.
 - **Classification has edges**: 12 archetypes today; desktop/mobile/hardware/games/research artifacts have **no dedicated skeleton** — use the base plus category deltas and mark `template=missing` instead of forcing a near-miss template.
 - **Credential detection is pattern-based** (`scripts/secret-rules.json`), not entropy-based; every suppression is reported as P2 and a human pass is still required.
 - **Licensing guidance is not legal advice**; model/dataset license chains need your own confirmation.
