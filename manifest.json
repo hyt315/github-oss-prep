@@ -1,8 +1,8 @@
 {
   "name": "github-oss-prep",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "owner": "hyt315",
-  "updated_at": "2026-11-08",
+  "updated_at": "2026-11-12",
   "description": "Comprehensive GitHub open-source preparation skill: 7-step workflow, type-adaptive README/community files, single-source secret scanning, environment-adaptive publishing with approval gates, and multi-channel distribution.",
   "license": "MIT",
   "requires": {

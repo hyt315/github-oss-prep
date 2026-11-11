@@ -61,7 +61,7 @@ def test_rules_single_source() -> None:
     signatures = ["gh[pousr]_[A-Za-z0-9]{36", "AKIA|ASIA", "pypi-AgEIcHlwaS5vcmc", "BEGIN (?:[A-Z0-9]+ )?PRIVATE KEY"]
     offenders = []
     for path in ROOT.rglob("*"):
-        if not path.is_file() or ".git" in path.parts or path.name == "secret-rules.json":
+        if not path.is_file() or {".git", "__pycache__"} & set(path.parts) or path.name == "secret-rules.json":
             continue
         if path.name == Path(__file__).name:  # this test names the signatures on purpose
             continue
@@ -144,7 +144,7 @@ def test_anchor_slug_matches_github() -> None:
 
 
 def test_scanner_regressions() -> None:
-    """v3.3.2 fixes: target under build/, sk- word boundary, local proxy, .env variants, .git/config."""
+    """v3.3.2 regressions: target under build/, sk- word boundary, local proxy, .env variants, .git/config."""
     import tempfile
     rules = validate_repo.load_rules()
     with tempfile.TemporaryDirectory() as tmp:
@@ -185,6 +185,58 @@ def test_history_scan_finds_removed_leak() -> None:
         ids = {f["id"] for f in validate_repo.scan_history(root)}
     assert "loopback-proxy-port" in ids, ids
     assert "history-author-email" not in ids, ids
+
+
+def test_calibration_placeholders_and_personal_data() -> None:
+    """v3.3.3: placeholders and system folders stay quiet; real names, personal mail and phone numbers are caught."""
+    import tempfile
+    rules = validate_repo.load_rules()
+    quiet = (
+        "```bash\ngh repo clone <owner>/<repo>\n```\n"
+        "Copy to C:\\Users\\<user>\\AppData and C:\\Users\\YourName\\x and C:\\Users\\%USERNAME%\\y\n"
+        "System: C:\\Windows\\System32\\ and C:\\ProgramData\\Foo\\ and C:\\Users\\Public\\z\n"
+        "Unix: /home/user/proj/ and /Users/you/code/ and /home/runner/work/\n"
+        "Mail security@example.com or someone@users.noreply.github.com; order 202611120001234; sha 1a13812345678b\n"
+    )
+    loud = (
+        "C:\\Users\\" + "zhangwei\\Desktop\n"
+        "/home/" + "zhangwei/proj/\n"
+        "Contact zhang.san@" + "163.com or 1381234" + "5678\n"
+    )
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        (root / "quiet.md").write_text(quiet, encoding="utf-8")
+        (root / "loud.md").write_text(loud, encoding="utf-8")
+        found = validate_repo.scan_tree(root, rules)
+    noisy = [(f["id"], f["evidence"]) for f in found if f["file"].endswith("quiet.md") and f["severity"] in {"P0", "P1"}]
+    assert not noisy, f"placeholders/system folders flagged: {noisy}"
+    ids = {f["id"] for f in found if f["file"].endswith("loud.md") and f["severity"] == "P1"}
+    expected = {"windows-user-profile-path", "unix-home-path", "personal-email", "cn-mobile-number"}
+    assert expected <= ids, f"missed {expected - ids}; got {ids}"
+
+
+def test_history_p1_is_report_only() -> None:
+    """--strict blocks P1 in the current tree only; P1 that lives only in history is printed, not blocking."""
+    import shutil
+    import tempfile
+    if not shutil.which("git"):
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        run = lambda *a: subprocess.run(["git", "-C", tmp, *a], check=True, capture_output=True)  # noqa: E731
+        run("init", "-q")
+        run("config", "user.name", "t")
+        run("config", "user.email", "t@users.noreply.github.com")
+        (root / "x.md").write_text("see /home/" + "zhangwei/proj/\n", encoding="utf-8")
+        run("add", ".")
+        run("commit", "-qm", "a")
+        (root / "x.md").write_text("clean\n", encoding="utf-8")
+        run("commit", "-qam", "b")
+        result = subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_repo.py"), tmp, "--strict", "--history", "--json"],
+                                capture_output=True, text=True)
+        payload = json.loads(result.stdout)
+    assert any(f["id"] == "unix-home-path" for f in payload["findings"]), payload
+    assert payload["status"] == "PASS" and result.returncode == 0, payload
 
 
 def main() -> int:

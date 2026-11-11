@@ -37,7 +37,7 @@
 |---|---|---|
 | **分类主表 + 品类 README 引擎** | `references/category-map.md` 用 12 类主表 + 三轴 + 旗标做判定（唯一分类源）；`readme-template.md` 提供 10 份骨架、通用底座 12 节与**逐空判据**（`<!-- 判据 -->`/`<!-- 反例 -->`/`<!-- 可删 -->`） | 先定类再取模板；填空处同时给出"怎样算写好"，避免只套格式不判断 |
 | **渐进式披露执行铁律** | 依据品类判定结果定向调阅专属规范，严格隔离无关品类 | 减少上下文膨胀与跨品类交叉污染 |
-| **五重深度隐私安全网** | 凭据/PAT/PEM 私钥、路径与私网指纹、会话标记、Git Remote 凭据、构建缓存；规则唯一真相源 `scripts/secret-rules.json` | 拦住现行格式的凭据泄露；覆盖范围与已知盲区在 `privacy-scan.md` 明示 |
+| **五重深度隐私安全网** | 凭据/PAT/PEM 私钥、路径与私网指纹、个人邮箱与手机号、Git Remote 凭据、提交历史与提交邮箱、构建缓存（会话标记仍靠人工）；占位符与系统目录不误报；规则唯一真相源 `scripts/secret-rules.json` | 拦住现行格式的凭据泄露；覆盖范围与已知盲区在 `privacy-scan.md` 明示 |
 | **2026 社区与 CI 自动化库** | 交互式 YAML Issue Forms、PR 模板、`SECURITY.md`、**Node/Python 矩阵 CI（锁 SHA + 顶层只读）** 与 **Dependabot 配置** | 社区健康文件按官方口径齐备；CI 供应链加固、依赖自动更新 |
 | **全生态分发与发版实操** | **uv/PyPI、npm、Hugging Face、Chrome Web Store、Docker、Homebrew、Crates.io** 具体发版指南与 Release Checksums | 提供从本地代码到全球各大分发中心的全流程发版指令 |
 | **可验证工程架构** | 校验器可指向任意项目（`validate_repo.py <dir>`）、分级 finding、fixture 回归（真阳必检、干净样例不误报） | 门禁可复核：每条结论都能用命令复现，未测量不出口绿灯 |
@@ -92,7 +92,7 @@
 
 ```bash
 # gh skill 目前为 Public Preview（命令与 flag 可能变动），先 `gh skill --help` 确认
-gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin v3.3.2
+gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin v3.3.3
 # 本仓库的 SKILL.md 在根目录；若 gh 提示找不到技能，改用方式 C
 ```
 
@@ -248,7 +248,7 @@ github-oss-prep/
 按本技能自己的"§9 已知限制"标准，如实列出它做不到的事：
 
 - **脚本不验证运行期行为**：自带脚本只整理文件、扫描凭据、检查链接与版本一致性，不会安装你的包或跑你的测试；"干净环境跑通"由执行技能的 Agent 按 Step 3 去做，或交给你的 CI。
-- **历史扫描是模式匹配**：`validate_repo.py --history` 会扫历史中新增的每一行和提交邮箱，但不做高熵检测；要求更高时再加 `gitleaks`/`trufflehog`。远程仓库的 fork 与缓存不在扫描范围内。
+- **历史扫描是模式匹配**：`validate_repo.py --history` 会扫历史中新增的每一行和提交邮箱，但不做高熵检测；历史里的 P0 阻断，P1 只报告（只能靠改写历史清除）；要求更高时再加 `gitleaks`/`trufflehog`。远程仓库的 fork 与缓存不在扫描范围内。
 - **分类有边界**：主表当前 12 类；桌面 App、移动 App、硬件、游戏、研究复现等**没有专属骨架**，此时按底座 12 节 + 品类增量写，并在事实卡标 `template=missing`，不会硬套模板冒充专属。
 - **凭据检测有盲区**：规则是模式匹配（`scripts/secret-rules.json`），不是高熵检测；自定义格式或已泄露进历史的密钥仍可能漏，故所有豁免会以 P2 明示、发布前仍需人工复核。
 - **许可建议不是法律意见**：分许可表帮你想清"什么资产配什么许可"，重大选择请找法务；模型/数据类还需自行确认上游许可链。
