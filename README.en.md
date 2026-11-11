@@ -38,7 +38,7 @@ When open-sourcing projects on GitHub, developers frequently hit these hurdles:
 | **Taxonomy Router + 10 README Skeletons** | `references/category-map.md` is the single classification source (12 archetypes, three axes, flags, decision algorithm); `readme-template.md` adds a 12-section base and per-blank acceptance criteria | Classify first, then pick a skeleton; every blank states what "done" looks like |
 | **10 Universal Archetype Engines** | Tailored, copy-paste-ready Markdown skeletons for AI Skills, MCP Servers, Models/GGUF, CLI tools, Multimedia, SDKs, Extensions, IaC, Web Apps, Awesome Lists | Replaces generic templates with concrete structures and package manager matrices |
 | **Progressive Disclosure Architecture** | Loads only the specific archetype template matched in Step 1 | Eliminates context bloat and prevents cross-archetype pollution |
-| **Layered Security Scan** | Credentials/PATs/PEM keys, path, private-network and local-proxy fingerprints, `.git/config` remote credentials, commit history and author emails, committed build caches (agent session markers stay a manual check); single source of truth in `scripts/secret-rules.json` | Blocks current credential formats; coverage and known blind spots are documented in `privacy-scan.md` |
+| **Layered Security Scan** | Credentials/PATs/PEM keys, path, private-network and local-proxy fingerprints, personal mailboxes and phone numbers (placeholders and system folders are not flagged), `.git/config` remote credentials, commit history and author emails, committed build caches (agent session markers stay a manual check); single source of truth in `scripts/secret-rules.json` | Blocks current credential formats; coverage and known blind spots are documented in `privacy-scan.md` |
 | **2026 Community & CI Profile Pack** | Interactive YAML Issue Forms, PR template, `SECURITY.md`, Node/Python matrix CI (SHA-pinned, read-only token) and Dependabot config | Covers the official health-file baseline and hardens the CI supply chain |
 | **All-Ecosystem Distribution Guides** | Practical publishing workflows for uv/PyPI, npm, Hugging Face, Chrome Web Store, Docker, Homebrew, Crates.io, Release Checksums | End-to-end guidance from local source to global package registries |
 | **Verifiable Architecture** | Validator works on any target directory (`validate_repo.py <dir>`), severity-graded findings, fixture regressions (real positives caught, clean sample stays clean) | Every claim is reproducible by command; nothing is reported green unless measured |
@@ -90,7 +90,7 @@ Send this to your AI assistant and it will detect the platform and clone to the 
 ### Option B: GitHub CLI 2.90+ (one command)
 
 ```bash
-gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin v3.3.2
+gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin v3.3.3
 # SKILL.md sits at the repo root; if gh cannot find the skill, use Option C
 ```
 
@@ -242,7 +242,7 @@ A complete, production-ready toolchain for open-source maintainers and contribut
 ## ⚠️ Known Limitations
 
 - **Scripts do not verify runtime behaviour**: the bundled scripts prepare files, scan credentials and check links/versions, but do not install your package or run your tests; the agent running the skill does that in Step 3, or your CI does.
-- **History scan is pattern-based**: `validate_repo.py --history` scans every line ever added plus commit emails, without entropy detection; add `gitleaks`/`trufflehog` for stronger checks. Forks and caches of the remote are out of reach.
+- **History scan is pattern-based**: `validate_repo.py --history` scans every line ever added plus commit emails, without entropy detection; P0 in history blocks, P1 is reported only (it can only be cleared by rewriting history); add `gitleaks`/`trufflehog` for stronger checks. Forks and caches of the remote are out of reach.
 - **Classification has edges**: 12 archetypes today; desktop/mobile/hardware/games/research artifacts have **no dedicated skeleton** — use the base plus category deltas and mark `template=missing` instead of forcing a near-miss template.
 - **Credential detection is pattern-based** (`scripts/secret-rules.json`), not entropy-based; every suppression is reported as P2 and a human pass is still required.
 - **Licensing guidance is not legal advice**; model/dataset license chains need your own confirmation.

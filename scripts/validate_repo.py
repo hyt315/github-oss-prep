@@ -3,7 +3,7 @@
 
 Usable on this skill's own repository (default) or on any target directory:
 
-    python scripts/validate_repo.py [TARGET_DIR] [--json] [--format text|json|md] [--strict]
+    python scripts/validate_repo.py [TARGET_DIR] [--json] [--format text|json|md] [--strict] [--history]
 
 Rules (secrets, private paths, blocked filenames) live in scripts/secret-rules.json
 and are the single source of truth — tests import them from here, docs must not
@@ -32,7 +32,6 @@ REQUIRED = [
     "references/discovery-and-promotion.md",
 ]
 
-PLACEHOLDER_RE = re.compile(r"<(?:owner|repo)>")
 UNRESOLVED_RE = re.compile(r"\{(owner|repo)\}")
 SUPPRESSION_RE = re.compile(
     r"<!--\s*(?:scan-ignore:\s*([a-z0-9,\-\s]+?)\s*(?:\(([^)]*)\))?\s*|skill-doctor:\s*allow[^>]*)-->"
@@ -210,10 +209,8 @@ def scan_tree(root: Path, rules: dict | None = None) -> list[dict]:
     rules = rules or load_rules()
     findings: list[dict] = []
 
-    cred = [(p["id"], p["severity"], re.compile(p["regex"]), p["label"]) for p in rules["credential_patterns"]]
-    paths = [(p["id"], p["severity"], re.compile(p["regex"]), p["label"]) for p in rules.get("path_patterns", [])]
-    ips = [(p["id"], p["severity"], re.compile(p["regex"]), p["label"]) for p in rules.get("private_ip_patterns", [])]
-    envs = [(p["id"], p["severity"], re.compile(p["regex"]), p["label"]) for p in rules.get("local_env_patterns", [])]
+    cred = _compiled(rules, ("credential_patterns",))
+    patterns = _compiled(rules)
     allow = set(rules.get("filename_allowlist", []))
 
     max_bytes = rules["scan_scope"].get("max_file_bytes", 0)
@@ -251,23 +248,15 @@ def scan_tree(root: Path, rules: dict | None = None) -> list[dict]:
                     "inline suppression for " + (",".join(rule_ids) if rule_ids else "skill-doctor")
                     + (f" ({reason})" if reason else ""),
                 )
-            for fid, sev, rx, label in cred + paths + ips + envs:
-                if fid in suppressed or "all" in suppressed:
-                    continue
-                hit = rx.search(line)
-                if hit:
-                    _finding(findings, fid, sev, path, lineno, label, hit.group(0))
-            for match in PLACEHOLDER_RE.finditer(line):
-                _finding(findings, "unresolved-placeholder", "P0", path, lineno, "unresolved placeholder", match.group(0))
+            for fid, sev, label, hit in _match_line(line, patterns, suppressed):
+                _finding(findings, fid, sev, path, lineno, label, hit)
 
     # .git/config is skipped with .git/, but a token-bearing remote URL there leaks with any ZIP of the folder
     git_config = root / ".git" / "config"
     if git_config.is_file():
         for lineno, line in enumerate(_read(git_config).splitlines(), 1):
-            for fid, sev, rx, label in cred:
-                hit = rx.search(line)
-                if hit:
-                    _finding(findings, fid, sev, git_config, lineno, label + " (in .git/config)", hit.group(0))
+            for fid, sev, label, hit in _match_line(line, cred, set()):
+                _finding(findings, fid, sev, git_config, lineno, label + " (in .git/config)", hit)
 
     # build caches and dependency folders are skipped above; report any that are actually tracked by git
     _report_tracked_artifacts(root, rules, findings)
@@ -299,11 +288,24 @@ def scan_tree(root: Path, rules: dict | None = None) -> list[dict]:
     return findings
 
 
-def _compiled(rules: dict):
+PATTERN_GROUPS = ("credential_patterns", "path_patterns", "private_ip_patterns", "local_env_patterns", "personal_patterns")
+
+
+def _compiled(rules: dict, groups: tuple[str, ...] = PATTERN_GROUPS):
     out = []
-    for key in ("credential_patterns", "path_patterns", "private_ip_patterns", "local_env_patterns"):
+    for key in groups:
         out += [(p["id"], p["severity"], re.compile(p["regex"]), p["label"]) for p in rules.get(key, [])]
     return out
+
+
+def _match_line(text: str, patterns, suppressed: set[str]):
+    """The one matcher shared by the tree, .git/config and history scans: (id, severity, label, evidence)."""
+    for fid, sev, rx, label in patterns:
+        if fid in suppressed or "all" in suppressed:
+            continue
+        hit = rx.search(text)
+        if hit:
+            yield fid, sev, label, hit.group(0)
 
 
 DUMMY_RE = re.compile(r"(?i)example|test|dummy|fake|placeholder|x{4,}|1234567890|abcdef")
@@ -338,8 +340,10 @@ def scan_history(root: Path, rules: dict | None = None) -> list[dict]:
             for email in parts[2:]:
                 if email and not noreply.search(email) and ("email", email) not in seen:
                     seen.add(("email", email))
-                    _finding(findings, "history-author-email", "P2", Path(f"history:{commit}"), 0,
-                             "commit metadata exposes a non-noreply email (consider the GitHub noreply address)", email)
+                    personal = any(fid == "personal-email" for fid, *_ in _match_line(email, patterns, set()))
+                    _finding(findings, "history-author-email", "P1" if personal else "P2", Path(f"history:{commit}"), 0,
+                             "commit metadata exposes a " + ("personal mailbox" if personal else "non-noreply email")
+                             + "; set user.email to your GitHub noreply address for future commits", email)
             continue
         if line.startswith("+++ b/"):
             current = line[6:]
@@ -348,16 +352,14 @@ def scan_history(root: Path, rules: dict | None = None) -> list[dict]:
             continue
         text = line[1:]
         suppressed = {r.strip() for m in SUPPRESSION_RE.finditer(text) for r in (m.group(1) or "").split(",") if r.strip()}
-        for fid, sev, rx, label in patterns:
-            if fid in suppressed:
+        for fid, sev, label, hit in _match_line(text, patterns, suppressed):
+            if (fid, hit) in seen:
                 continue
-            hit = rx.search(text)
-            if hit and (fid, hit.group(0)) not in seen:
-                seen.add((fid, hit.group(0)))
-                if sev == "P0" and DUMMY_RE.search(hit.group(0)):
-                    sev = "P2"  # obvious placeholder (example/test/123456…): show it, don't block
-                _finding(findings, fid, sev, Path(f"history:{commit}:{current}"), 0,
-                         label + " (in git history; removing it now does not erase it)", hit.group(0))
+            seen.add((fid, hit))
+            if sev == "P0" and DUMMY_RE.search(hit):
+                sev = "P2"  # obvious placeholder (example/test/123456…): show it, don't block
+            _finding(findings, fid, sev, Path(f"history:{commit}:{current}"), 0,
+                     label + " (in git history; removing it now does not erase it)", hit)
     return findings
 
 
@@ -434,7 +436,8 @@ def main() -> int:
     parser.add_argument("target", nargs="?", default=None, help="directory to check (default: this skill)")
     parser.add_argument("--json", action="store_true", help="output as JSON (shortcut for --format json)")
     parser.add_argument("--format", choices=["text", "json", "md"], default=None)
-    parser.add_argument("--strict", action="store_true", help="treat P1 findings as failures (use before publishing)")
+    parser.add_argument("--strict", action="store_true",
+                        help="treat P1 findings in the current tree as failures (use before publishing); history P1 stays report-only")
     parser.add_argument("--history", action="store_true", help="also scan every line ever committed and commit emails")
     args = parser.parse_args()
 
@@ -449,7 +452,8 @@ def main() -> int:
         findings.extend(scan_history(root))
 
     blocking = [f for f in findings if f["severity"] == "P0"]
-    strict_hits = [f for f in findings if f["severity"] == "P1"]
+    # P1 in history is report-only: it can only be cleared by rewriting history, which is the user's call
+    strict_hits = [f for f in findings if f["severity"] == "P1" and not str(f["file"]).startswith("history:")]
     failed = bool(blocking) or (args.strict and bool(strict_hits))
 
     for f in findings:

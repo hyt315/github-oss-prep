@@ -110,7 +110,7 @@
   - 文档或脚本里写着作者自己的代理地址和端口（如 `http.proxy=…127.0.0.1:<端口>`）、"本机实测"之类的环境快照、token 放在哪个环境变量里、哪个域名直连不通，都会暴露作者的网络环境；回环地址外人连不上，但它仍是个人信息，也会让别人照抄后失败。 <!-- scan-ignore: machine-specific-claim, local-proxy-config (规则说明本身) -->
   - 一律改成占位符（`<proxy>`）加"按探测结果套用"的条件写法；`scripts/secret-rules.json` 的 `local_env_patterns` 会拦截常见代理端口与"本机实测"类表述。 <!-- scan-ignore: machine-specific-claim, local-proxy-config (规则说明本身) -->
 - **提交元数据里的邮箱**：
-  - 删文件不会删提交作者信息。不想公开真实邮箱时，提交前把 `user.email` 设为 GitHub 的 noreply 地址；`validate_repo.py --history` 会列出历史里出现过的非 noreply 邮箱。
+  - 删文件不会删提交作者信息。不想公开真实邮箱时，提交前把 `user.email` 设为 GitHub 的 noreply 地址；`validate_repo.py --history` 会列出历史里出现过的非 noreply 邮箱，个人邮箱域（qq、163、gmail 等）标为 P1。
 - **`.git/config` 内嵌明文 Token 泄漏**：
   - 开发者通过带有 Token 的 URL（如 `https://<token>@github.com/org/repo.git`）克隆或推送代码；
   - 克隆时写进 URL 的 Token 会以明文形式永久固化在本地 `.git/config` 中；推送时临时写进 URL 也会出现在进程列表里，若后续打包整个项目（如 ZIP）交付或误将 `.git` 文件夹公开，特权 Token 就会直接泄露。

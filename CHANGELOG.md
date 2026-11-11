@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 _No unreleased changes._
 
+## [3.3.3] - 2026-11-12
+
+Patch release: scanner calibration. The release gate `validate_repo.py --strict --history` now passes on clean projects and catches personal data it used to miss.
+
+### Fixed
+
+- **Placeholders no longer block a release.** The `<owner>`/`<repo>` rule raised P0 even inside code blocks, although SKILL.md treats placeholders as safe. It is removed; `{owner}`/`{repo}` left in shipped docs are still caught by `placeholder-unresolved`.
+- **Path rules ignore placeholders and system folders.** `windows-user-profile-path` skips `<user>`, `YourName`, `username`, `%USERNAME%`, `Public`, `Default` and similar; `unix-home-path` skips `user`, `you`, `runner` and similar. `windows-absolute-path` is now P2 (informational) and ignores `C:\Windows`, `C:\ProgramData`, `C:\Program Files`. On a real Windows-tooling project, strict tree P1 dropped from 92 to 1. <!-- scan-ignore: windows-absolute-path (规则说明本身) -->
+- **`--strict` no longer fails on history it cannot fix.** P1 found only in git history is reported but does not block; P0 in history still blocks. The documented gate `--strict --history` failed on this repository itself (24 history P1); CI now runs it as one step.
+
+### Added
+
+- `personal_patterns` in `secret-rules.json`: personal mailbox addresses (qq, 163, 126, foxmail, gmail, outlook, …) and mainland China mobile numbers, both P1. SKILL.md has always required both to be absent; until now neither was scanned.
+- A non-noreply commit email on a personal mailbox domain is now P1 in the history scan (was P2).
+- Tree, `.git/config` and history scans share one matcher (`_match_line`), so a rule behaves the same everywhere.
+- Selftest: placeholder/system-path calibration, personal data detection, history P1 report-only.
+- README (zh/en): security feature row and the history-scan limitation describe the new behaviour; install `--pin` is v3.3.3.
+
 ## [3.3.2] - 2026-11-08
 
 Patch release: fixes and tightening only, no new workflow steps.

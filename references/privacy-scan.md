@@ -35,12 +35,12 @@
 | 重 | 自动化 | 命令 / 规则组 | 仍需人工 |
 |---|---|---|---|
 | 1 凭据 | ✅ | `validate_repo.py`：`credential_patterns`、`blocked_filenames` | 新格式或自定义格式的密钥 |
-| 2 机器指纹 | ✅ | `path_patterns`、`private_ip_patterns`、`local_env_patterns` | 文中提到的真实用户名、主机名、公司名 |
+| 2 机器指纹与个人信息 | ✅ | `path_patterns`、`private_ip_patterns`、`local_env_patterns`、`personal_patterns`（个人邮箱、大陆手机号） | 文中提到的真实用户名、主机名、公司名；证件号、境外手机号 |
 | 3 Agent 会话标记 | ❌ | 暂无规则 | 全部人工：会话 ID、内部 Agent 名、私有工作区别名 |
 | 4 Git 凭据与历史 | ✅ | `validate_repo.py --history`（历史中新增的每一行 + 提交邮箱） | `.git/config` 的 remote URL：`git remote -v` 看一眼 |
 | 5 构建产物与缓存 | ⚠️ 部分 | 扫描时跳过这些目录，但**不报错** | 用 `git ls-files` 确认它们没被提交 |
 
-> 发布前用 `--strict` 运行：私有路径、内网 IP 和本机环境指纹都是 P1，只有 `--strict` 才会让检查失败。
+> 发布前用 `--strict --history` 运行：带真实用户名的路径、内网 IP、本机环境指纹、个人邮箱和手机号都是 P1，只有 `--strict` 才会让检查失败，且只针对**当前树**；历史里的 P1 只报告不阻断。盘符绝对路径（如 `D:\Projects\`）只作 P2 提示；`C:\Windows`、`C:\ProgramData` 等系统目录和 `<user>`、`YourName`、`%USERNAME%` 这类占位用户名不报。 <!-- scan-ignore: windows-absolute-path (示例路径) -->
 
 ---
 
@@ -52,7 +52,8 @@
 
 - 凭据：GitHub Classic / Fine-grained PAT、OpenAI 系（含 `sk-proj-`/`sk-ant-`）、Anthropic、Stripe、AWS（`AKIA`/`ASIA`）、Google API Key、Hugging Face、npm、PyPI、Slack、SendGrid、Telegram、JWT、Azure 存储密钥、URL 内嵌凭据
 - 私钥：PEM 私钥块（含无算法前缀的 PKCS#8）
-- 路径与网络：Windows 任意用户名（含非 ASCII）、Unix 家目录、WSL/挂载路径、RFC1918 私网 IP
+- 路径与网络：Windows 用户目录（任意真实用户名，含非 ASCII；占位用户名除外）、Unix 家目录、WSL/挂载路径、RFC1918 私网 IP
+- 个人信息：常见个人邮箱域（qq、163、126、foxmail、gmail、outlook 等）的地址、中国大陆手机号；提交邮箱属个人邮箱域时在历史扫描里升为 P1
 - 本机环境：回环地址上的代理配置、代理客户端常用端口、"本机实测"类环境快照 <!-- scan-ignore: machine-specific-claim (规则说明本身) -->
 - 文件名级拦截：`.env`、`.env.*`（`.env.example` 等模板除外）、`credentials.json`、`*.pem`、`*.key`、`*.p12`、`*.pfx`、`id_rsa`/`id_ed25519`/`id_ecdsa`/`id_dsa`
 - 不读的文件：图片、压缩包、模型权重与数据文件（`.gguf`、`.safetensors`、`.parquet` 等）和超过 5 MB 的文件，后者会以 P2 列出

@@ -3,7 +3,7 @@ name: github-oss-prep
 description: "Use when preparing, publishing, launching, or improving a project for open-source adoption on GitHub. Triggers include GitHub 开源准备、准备发布到 GitHub、美化项目准备开源、开源化、开源推广、oss prep、publish to GitHub, launch an open-source project, and prepare for open source."
 license: MIT
 metadata:
-  version: "3.3.2"
+  version: "3.3.3"
 ---
 
 # GitHub 开源准备
@@ -59,7 +59,7 @@ Step 0 定位 → Step 1 扫描 →【闸 1】→ Step 2 整理 → Step 3 验�
 
 1. **判定类型**：按 `references/category-map.md` §3 执行（指纹 → 候选集 → 主产物一问 → 旗标 → 生命周期），产出**一个** `category_id`；落不进就记 `general` + `router=unresolved`，不硬套。
 2. **核对社区健康文件**：README、LICENSE、CODE_OF_CONDUCT、CONTRIBUTING、SECURITY（根目录、`.github/` 或 `docs/`），Issue 表单与 PR 模板（`.github/`）。`LICENSE` 不能由组织级 `.github` 仓库兜底；Description 与 Topics 不是文件，但发布时必须设置。
-3. **跑一次基线扫描**：`python scripts/validate_repo.py <项目目录> --strict --history`，记下 P0/P1 命中。
+3. **跑一次基线扫描**：`python scripts/validate_repo.py <项目目录> --strict --history`，记下 P0/P1 命中。`--strict` 只让**当前树**的 P1 失败；历史里的 P1 照常列出但不阻断（只能靠改写历史清除，要不要改由用户决定）。
 
 ### Step 2：整理
 
@@ -147,7 +147,7 @@ Step 0 定位 → Step 1 扫描 →【闸 1】→ Step 2 整理 → Step 3 验�
 | 层级 | 检查项 | 测量值 | 命令（附执行时间） | 判定 |
 |---|---|---|---|:---:|
 | L1 隐私安全 | 当前树 P0 / P1 命中数 | {P0} / {P1} | `python scripts/validate_repo.py <dir> --strict`（{RUN_AT}） | {VERDICT} |
-| L1 隐私安全 | 历史提交与提交邮箱 | {HISTORY} | `python scripts/validate_repo.py <dir> --history`；可加 `gitleaks git`（{RUN_AT}） | {VERDICT} |
+| L1 隐私安全 | 历史提交与提交邮箱（P0 阻断，P1 只报告） | {HISTORY} | `python scripts/validate_repo.py <dir> --history`；可加 `gitleaks git`（{RUN_AT}） | {VERDICT} |
 | L2 社区健康 | 健康文件与 Issue/PR 模板 | {FILES} | `validate_repo.py` 文件清单（{RUN_AT}） | {VERDICT} |
 | L3 供应链 | workflow 顶层 permissions 与 Action SHA 锁定 | {CI_PIN} | `validate_repo.py` 规则 `ci-pin-*`（{RUN_AT}） | {VERDICT} |
 | L3 自动化 | 项目自带测试 / 本技能 selftest | {TESTS} | 项目测试命令或 `python scripts/selftest.py`（{RUN_AT}） | {VERDICT} |

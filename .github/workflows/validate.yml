@@ -28,7 +28,5 @@ jobs:
         run: python scripts/selftest.py
       - name: Unit tests (stdlib unittest, no extra deps)
         run: python -m unittest discover -s tests -p "test_*.py" -v
-      - name: Repository checks
-        run: python scripts/validate_repo.py --strict
-      - name: History scan (P0 in any past commit blocks)
-        run: python scripts/validate_repo.py --history
+      - name: Release gate (current tree P0/P1 and history P0 block; history P1 is reported)
+        run: python scripts/validate_repo.py --strict --history
