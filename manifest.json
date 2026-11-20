@@ -1,9 +1,9 @@
 {
   "name": "github-oss-prep",
-  "version": "3.3.3",
+  "version": "3.4.0",
   "owner": "hyt315",
-  "updated_at": "2026-11-12",
-  "description": "Comprehensive GitHub open-source preparation skill: 7-step workflow, type-adaptive README/community files, single-source secret scanning, environment-adaptive publishing with approval gates, and multi-channel distribution.",
+  "updated_at": "2026-11-20",
+  "description": "Lightweight GitHub open-source preparation skill: deterministic security/hygiene audit, must-have vs optional OSS polish, modern install conventions, and approval-gated publishing.",
   "license": "MIT",
   "requires": {
     "python": ">=3.9"
@@ -13,7 +13,7 @@
     "open-source",
     "readme",
     "agent-skill",
-    "community-health",
+    "security-scanning",
     "supply-chain-security"
   ]
 }

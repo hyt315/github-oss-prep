@@ -1,269 +1,99 @@
-# 📦 GitHub OSS Prep / github-oss-prep
+# 📦 GitHub OSS Prep
 
 <div align="center">
 
-**Turn any project into a polished, GitHub-ready open-source repository with full community health files, CI automation, and tailored multi-channel distribution.**
-
-**将任意项目美化为适合 GitHub 发布的专业级开源版本，补齐全套社区健康文件与 CI 自动化，构建专属针对性门面与全生态分发。**
+**Lightweight AI Agent Skill for GitHub open-source prep: deterministic secret & hygiene audit, must-have vs optional polish, and approval-gated publishing.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/hyt315/github-oss-prep?sort=semver)](CHANGELOG.md)
 [![Validate skill](https://github.com/hyt315/github-oss-prep/actions/workflows/validate.yml/badge.svg)](https://github.com/hyt315/github-oss-prep/actions)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-1f6feb)](SKILL.md)
-[![Dependencies](https://img.shields.io/badge/Dependencies-Zero%20(Pure%20Python)-brightgreen)](SKILL.md)
-[![GitHub Stars](https://img.shields.io/github/stars/hyt315/github-oss-prep?style=social)](https://github.com/hyt315/github-oss-prep/stargazers)
 
 [English](./README.en.md) | [中文](./README.md)
 
 </div>
 
----
+## What is it?
 
-## 📖 What is this?
+Modern AI coding agents can draft clean READMEs and config files without rigid fill-in-the-blank templates. What still breaks open-source launches is leaking local paths, personal emails, API keys, or secrets buried in git history—and bloating small repos with unused governance boilerplate.
 
-When open-sourcing projects on GitHub, developers frequently hit these hurdles:
-- Missing `LICENSE`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md` or modern YAML Issue Forms — the official community-health baseline names these files (GitHub's community profile reports a health percentage, but it only checks that files exist; this skill reviews their content instead of chasing the score);
-- Generic, one-size-fits-all README layouts that fail to highlight the distinct value of AI Agent Skills, MCP Servers, Model weights/GGUF, system CLI tools, browser extensions, or fullstack apps;
-- Missing concrete publishing instructions for `uvx`, `bunx`, `pnpm dlx`, Hugging Face, Chrome Web Store, or CI matrix testing;
-- Accidental leaks of local machine paths, private agent session fingerprints, API tokens, or Git credentials into public repositories.
+`github-oss-prep` splits open-source prep into two layers:
+- **Deterministic audit script**: Zero-dependency `scripts/validate_repo.py` checks working files, `.git/config`, git history (streaming), commit emails, GitHub Actions supply-chain hygiene, and baseline OSS files on any target repository.
+- **Lean, layered guidance**: Separates **must-have basics** (clean secret scan, runnable README, `LICENSE`, `.gitignore`, Description/Topics) from **on-demand enhancements** (community files, SHA-pinned CI, bilingual docs, multi-channel release, promotion), guarded by two approval gates.
 
-**`github-oss-prep`** is a professional-grade GitHub open-source preparation skill designed for AI Agents and open-source creators. Grounded in the **Progressive Disclosure Principle**, it features **10 Universal Archetype-tailored README engines**, **all-ecosystem package distribution guides**, a **5-layer deep environment and credential security scanner**, and the **GitHub 2026 Community Profile & CI pack** for seamless, professional repo releases.
+## Quick Start
 
----
+### Option A: Send one sentence to your AI agent (easiest)
 
-## ✨ Key Features
+> Please install the `github-oss-prep` skill from `https://github.com/hyt315/github-oss-prep` into your skills directory and confirm it is ready.
 
-| Core Module | Capabilities | Value Delivered |
-|---|---|---|
-| **Taxonomy Router + 10 README Skeletons** | `references/category-map.md` is the single classification source (12 archetypes, three axes, flags, decision algorithm); `readme-template.md` adds a 12-section base and per-blank acceptance criteria | Classify first, then pick a skeleton; every blank states what "done" looks like |
-| **10 Universal Archetype Engines** | Tailored, copy-paste-ready Markdown skeletons for AI Skills, MCP Servers, Models/GGUF, CLI tools, Multimedia, SDKs, Extensions, IaC, Web Apps, Awesome Lists | Replaces generic templates with concrete structures and package manager matrices |
-| **Progressive Disclosure Architecture** | Loads only the specific archetype template matched in Step 1 | Eliminates context bloat and prevents cross-archetype pollution |
-| **Layered Security Scan** | Credentials/PATs/PEM keys, path, private-network and local-proxy fingerprints, personal mailboxes and phone numbers (placeholders and system folders are not flagged), `.git/config` remote credentials, commit history and author emails, committed build caches (agent session markers stay a manual check); single source of truth in `scripts/secret-rules.json` | Blocks current credential formats; coverage and known blind spots are documented in `privacy-scan.md` |
-| **2026 Community & CI Profile Pack** | Interactive YAML Issue Forms, PR template, `SECURITY.md`, Node/Python matrix CI (SHA-pinned, read-only token) and Dependabot config | Covers the official health-file baseline and hardens the CI supply chain |
-| **All-Ecosystem Distribution Guides** | Practical publishing workflows for uv/PyPI, npm, Hugging Face, Chrome Web Store, Docker, Homebrew, Crates.io, Release Checksums | End-to-end guidance from local source to global package registries |
-| **Verifiable Architecture** | Validator works on any target directory (`validate_repo.py <dir>`), severity-graded findings, fixture regressions (real positives caught, clean sample stays clean) | Every claim is reproducible by command; nothing is reported green unless measured |
+Then ask your agent: *"Audit this repo and prepare it for GitHub open-source release."*
 
----
-
-## 📊 Complete Open-Source Preparation Architecture
-
-```
-[Input: Any local project / directory to open-source]
-                         │
-      [Step 0: Positioning (target users + core value + verifiable result)]
-      Detect: AI Skill / MCP Server / Model weights / CLI tool / Browser extension / IaC / ...
-                         │
-      [Step 1: Scanning (archetype detection + gaps, weaknesses, risks)]
-      Check against the GitHub Community Profile requirements
-                         │
-      [Step 2: Assembling (create missing files + improve weak ones after approval)]
-      Generate bilingual community health files
-                         │
-      [Step 3: Verification (content + privacy + provenance/licensing + clean-environment run)]
-      5-layer deep scan to guarantee no sensitive information leaks
-                         │
-      [Step 4: Repository facade (README + Description + Topics + social preview)]
-      Progressive disclosure: load only the dedicated archetype skeleton
-                         │
-      [Step 5: Publish confirmation → branch/PR (default) or solo direct push (optional)]
-      public-safe or solo-fast
-                         │
-      [Step 6: Release + multi-platform distribution + version consistency check]
-      uv/PyPI/npm/HuggingFace/ChromeStore/Docker/Homebrew/Crates.io
-                         │
-      [Step 7: Discovery & growth (Launch Kit + targeted channels + feedback loop)]
-      Stranger Test, channel selection, release rhythm
-```
-
----
-
-## 🚀 Quick Start
-
-This is an AI Agent Skill — install it into your AI assistant and you're ready.
-
-### Option A: Paste one sentence into any Agent (recommended, most universal)
-
-Send this to your AI assistant and it will detect the platform and clone to the right skills directory:
-
-> Please install the github-oss-prep skill: clone `https://github.com/hyt315/github-oss-prep` into your skills directory (e.g. `~/.claude/skills/github-oss-prep` or `~/.agents/skills/github-oss-prep`) and confirm it works.
-
-### Option B: GitHub CLI 2.90+ (one command)
+### Option B: Install via `npx skills` (90+ agents)
 
 ```bash
-gh skill install hyt315/github-oss-prep github-oss-prep --agent claude-code --scope user --pin v3.3.3
-# SKILL.md sits at the repo root; if gh cannot find the skill, use Option C
+# Project-level install
+npx skills add hyt315/github-oss-prep
+
+# Global install (recommended)
+npx skills add hyt315/github-oss-prep -g
 ```
 
-### Option C: Manual per-platform install
-
-| Platform | Command |
-|---|---|
-| **Claude Code** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.claude/skills/github-oss-prep` |
-| **Cursor** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.cursor/skills/github-oss-prep` |
-| **General Agents** | `git clone https://github.com/hyt315/github-oss-prep.git ~/.agents/skills/github-oss-prep` |
-
-### Option D: Run local regression selftest
+### Option C: Manual clone
 
 ```bash
-python scripts/selftest.py
+# Claude Code
+git clone https://github.com/hyt315/github-oss-prep.git ~/.claude/skills/github-oss-prep
+
+# Cursor
+git clone https://github.com/hyt315/github-oss-prep.git ~/.cursor/skills/github-oss-prep
+
+# Codex / generic Agents directory
+git clone https://github.com/hyt315/github-oss-prep.git ~/.agents/skills/github-oss-prep
 ```
 
----
+### Run the validator directly
 
-## 📚 End-to-End Practical Walkthrough
+```bash
+# Audit any target repository (working tree + git history + CI security + baseline files)
+python3 scripts/validate_repo.py /path/to/your-repo --strict --history
 
-Suppose you have a local Python CLI utility, MCP Server, or browser extension ready to open-source:
-
-1. **Trigger & Scan**: Send "help me prepare this project for open-source" → Auto-detects archetype, scans current files and commit history, and lists path fingerprints, local-environment details and committed caches for review;
-2. **Generate Community & CI Files**: Creates GitHub 2026-compliant YAML Issue Forms, `SECURITY.md`, `LICENSE`, and Node/Python matrix CI workflows;
-3. **Progressive Facade Rendering**: Progressively loads dedicated archetype template, generating bilingual READMEs with modern CLI matrices (`uvx`/`bunx`) and config blocks;
-4. **Validate & Distribute**: Runs `selftest.py` locally, outputs clean reviewable project bundle, and publishes to GitHub, Release assets, and global registries upon explicit approval.
-
----
-
-## 🔒 Safety & Privacy Principles
-
-- **Audit Before Change**: Reads and audits locally by default, generating diffs before creating or modifying any files.
-- **Progressive Isolation**: Only loads relevant archetype references, preventing context pollution.
-- **Layered scanning**: Pattern scans across code, docs, `.git/config` and commit history; credentials block the release, and what cannot be detected automatically (such as agent session markers) is listed as a manual check.
-- **Staged Approvals**: Local preparation, remote repo creation, Release packaging, and external promotion are approved independently.
-
----
-
-## 📥 Download
-
-| Method | Command / Link |
-|---|---|
-| **HTTPS** | `git clone https://github.com/hyt315/github-oss-prep.git` |
-| **SSH** | `git clone git@github.com:hyt315/github-oss-prep.git` |
-| **GitHub CLI** | `gh repo clone hyt315/github-oss-prep` |
-| **ZIP** | [Download ZIP](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.zip) |
-| **Tarball** | [Download Tar](https://github.com/hyt315/github-oss-prep/archive/refs/heads/main.tar.gz) |
-| **Single file (SKILL.md)** | `curl -O https://raw.githubusercontent.com/hyt315/github-oss-prep/main/SKILL.md` (preview only: it cannot run without `references/` and `scripts/`) |
-
----
-
-## 📖 In-Depth Technical References
-
-| Reference Guide | Core Focus | When to Read | Size |
-|---|---|---|---|
-| 🗺️ [**Taxonomy & Routing Map (`category-map.md`)**](references/category-map.md) | 12 archetypes, audience/lifecycle axes, flags, decision algorithm, router regression cases | When classifying a project and picking `category_id` | ~9.7 KB |
-| 📑 [**10 Universal Archetype README Engines (`readme-template.md`)**](references/readme-template.md) | Complete copy-pasteable Markdown skeletons and 2026 CLI runner tables | When generating or rewriting READMEs | ~12.4 KB (+10 skeleton files, 2–5 KB each) |
-| 🚨 [**OSS Prep Killer Pitfalls & Baselines (`github-oss-prep-pitfalls.md`)**](references/github-oss-prep-pitfalls.md) | Official community-health baseline, Git history secret scrubbing & CI supply-chain action pinning | When auditing safety baselines and avoiding deep pitfalls | ~17.2 KB |
-| 🛡️ [**5-Layer Deep Privacy Scanner (`privacy-scan.md`)**](references/privacy-scan.md) | 5-layer interception rules, real-leak comparison table, and sanitization | When performing security audits and sanitization | ~8.5 KB |
-| 🏛️ [**Community Profile & CI Pack (`community-templates.md`)**](references/community-templates.md) | Interactive YAML Issue Forms, Node/Python matrix CI, and Dependabot | When completing GitHub Community Standards & CI | ~9.8 KB |
-| 🚀 [**All-Ecosystem Distribution (`release-and-distribution.md`)**](references/release-and-distribution.md) | uv, npm, HuggingFace, ChromeStore, Docker publishing, and Checksums | When publishing to registries or GitHub Release | ~8.4 KB |
-| 🏷️ [**Description & Topics Guide (`description-guide.md`)**](references/description-guide.md) | Concise 120-char repository description and topic selection | When configuring repo surface metadata | ~4.7 KB |
-| 🌐 [**Discoverability & Launch Kit (`discovery-and-promotion.md`)**](references/discovery-and-promotion.md) | Promotion strategies, social previews, and channel checklists | When launching or publicizing a project | ~2.5 KB |
-| 🔐 [**GitHub Push & MCP Guide (`mcp-push-guide.md`)**](references/mcp-push-guide.md) | Official MCP server setup and standard CLI push workflows | When pushing code and creating remote repos | ~5.7 KB |
-| 🚦 [**PR, CI & Release Gates (`pr-and-release-workflow.md`)**](references/pr-and-release-workflow.md) | Branches, PRs, CI testing, and release gating rules | When establishing CI pipelines and release gates | ~3.1 KB |
-| 🔑 [**GitHub Credential Comparison (`github-pat-comparison.md`)**](references/github-pat-comparison.md) | Permission and security comparison across the official connector, GitHub CLI, and PATs | When choosing a push authentication method | ~2.5 KB |
-| 🔒 [**Least-Privilege PAT Setup (`github-pat-setup.md`)**](references/github-pat-setup.md) | Creating a least-privilege personal access token on GitHub's official page | When a PAT is explicitly chosen | ~2.7 KB |
-
----
-
-## 📁 File Structure
-
+# Run regression tests
+python3 -m unittest discover -s tests -v
 ```
+
+## Workflow
+
+1. **Audit & Scope**: Run `validate_repo.py --strict --history`, review manual blind spots, identify project archetype → **Gate 1 (before editing files)**.
+2. **Must-Have Polish**: Clear P0/P1 findings, write a concise runnable README (for Skills: copy-to-AI prompt + `npx skills add` + manual clone), ensure `LICENSE` and `.gitignore`, draft Description (≤120 chars) & Topics (5–10), verify clean-directory run.
+3. **On-Demand Enhancements**: Add `SECURITY.md`, `CONTRIBUTING.md`, YAML Issue Forms, SHA-pinned CI, Dependabot (only for ecosystems present in the repo), bilingual README, or package distribution only when the project needs them.
+4. **Approval-Gated Publish**: → **Gate 2 (before publishing)** Read-only environment probe (connector / `gh` / `GITHUB_TOKEN` / offline ZIP), push, set and read back Description/Topics, and optionally cut a SemVer Release.
+
+## Repository Structure
+
+```text
 github-oss-prep/
-├── SKILL.md                          # Core skill definition, progressive disclosure & lightweight workflow
-├── README.md                         # Chinese documentation
-├── README.en.md                      # English documentation
-├── CHANGELOG.md                      # Version history
-├── LICENSE                           # MIT License
-├── .gitignore                        # Git ignore rules
-├── CONTRIBUTING.md                   # Contribution guide
-├── CODE_OF_CONDUCT.md                # Code of conduct
-├── SECURITY.md                       # Security policy
-├── SUPPORT.md                        # Support channels
-├── manifest.json                     # Skill manifest
-├── agents/                           # Multi-agent metadata
+├── SKILL.md                             # Core skill workflow (4 steps + 2 approval gates)
 ├── scripts/
-│   ├── secret-rules.json             # Single source of truth for credential/path rules
-│   ├── validate_repo.py              # Structure, hygiene & security validator (any target dir)
-│   └── selftest.py                   # Automated regression test runner
+│   ├── secret-rules.json                # Single source of truth for secret/privacy patterns
+│   └── validate_repo.py                 # Zero-dependency repository auditor
+├── references/
+│   ├── readme-and-archetypes.md         # Must-have vs optional README guide & 6 archetypes
+│   ├── security-and-pitfalls.md         # Scan blind spots, git history cleanup, CI & license traps
+│   ├── community-and-ci.md              # On-demand community files & SHA-pinned CI snippets
+│   └── publishing-and-release.md        # Read-only probe, one-shot credential push, Release & promo
 ├── tests/
-│   ├── fixtures/                   # leaked-repo (must be caught) + clean-repo (must stay clean)
-│   └── test_skill.py                 # stdlib unittest entry
-├── .github/
-│   ├── CODEOWNERS                    # Code owners config
-│   ├── pull_request_template.md      # Standard PR template
-│   ├── workflows/                    # CI workflows
-│   └── ISSUE_TEMPLATE/
-│       ├── bug_report.yml            # Interactive Bug report form
-│       ├── doc_improvement.yml       # Documentation improvement form
-│       ├── feature_request.yml       # Interactive Feature request form
-│       └── config.yml                # Template selector config
-└── references/                       # In-depth reference guides
-    ├── category-map.md               # Single classification source: 12 categories + general, routing
-    ├── readme-templates/             # 10 category skeletons; read only the one for your category_id
-    ├── github-oss-prep-pitfalls.md   # OSS Prep Killer Pitfalls & Baselines
-    ├── readme-template.md            # README template index: base sections, badges, install tables, per-category additions
-    ├── privacy-scan.md               # 5-Layer deep privacy and environment scan guide
-    ├── community-templates.md        # GitHub 2026 Community Profile & CI pack
-    ├── release-and-distribution.md   # All-ecosystem package distribution guides
-    ├── description-guide.md          # Description & Topics optimization guide
-    ├── discovery-and-promotion.md    # Open-source discoverability & Launch Kit
-    ├── mcp-push-guide.md             # GitHub push & MCP guide
-    ├── pr-and-release-workflow.md    # PR, CI & release gates
-    ├── github-pat-setup.md           # GitHub PAT setup guide
-    └── github-pat-comparison.md      # GitHub PAT comparison
+│   ├── test_skill.py                    # Unified stdlib unittest suite
+│   └── fixtures/                        # Positive leak & clean regression fixtures
+└── .github/workflows/validate.yml       # CI validation workflow
 ```
 
----
+## Known Limitations
 
----
+- **Pattern-based scanning**: Detects major cloud/AI keys, local paths, proxy fingerprints, personal emails/CN mobile numbers, `.git/config` tokens, and streaming git history, without entropy analysis; pair with `gitleaks` or `trufflehog` for high-sensitivity repos.
+- **No runtime execution in script**: Clean-clone install and test execution are performed by the agent or project CI.
+- **License guidance is not legal advice**: Verify upstream model/dataset license chains independently.
 
-## 🌐 GitHub Open Source Lifecycle Suite
+## License
 
-A complete, production-ready toolchain for open-source maintainers and contributors:
-
-| Stage / Role | Recommended Skill | Core Mission & Capabilities | GitHub Repository |
-|---|---|---|---|
-| 📦 **Pre-Launch Prep** | [**`github-oss-prep`**](https://github.com/hyt315/github-oss-prep) | Automated repository scaffolding, bilingual READMEs, CI workflows, and compliance checks | [hyt315/github-oss-prep](https://github.com/hyt315/github-oss-prep) |
-| ⚙️ **Post-Launch Ops** | [**`github-oss-ops`**](https://github.com/hyt315/github-oss-ops) | Issue triage, AI hallucination defense, PR review, GHSA vulnerability SOP, and multi-channel broadcasting | [hyt315/github-oss-ops](https://github.com/hyt315/github-oss-ops) |
-| 🚀 **Contributor Navigator** | [**`github-oss-contribute`**](https://github.com/hyt315/github-oss-contribute) | End-to-end contributor guide: Fork syncing, Rebase conflict resolution, DCO signing, and anti-AI slop gates | [hyt315/github-oss-contribute](https://github.com/hyt315/github-oss-contribute) |
-
----
-
-## ❓ FAQ
-
-- **Q: Do I need a GitHub Token for preparation and packaging?**  
-  A: No. Scanning, privacy audits, community file generation, README creation, and ZIP packaging run entirely locally without tokens.
-- **Q: Will it rewrite my codebase without asking?**  
-  A: Never. The skill follows strict "audit before change" principles, requiring explicit approval before modifying any files.
-- **Q: Does it support non-AI projects?**  
-  A: Absolutely. It features 10 dedicated archetype engines covering MCP Servers, AI models, CLI tools, extensions, SDK libraries, IaC, fullstack apps, and curated lists.
-- **Q: Why does `SKILL.md` remain lightweight?**  
-  A: The skill follows the Progressive Disclosure Architecture, encapsulating deep domain templates into modular references to prevent LLM context over-saturation and cross-domain pollution.
-
----
-
-## ⚠️ Known Limitations
-
-- **Scripts do not verify runtime behaviour**: the bundled scripts prepare files, scan credentials and check links/versions, but do not install your package or run your tests; the agent running the skill does that in Step 3, or your CI does.
-- **History scan is pattern-based**: `validate_repo.py --history` scans every line ever added plus commit emails, without entropy detection; P0 in history blocks, P1 is reported only (it can only be cleared by rewriting history); add `gitleaks`/`trufflehog` for stronger checks. Forks and caches of the remote are out of reach.
-- **Classification has edges**: 12 archetypes today; desktop/mobile/hardware/games/research artifacts have **no dedicated skeleton** — use the base plus category deltas and mark `template=missing` instead of forcing a near-miss template.
-- **Credential detection is pattern-based** (`scripts/secret-rules.json`), not entropy-based; every suppression is reported as P2 and a human pass is still required.
-- **Licensing guidance is not legal advice**; model/dataset license chains need your own confirmation.
-- **No unilateral publishing**: remote push, tags, releases and promotion each require separate approval.
-
-## 🆘 Support
-
-Stuck? Search [Issues](https://github.com/hyt315/github-oss-prep/issues) or ask in [Discussions](https://github.com/hyt315/github-oss-prep/discussions) with reproducible steps. Timing: see [SECURITY.md](SECURITY.md) (vulnerabilities) and [SUPPORT.md](SUPPORT.md) (general).
-
-## 🤝 Contributing
-
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md). If this skill helped you, please give it a [Star ⭐](https://github.com/hyt315/github-oss-prep/stargazers)!
-
----
-
-## 📄 License
-
-Licensed under the [MIT License](LICENSE).
-
-See [CHANGELOG.md](CHANGELOG.md) for version history.
-
----
-
-> 🌏 **中文版: [README.md](./README.md)**
+[MIT](LICENSE). See [CHANGELOG.md](CHANGELOG.md) for version history.

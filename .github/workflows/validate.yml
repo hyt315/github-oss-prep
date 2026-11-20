@@ -24,9 +24,7 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
-      - name: Fixture regression (real positives caught, clean sample clean)
-        run: python scripts/selftest.py
-      - name: Unit tests (stdlib unittest, no extra deps)
+      - name: Unit & regression tests (stdlib unittest, no extra deps)
         run: python -m unittest discover -s tests -p "test_*.py" -v
       - name: Release gate (current tree P0/P1 and history P0 block; history P1 is reported)
         run: python scripts/validate_repo.py --strict --history
